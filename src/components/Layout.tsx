@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
+import { OfflineBanner } from './OfflineBanner';
 
 export function Layout({ children }: { children: ReactNode }) {
   return (
@@ -15,6 +16,7 @@ export function Layout({ children }: { children: ReactNode }) {
           </NavLink>
         </nav>
       </header>
+      <OfflineBanner />
       <main className="app-main">{children}</main>
     </div>
   );
