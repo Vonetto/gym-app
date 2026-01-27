@@ -77,6 +77,16 @@ export function Settings() {
         )}
       </div>
 
+      <div className="card">
+        <h2>Créditos</h2>
+        <p className="muted">
+          El catálogo inicial de ejercicios se basa en datos del proyecto wger.
+        </p>
+        <p>
+          Fuente: <a href="https://wger.de/en/software/api">wger API</a> · Licencia{' '}
+          <a href="https://creativecommons.org/licenses/by-sa/4.0/">CC BY-SA 4.0</a>
+        </p>
+      </div>
     </section>
   );
 }
