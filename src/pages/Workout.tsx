@@ -43,12 +43,17 @@ export function Workout() {
   const [exerciseOptions, setExerciseOptions] = useState<
     Array<{ id: string; label: string; metricType: string }>
   >([]);
+  const [exerciseHistory, setExerciseHistory] = useState<
+    Record<string, Array<{ weight?: number; reps?: number }>>
+  >({});
 
   useEffect(() => {
     const stored = localStorage.getItem('active-session');
     if (stored) {
       setSession(JSON.parse(stored));
     }
+    const history = localStorage.getItem('exercise-history');
+    setExerciseHistory(history ? JSON.parse(history) : {});
   }, []);
 
   useEffect(() => {
@@ -132,6 +137,15 @@ export function Workout() {
       const history = existing ? JSON.parse(existing) : [];
       history.unshift(session);
       localStorage.setItem('workout-history', JSON.stringify(history.slice(0, 50)));
+      const historyByExercise = { ...exerciseHistory };
+      session.exercises.forEach((exercise) => {
+        historyByExercise[exercise.exerciseId] = exercise.sets.map((set) => ({
+          weight: set.weight,
+          reps: set.reps
+        }));
+      });
+      localStorage.setItem('exercise-history', JSON.stringify(historyByExercise));
+      setExerciseHistory(historyByExercise);
     }
     localStorage.removeItem('active-session');
     setSession(null);
@@ -154,7 +168,7 @@ export function Workout() {
         exerciseId: selected.id,
         name: selected.label,
         metricType: selected.metricType,
-        previousSets: [],
+        previousSets: exerciseHistory[selected.id] ?? [],
         sets: Array.from({ length: 3 }, () => ({
           completed: false
         }))
@@ -165,6 +179,42 @@ export function Workout() {
       };
     });
     setExercisePicker('');
+  };
+
+  const buildPreviousMatches = (
+    previous: Array<{ weight?: number; reps?: number }>,
+    current: WorkoutSet[]
+  ) => {
+    if (!previous.length) return current.map(() => null);
+    const remaining = previous.map((set, index) => ({ ...set, index }));
+    return current.map((set, index) => {
+      if (!remaining.length) return null;
+      let bestIndex = 0;
+      let bestScore = Number.POSITIVE_INFINITY;
+      for (let i = 0; i < remaining.length; i += 1) {
+        const candidate = remaining[i];
+        const weightScore =
+          set.weight !== undefined && candidate.weight !== undefined
+            ? Math.abs(set.weight - candidate.weight) * 2
+            : set.weight !== undefined || candidate.weight !== undefined
+            ? 5
+            : 0;
+        const repsScore =
+          set.reps !== undefined && candidate.reps !== undefined
+            ? Math.abs(set.reps - candidate.reps)
+            : set.reps !== undefined || candidate.reps !== undefined
+            ? 3
+            : 0;
+        const orderScore = Math.abs(index - candidate.index) * 0.25;
+        const score = weightScore + repsScore + orderScore;
+        if (score < bestScore) {
+          bestScore = score;
+          bestIndex = i;
+        }
+      }
+      const [match] = remaining.splice(bestIndex, 1);
+      return match;
+    });
   };
 
   const workoutTitle = useMemo(() => session?.routineName ?? 'Entreno', [session?.routineName]);
@@ -201,68 +251,73 @@ export function Workout() {
           <p className="muted">No hay ejercicios en esta sesión.</p>
         </div>
       ) : (
-        session.exercises.map((exercise, exerciseIndex) => (
-          <div key={exercise.exerciseId} className="exercise-card">
-            <div className="exercise-header">
-              <div className="avatar">{exercise.name.charAt(0)}</div>
-              <div>
-                <h2 className="exercise-title">{exercise.name}</h2>
-                <p className="muted">Agregar notas aquí...</p>
-                <p className="rest">Descanso: APAGADO</p>
-              </div>
-            </div>
-
-            <div className="set-table">
-              <div className="set-row set-header">
-                <span>Serie</span>
-                <span>Anterior</span>
-                <span>KG</span>
-                <span>Reps</span>
-                <span>RPE</span>
-                <span />
-              </div>
-              {exercise.sets.map((set, setIndex) => (
-                <div key={`${exercise.exerciseId}-${setIndex}`} className="set-row">
-                  <span>{setIndex + 1}</span>
-                  <span className="muted">
-                    {exercise.previousSets?.[setIndex]?.weight !== undefined &&
-                    exercise.previousSets?.[setIndex]?.reps !== undefined
-                      ? `${exercise.previousSets?.[setIndex]?.weight} x ${exercise.previousSets?.[setIndex]?.reps}`
-                      : '-'}
-                  </span>
-                  <input
-                    type="number"
-                    value={set.weight ?? ''}
-                    onChange={(event) =>
-                      handleSetChange(exerciseIndex, setIndex, 'weight', event.target.value)
-                    }
-                  />
-                  <input
-                    type="number"
-                    value={set.reps ?? ''}
-                    onChange={(event) =>
-                      handleSetChange(exerciseIndex, setIndex, 'reps', event.target.value)
-                    }
-                  />
-                  <button className="pill" type="button">
-                    RPE
-                  </button>
-                  <button
-                    className={set.completed ? 'check active' : 'check'}
-                    type="button"
-                    onClick={() => toggleComplete(exerciseIndex, setIndex)}
-                  >
-                    ✓
-                  </button>
+        session.exercises.map((exercise, exerciseIndex) => {
+          const matches = buildPreviousMatches(exercise.previousSets ?? [], exercise.sets);
+          return (
+            <div key={exercise.exerciseId} className="exercise-card">
+              <div className="exercise-header">
+                <div className="avatar">{exercise.name.charAt(0)}</div>
+                <div>
+                  <h2 className="exercise-title">{exercise.name}</h2>
+                  <p className="muted">Agregar notas aquí...</p>
+                  <p className="rest">Descanso: APAGADO</p>
                 </div>
-              ))}
-            </div>
+              </div>
 
-            <button className="ghost-button full" type="button" onClick={() => handleAddSet(exerciseIndex)}>
-              + Agregar serie
-            </button>
-          </div>
-        ))
+              <div className="set-table">
+                <div className="set-row set-header">
+                  <span>Serie</span>
+                  <span>Anterior</span>
+                  <span>KG</span>
+                  <span>Reps</span>
+                  <span>RPE</span>
+                  <span />
+                </div>
+                {exercise.sets.map((set, setIndex) => {
+                  const match = matches[setIndex];
+                  return (
+                    <div key={`${exercise.exerciseId}-${setIndex}`} className="set-row">
+                      <span>{setIndex + 1}</span>
+                      <span className="muted">
+                        {match?.weight !== undefined && match?.reps !== undefined
+                          ? `${match.weight} x ${match.reps}`
+                          : '-'}
+                      </span>
+                      <input
+                        type="number"
+                        value={set.weight ?? ''}
+                        onChange={(event) =>
+                          handleSetChange(exerciseIndex, setIndex, 'weight', event.target.value)
+                        }
+                      />
+                      <input
+                        type="number"
+                        value={set.reps ?? ''}
+                        onChange={(event) =>
+                          handleSetChange(exerciseIndex, setIndex, 'reps', event.target.value)
+                        }
+                      />
+                      <button className="pill" type="button">
+                        RPE
+                      </button>
+                      <button
+                        className={set.completed ? 'check active' : 'check'}
+                        type="button"
+                        onClick={() => toggleComplete(exerciseIndex, setIndex)}
+                      >
+                        ✓
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <button className="ghost-button full" type="button" onClick={() => handleAddSet(exerciseIndex)}>
+                + Agregar serie
+              </button>
+            </div>
+          );
+        })
       )}
 
       <div className="card">

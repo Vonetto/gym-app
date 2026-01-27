@@ -87,6 +87,8 @@ export function Home() {
     const historyRaw = localStorage.getItem('workout-history');
     const history = historyRaw ? JSON.parse(historyRaw) : [];
     const lastSession = history.find((entry: WorkoutSession) => entry.routineId === routineId);
+    const exerciseHistoryRaw = localStorage.getItem('exercise-history');
+    const exerciseHistory = exerciseHistoryRaw ? JSON.parse(exerciseHistoryRaw) : {};
     const session: WorkoutSession = {
       id: `session-${crypto.randomUUID()}`,
       createdAt: new Date().toISOString(),
@@ -111,7 +113,10 @@ export function Home() {
           exerciseId: entry.exerciseId,
           name: exercise ? getExerciseDisplayName(exercise, settings.language) : 'Ejercicio',
           metricType: exercise?.metricType ?? 'weight_reps',
-          previousSets: previous.map((set: { weight?: number; reps?: number }) => ({
+          previousSets: (previous.length
+            ? previous
+            : exerciseHistory[entry.exerciseId] ?? []
+          ).map((set: { weight?: number; reps?: number }) => ({
             weight: set.weight,
             reps: set.reps
           })),
