@@ -5,7 +5,6 @@ import { createRoutine, deleteRoutine, duplicateRoutine, listRoutines, reorderRo
 export function Routines() {
   const [name, setName] = useState('');
   const [tags, setTags] = useState('');
-  const [estimatedDuration, setEstimatedDuration] = useState('45');
   const [routines, setRoutines] = useState<Array<{ id: string; name: string; order: number }>>([]);
   const navigate = useNavigate();
 
@@ -20,19 +19,15 @@ export function Routines() {
 
   const handleCreate = async () => {
     if (!name.trim()) return;
-    const durationValue = Number(estimatedDuration);
-    if (!Number.isFinite(durationValue) || durationValue <= 0) return;
     const routine = await createRoutine(
       name.trim(),
       tags
         .split(',')
         .map((tag) => tag.trim())
-        .filter(Boolean),
-      durationValue
+        .filter(Boolean)
     );
     setName('');
     setTags('');
-    setEstimatedDuration('45');
     await loadRoutines();
     navigate(`/routines/${routine.id}`);
   };
@@ -83,16 +78,6 @@ export function Routines() {
             value={tags}
             placeholder="Tags o días (separados por coma)"
             onChange={(event) => setTags(event.target.value)}
-          />
-          <label className="label" htmlFor="routine-duration">
-            Duración estimada (min)
-          </label>
-          <input
-            id="routine-duration"
-            type="number"
-            min={1}
-            value={estimatedDuration}
-            onChange={(event) => setEstimatedDuration(event.target.value)}
           />
           <button className="primary-button" type="button" onClick={handleCreate}>
             Crear rutina

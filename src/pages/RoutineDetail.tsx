@@ -23,7 +23,6 @@ export function RoutineDetail() {
   const { settings } = useSettings();
   const [name, setName] = useState('');
   const [tags, setTags] = useState('');
-  const [estimatedDuration, setEstimatedDuration] = useState('45');
   const [exerciseId, setExerciseId] = useState('');
   const [routineExercises, setRoutineExercises] = useState<
     Array<{ exerciseId: string; order: number }>
@@ -32,6 +31,7 @@ export function RoutineDetail() {
     Record<
       string,
       {
+        defaultSets?: number;
         defaultReps?: number;
         defaultWeight?: number;
         defaultDuration?: number;
@@ -54,11 +54,11 @@ export function RoutineDetail() {
     }
     setName(detail.routine.name);
     setTags(detail.tags.join(', '));
-    setEstimatedDuration(String(detail.routine.estimatedDurationMinutes ?? 45));
     setRoutineExercises(detail.exercises);
     const defaultsMap: Record<
       string,
       {
+        defaultSets?: number;
         defaultReps?: number;
         defaultWeight?: number;
         defaultDuration?: number;
@@ -67,6 +67,7 @@ export function RoutineDetail() {
     > = {};
     detail.defaults.forEach((item) => {
       defaultsMap[item.exerciseId] = {
+        defaultSets: item.defaultSets,
         defaultReps: item.defaultReps,
         defaultWeight: item.defaultWeight,
         defaultDuration: item.defaultDuration,
@@ -111,8 +112,6 @@ export function RoutineDetail() {
 
   const handleSave = async () => {
     if (!routineId) return;
-    const durationValue = Number(estimatedDuration);
-    if (!Number.isFinite(durationValue) || durationValue <= 0) return;
     await updateRoutine(
       routineId,
       {
@@ -120,8 +119,7 @@ export function RoutineDetail() {
         tags: tags
           .split(',')
           .map((tag) => tag.trim())
-          .filter(Boolean),
-        estimatedDurationMinutes: durationValue
+          .filter(Boolean)
       }
     );
     await loadDetail();
@@ -148,7 +146,7 @@ export function RoutineDetail() {
 
   const handleDefaultChange = async (
     exerciseIdToUpdate: string,
-    field: 'defaultReps' | 'defaultWeight' | 'defaultDuration' | 'defaultDistance',
+    field: 'defaultSets' | 'defaultReps' | 'defaultWeight' | 'defaultDuration' | 'defaultDistance',
     value: string
   ) => {
     if (!routineId) return;
@@ -186,16 +184,6 @@ export function RoutineDetail() {
             type="text"
             value={tags}
             onChange={(event) => setTags(event.target.value)}
-          />
-          <label className="label" htmlFor="routine-duration-edit">
-            Duración estimada (min)
-          </label>
-          <input
-            id="routine-duration-edit"
-            type="number"
-            min={1}
-            value={estimatedDuration}
-            onChange={(event) => setEstimatedDuration(event.target.value)}
           />
           <button className="primary-button" type="button" onClick={handleSave}>
             Guardar cambios
@@ -274,18 +262,26 @@ export function RoutineDetail() {
                     </p>
                   </div>
                   <div className="inline">
-                    {metricType === 'weight_reps' || metricType === 'reps' ? (
-                      <label className="muted">
-                        Reps
-                        <input
-                          type="number"
-                          value={defaultValues.defaultReps ?? ''}
-                          onChange={(event) =>
-                            handleDefaultChange(exercise.exerciseId, 'defaultReps', event.target.value)
-                          }
-                        />
-                      </label>
-                    ) : null}
+                    <label className="muted">
+                      Sets
+                      <input
+                        type="number"
+                        value={defaultValues.defaultSets ?? ''}
+                        onChange={(event) =>
+                          handleDefaultChange(exercise.exerciseId, 'defaultSets', event.target.value)
+                        }
+                      />
+                    </label>
+                    <label className="muted">
+                      Reps
+                      <input
+                        type="number"
+                        value={defaultValues.defaultReps ?? ''}
+                        onChange={(event) =>
+                          handleDefaultChange(exercise.exerciseId, 'defaultReps', event.target.value)
+                        }
+                      />
+                    </label>
                     {metricType === 'weight_reps' ? (
                       <label className="muted">
                         Peso (kg)

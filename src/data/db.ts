@@ -13,7 +13,6 @@ export interface RoutineRecord {
   createdAt: string;
   updatedAt: string;
   order: number;
-  estimatedDurationMinutes: number;
 }
 
 export type ExerciseMetric = 'weight_reps' | 'reps' | 'time' | 'distance';
@@ -54,6 +53,7 @@ export interface ExerciseDefaultRecord {
   id: string;
   routineId: string;
   exerciseId: string;
+  defaultSets?: number;
   defaultReps?: number;
   defaultWeight?: number;
   defaultDuration?: number;
@@ -117,8 +117,7 @@ class AppDB extends Dexie {
           sorted.map((routine, index) =>
             routineTable.update(routine.id, {
               updatedAt: routine.updatedAt ?? routine.createdAt,
-              order: routine.order ?? index,
-              estimatedDurationMinutes: routine.estimatedDurationMinutes ?? 45
+              order: routine.order ?? index
             })
           )
         );

@@ -7,6 +7,7 @@ export interface RoutineSnapshot {
     exerciseId: string;
     order: number;
     defaults?: {
+      defaultSets?: number;
       defaultReps?: number;
       defaultWeight?: number;
       defaultDuration?: number;
@@ -23,7 +24,7 @@ export async function listRoutines() {
   return db.routines.orderBy('order').toArray();
 }
 
-export async function createRoutine(name: string, tags: string[], estimatedDurationMinutes: number) {
+export async function createRoutine(name: string, tags: string[]) {
   const now = new Date().toISOString();
   const lastOrder = await db.routines.orderBy('order').last();
   const order = lastOrder ? lastOrder.order + 1 : 0;
@@ -32,8 +33,7 @@ export async function createRoutine(name: string, tags: string[], estimatedDurat
     name,
     createdAt: now,
     updatedAt: now,
-    order,
-    estimatedDurationMinutes
+    order
   };
   await db.transaction('rw', db.routines, db.routineTags, db.routineVersions, async () => {
     await db.routines.add(routine);
@@ -55,7 +55,7 @@ export async function createRoutine(name: string, tags: string[], estimatedDurat
 
 export async function updateRoutine(
   routineId: string,
-  updates: { name: string; tags: string[]; estimatedDurationMinutes: number }
+  updates: { name: string; tags: string[] }
 ) {
   const routine = await db.routines.get(routineId);
   if (!routine) return;
@@ -70,8 +70,7 @@ export async function updateRoutine(
   const nextRoutine: RoutineRecord = {
     ...routine,
     name: updates.name,
-    updatedAt: now,
-    estimatedDurationMinutes: updates.estimatedDurationMinutes
+    updatedAt: now
   };
   await db.transaction('rw', db.routines, db.routineTags, db.routineVersions, async () => {
     await db.routines.update(routineId, nextRoutine);
@@ -120,8 +119,7 @@ export async function duplicateRoutine(routineId: string) {
     name: `${routine.name} (Copia)`,
     createdAt: now,
     updatedAt: now,
-    order,
-    estimatedDurationMinutes: routine.estimatedDurationMinutes
+    order
   };
   await db.transaction(
     'rw',
@@ -234,12 +232,14 @@ export async function updateExerciseDefaults({
   routineId,
   exerciseId,
   defaultReps,
+  defaultSets,
   defaultWeight,
   defaultDuration,
   defaultDistance
 }: {
   routineId: string;
   exerciseId: string;
+  defaultSets?: number;
   defaultReps?: number;
   defaultWeight?: number;
   defaultDuration?: number;
@@ -250,6 +250,7 @@ export async function updateExerciseDefaults({
     id: existing?.id ?? `default-${crypto.randomUUID()}`,
     routineId,
     exerciseId,
+    defaultSets,
     defaultReps,
     defaultWeight,
     defaultDuration,
