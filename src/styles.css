@@ -1,0 +1,223 @@
+:root {
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light dark;
+  background-color: var(--surface);
+  color: var(--text);
+}
+
+:root[data-theme='dark'] {
+  --surface: #0b0b0b;
+  --surface-elevated: #151515;
+  --surface-muted: #1d1d1d;
+  --text: #f5f5f5;
+  --text-muted: #b4b4b4;
+  --accent: #78f26a;
+  --border: #2a2a2a;
+  --danger: #ff5b5b;
+}
+
+:root[data-theme='light'] {
+  --surface: #f7f7f7;
+  --surface-elevated: #ffffff;
+  --surface-muted: #ededed;
+  --text: #1a1a1a;
+  --text-muted: #5a5a5a;
+  --accent: #10703f;
+  --border: #d7d7d7;
+  --danger: #c62828;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--surface);
+  color: var(--text);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  background: var(--surface-elevated);
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.brand {
+  font-weight: 600;
+}
+
+.nav {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.95rem;
+}
+
+.nav a {
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.nav a.active {
+  background: var(--surface-muted);
+  color: var(--text);
+}
+
+.offline-banner {
+  background: #f4b740;
+  color: #1a1a1a;
+  padding: 0.4rem 1rem;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.app-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1.5rem 3rem;
+}
+
+.loading {
+  align-items: center;
+  justify-content: center;
+}
+
+.card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  max-width: 520px;
+  width: 100%;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+}
+
+.card.danger {
+  border-color: rgba(255, 91, 91, 0.6);
+}
+
+.stack {
+  display: grid;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 600px;
+}
+
+.field {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.label {
+  font-weight: 600;
+}
+
+.muted {
+  color: var(--text-muted);
+}
+
+.primary-button,
+.ghost-button,
+.danger-button,
+.toggle {
+  border-radius: 999px;
+  padding: 0.55rem 1.1rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease, border 0.15s ease;
+}
+
+.primary-button {
+  background: var(--accent);
+  color: #0b0b0b;
+}
+
+.primary-button:hover {
+  transform: translateY(-1px);
+}
+
+.ghost-button {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text);
+}
+
+.danger-button {
+  background: var(--danger);
+  color: #fff;
+}
+
+.toggle-group {
+  display: inline-flex;
+  gap: 0.5rem;
+}
+
+.toggle {
+  background: var(--surface-muted);
+  color: var(--text-muted);
+  border-color: var(--border);
+}
+
+.toggle.active {
+  background: var(--accent);
+  color: #0b0b0b;
+}
+
+.confirm {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.warning {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .app-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .nav {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
