@@ -165,7 +165,7 @@ export function ExerciseCatalog() {
   return (
     <section className="stack wide">
       <div className="card">
-        <h1>Catálogo de ejercicios</h1>
+        <h1>Ejercicios</h1>
         <p className="muted">
           Busca por nombre, filtra por músculo o equipo y crea ejercicios personalizados.
         </p>

@@ -10,10 +10,10 @@ export function Home() {
       </p>
       <div className="actions">
         <Link className="primary-button" to="/routines">
-          Crear rutina
+          Comenzar entrenamiento
         </Link>
-        <Link className="ghost-button" to="/catalog">
-          Explorar catálogo
+        <Link className="ghost-button" to="/routines">
+          Crear o editar rutinas
         </Link>
       </div>
     </section>
