@@ -20,6 +20,7 @@ interface WorkoutSession {
     exerciseId: string;
     name: string;
     metricType: string;
+    previousSets?: Array<{ weight?: number; reps?: number }>;
     sets: Array<{
       weight?: number;
       reps?: number;
@@ -83,6 +84,9 @@ export function Home() {
     if (!detail) return;
     const exercises = await listExercises();
     const exerciseMap = new Map(exercises.map((exercise) => [exercise.id, exercise]));
+    const historyRaw = localStorage.getItem('workout-history');
+    const history = historyRaw ? JSON.parse(historyRaw) : [];
+    const lastSession = history.find((entry: WorkoutSession) => entry.routineId === routineId);
     const session: WorkoutSession = {
       id: `session-${crypto.randomUUID()}`,
       createdAt: new Date().toISOString(),
@@ -99,10 +103,18 @@ export function Home() {
           distance: defaults?.defaultDistance,
           completed: false
         }));
+        const previous =
+          lastSession?.exercises.find(
+            (exerciseEntry: { exerciseId: string }) => exerciseEntry.exerciseId === entry.exerciseId
+          )?.sets ?? [];
         return {
           exerciseId: entry.exerciseId,
           name: exercise ? getExerciseDisplayName(exercise, settings.language) : 'Ejercicio',
           metricType: exercise?.metricType ?? 'weight_reps',
+          previousSets: previous.map((set: { weight?: number; reps?: number }) => ({
+            weight: set.weight,
+            reps: set.reps
+          })),
           sets
         };
       })

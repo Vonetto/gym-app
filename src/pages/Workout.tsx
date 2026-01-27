@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { listExercises, getExerciseDisplayName } from '../data/exercises';
+import { useSettings } from '../data/SettingsProvider';
 
 interface WorkoutSet {
   weight?: number;
@@ -13,6 +15,7 @@ interface WorkoutExercise {
   exerciseId: string;
   name: string;
   metricType: string;
+  previousSets?: Array<{ weight?: number; reps?: number }>;
   sets: WorkoutSet[];
 }
 
@@ -33,8 +36,13 @@ function formatDuration(seconds: number) {
 
 export function Workout() {
   const navigate = useNavigate();
+  const { settings } = useSettings();
   const [session, setSession] = useState<WorkoutSession | null>(null);
   const [elapsed, setElapsed] = useState(0);
+  const [exercisePicker, setExercisePicker] = useState('');
+  const [exerciseOptions, setExerciseOptions] = useState<
+    Array<{ id: string; label: string; metricType: string }>
+  >([]);
 
   useEffect(() => {
     const stored = localStorage.getItem('active-session');
@@ -47,6 +55,20 @@ export function Workout() {
     if (!session) return;
     localStorage.setItem('active-session', JSON.stringify(session));
   }, [session]);
+
+  useEffect(() => {
+    const loadExercises = async () => {
+      const exercises = await listExercises();
+      setExerciseOptions(
+        exercises.map((exercise) => ({
+          id: exercise.id,
+          label: getExerciseDisplayName(exercise, settings.language),
+          metricType: exercise.metricType
+        }))
+      );
+    };
+    loadExercises();
+  }, [settings.language]);
 
   useEffect(() => {
     if (!session) return;
@@ -105,6 +127,12 @@ export function Workout() {
   };
 
   const handleFinish = () => {
+    if (session) {
+      const existing = localStorage.getItem('workout-history');
+      const history = existing ? JSON.parse(existing) : [];
+      history.unshift(session);
+      localStorage.setItem('workout-history', JSON.stringify(history.slice(0, 50)));
+    }
     localStorage.removeItem('active-session');
     setSession(null);
     navigate('/');
@@ -114,6 +142,29 @@ export function Workout() {
     localStorage.removeItem('active-session');
     setSession(null);
     navigate('/');
+  };
+
+  const handleAddExercise = () => {
+    if (!session || !exercisePicker) return;
+    const selected = exerciseOptions.find((option) => option.id === exercisePicker);
+    if (!selected) return;
+    setSession((prev) => {
+      if (!prev) return prev;
+      const nextExercise: WorkoutExercise = {
+        exerciseId: selected.id,
+        name: selected.label,
+        metricType: selected.metricType,
+        previousSets: [],
+        sets: Array.from({ length: 3 }, () => ({
+          completed: false
+        }))
+      };
+      return {
+        ...prev,
+        exercises: [...prev.exercises, nextExercise]
+      };
+    });
+    setExercisePicker('');
   };
 
   const workoutTitle = useMemo(() => session?.routineName ?? 'Entreno', [session?.routineName]);
@@ -173,7 +224,12 @@ export function Workout() {
               {exercise.sets.map((set, setIndex) => (
                 <div key={`${exercise.exerciseId}-${setIndex}`} className="set-row">
                   <span>{setIndex + 1}</span>
-                  <span className="muted">-</span>
+                  <span className="muted">
+                    {exercise.previousSets?.[setIndex]?.weight !== undefined &&
+                    exercise.previousSets?.[setIndex]?.reps !== undefined
+                      ? `${exercise.previousSets?.[setIndex]?.weight} x ${exercise.previousSets?.[setIndex]?.reps}`
+                      : '-'}
+                  </span>
                   <input
                     type="number"
                     value={set.weight ?? ''}
@@ -209,9 +265,22 @@ export function Workout() {
         ))
       )}
 
-      <button className="primary-button full" type="button">
-        + Agregar ejercicio
-      </button>
+      <div className="card">
+        <h2>Agregar ejercicio</h2>
+        <div className="field inline">
+          <select value={exercisePicker} onChange={(event) => setExercisePicker(event.target.value)}>
+            <option value="">Selecciona ejercicio</option>
+            {exerciseOptions.map((exercise) => (
+              <option key={exercise.id} value={exercise.id}>
+                {exercise.label}
+              </option>
+            ))}
+          </select>
+          <button className="primary-button" type="button" onClick={handleAddExercise}>
+            Añadir
+          </button>
+        </div>
+      </div>
       <div className="actions">
         <button className="ghost-button" type="button">
           Configuración
