@@ -22,9 +22,17 @@ registerRoute(
   new StaleWhileRevalidate({ cacheName: 'assets' })
 );
 
+function isFetchEvent(event: ExtendableEvent): event is FetchEvent {
+  return 'request' in event;
+}
+
 setCatchHandler(async ({ event }) => {
-  if (event.request.mode === 'navigate') {
-    return navigationHandler({ event });
+  if (isFetchEvent(event) && event.request.mode === 'navigate') {
+    return navigationHandler({
+      event,
+      request: event.request,
+      url: new URL(event.request.url)
+    });
   }
   return Response.error();
 });
