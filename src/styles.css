@@ -38,6 +38,7 @@ body {
   min-height: 100vh;
   background: var(--surface);
   color: var(--text);
+  padding-bottom: 84px;
 }
 
 a {
@@ -51,38 +52,32 @@ a {
   flex-direction: column;
 }
 
-.app-header {
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
+  justify-content: space-around;
   align-items: center;
-  justify-content: space-between;
-  padding: 1rem 1.5rem;
-  background: var(--surface-elevated);
-  border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem 1rem;
+  background: rgba(17, 17, 17, 0.95);
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  z-index: 20;
 }
 
-.brand {
-  font-weight: 600;
-}
-
-.nav {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.95rem;
-}
-
-.nav a {
-  padding: 0.35rem 0.65rem;
-  border-radius: 999px;
-  background: transparent;
+.tab-bar a {
   color: var(--text-muted);
+  font-size: 0.85rem;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
 }
 
-.nav a.active {
-  background: var(--surface-muted);
+.tab-bar a.active {
   color: var(--text);
+  background: var(--surface-muted);
 }
 
 .offline-banner {
@@ -97,7 +92,7 @@ a {
   flex: 1;
   display: flex;
   justify-content: center;
-  padding: 2rem 1.5rem 3rem;
+  padding: 1.5rem 1.5rem 3rem;
 }
 
 .loading {
@@ -182,6 +177,10 @@ input::placeholder {
   transition: transform 0.15s ease, background 0.15s ease, border 0.15s ease;
 }
 
+.full {
+  width: 100%;
+}
+
 .primary-button {
   background: var(--accent);
   color: #0b0b0b;
@@ -227,6 +226,209 @@ input::placeholder {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+.overline {
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.badge {
+  background: #f2c94c;
+  color: #111;
+  font-weight: 700;
+  font-size: 0.65rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+}
+
+.training-header,
+.workout-header,
+.profile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.info-banner {
+  margin-top: 1rem;
+  background: #f1d678;
+  color: #111;
+  padding: 0.5rem 0.75rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.section-label {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.routine-card {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.routine-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.workout-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.workout-timer {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.exercise-card {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+}
+
+.exercise-header {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--surface-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+.exercise-title {
+  margin: 0;
+  color: #5bb8ff;
+}
+
+.rest {
+  color: #58d9ff;
+  font-weight: 600;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.set-table {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.set-row {
+  display: grid;
+  grid-template-columns: 0.6fr 1fr 1fr 1fr 0.8fr 0.5fr;
+  gap: 0.5rem;
+  align-items: center;
+  background: #222;
+  padding: 0.5rem 0.75rem;
+  border-radius: 12px;
+}
+
+.set-row input {
+  width: 100%;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.35rem 0.4rem;
+}
+
+.set-header {
+  background: transparent;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.pill {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+}
+
+.check {
+  border: none;
+  background: #2d2d2d;
+  color: var(--text-muted);
+  border-radius: 999px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+}
+
+.check.active {
+  background: var(--accent);
+  color: #111;
+}
+
+.profile-name {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.chart {
+  display: grid;
+  grid-auto-flow: column;
+  gap: 0.5rem;
+  align-items: end;
+  height: 140px;
+  margin-top: 1rem;
+}
+
+.chart-bar {
+  background: #2d8cff;
+  border-radius: 12px 12px 4px 4px;
+}
+
+.pill-row {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.pill-row .pill {
+  border-color: transparent;
+  background: var(--surface-muted);
+}
+
+.pill-row .pill.active {
+  background: #2d8cff;
+  color: #fff;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
 }
 
 .wide {
@@ -288,19 +490,19 @@ button:disabled {
 }
 
 @media (max-width: 640px) {
-  .app-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem;
-  }
-
-  .nav {
-    width: 100%;
-    justify-content: space-between;
-  }
-
   .list-row {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .set-row {
+    grid-template-columns: 0.6fr 1fr 1fr 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .set-row span:nth-child(2),
+  .set-row button.pill,
+  .set-row button.check {
+    display: none;
   }
 }
