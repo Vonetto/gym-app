@@ -1,11 +1,13 @@
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { defaultSettings, loadSettings, saveSettings, setTheme } from './settings';
+import { resetAll } from './db';
 import { Theme } from '../theme/theme';
 
 interface SettingsContextValue {
   settings: typeof defaultSettings;
   ready: boolean;
   updateTheme: (theme: Theme) => Promise<void>;
+  resetAllData: () => Promise<void>;
 }
 
 const SettingsContext = createContext<SettingsContextValue | undefined>(undefined);
@@ -34,11 +36,19 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     await saveSettings(next);
   };
 
+  const resetAllData = async () => {
+    await resetAll();
+    await saveSettings(defaultSettings);
+    setSettings(defaultSettings);
+    setTheme(defaultSettings.theme);
+  };
+
   const value = useMemo(
     () => ({
       settings,
       ready,
-      updateTheme
+      updateTheme,
+      resetAllData
     }),
     [settings, ready]
   );

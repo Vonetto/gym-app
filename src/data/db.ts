@@ -27,3 +27,13 @@ class AppDB extends Dexie {
 }
 
 export const db = new AppDB();
+
+export async function resetAll() {
+  await db.delete();
+  await db.open();
+  localStorage.clear();
+  if ('caches' in window) {
+    const cacheNames = await caches.keys();
+    await Promise.all(cacheNames.map((name) => caches.delete(name)));
+  }
+}
