@@ -336,6 +336,7 @@ input::placeholder {
 .set-table {
   display: grid;
   gap: 0.5rem;
+  overflow-x: auto;
 }
 
 .set-row {
@@ -346,6 +347,7 @@ input::placeholder {
   background: #222;
   padding: 0.5rem 0.75rem;
   border-radius: 12px;
+  min-width: 520px;
 }
 
 .set-row input {
@@ -490,6 +492,33 @@ button:disabled {
 }
 
 @media (max-width: 640px) {
+  .training-header,
+  .workout-header,
+  .profile-header,
+  .routine-header,
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .field.inline {
+    grid-auto-flow: row;
+    grid-template-columns: 1fr;
+  }
+
+  .inline {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actions {
+    width: 100%;
+  }
+
+  .actions button {
+    flex: 1 1 45%;
+  }
+
   .list-row {
     flex-direction: column;
     align-items: flex-start;
@@ -498,6 +527,7 @@ button:disabled {
   .set-row {
     grid-template-columns: 0.6fr 1fr 1fr 1fr;
     grid-template-rows: auto auto;
+    min-width: 100%;
   }
 
   .set-row span:nth-child(2),

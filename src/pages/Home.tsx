@@ -140,7 +140,6 @@ export function Home() {
           <p className="overline">Entrenamiento</p>
           <h1>Tu sesión</h1>
         </div>
-        <span className="badge">PRO</span>
       </div>
 
       <button className="primary-button full" type="button" onClick={handleStartEmpty}>
