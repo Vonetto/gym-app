@@ -105,49 +105,49 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PWA-01 | Phase TBD | Pending |
-| PWA-02 | Phase TBD | Pending |
-| PWA-03 | Phase TBD | Pending |
-| RTN-01 | Phase TBD | Pending |
-| RTN-02 | Phase TBD | Pending |
-| RTN-03 | Phase TBD | Pending |
-| RTN-04 | Phase TBD | Pending |
-| RTN-05 | Phase TBD | Pending |
-| EXE-01 | Phase TBD | Pending |
-| EXE-02 | Phase TBD | Pending |
-| EXE-03 | Phase TBD | Pending |
-| EXE-04 | Phase TBD | Pending |
-| LOG-01 | Phase TBD | Pending |
-| LOG-02 | Phase TBD | Pending |
-| LOG-03 | Phase TBD | Pending |
-| LOG-04 | Phase TBD | Pending |
-| LOG-05 | Phase TBD | Pending |
-| LOG-06 | Phase TBD | Pending |
-| UX-01 | Phase TBD | Pending |
-| UX-02 | Phase TBD | Pending |
-| UX-03 | Phase TBD | Pending |
-| UX-04 | Phase TBD | Pending |
-| UX-05 | Phase TBD | Pending |
-| UX-06 | Phase TBD | Pending |
-| TMR-01 | Phase TBD | Pending |
-| TMR-02 | Phase TBD | Pending |
-| ANA-01 | Phase TBD | Pending |
-| ANA-02 | Phase TBD | Pending |
-| ANA-03 | Phase TBD | Pending |
-| PRG-01 | Phase TBD | Pending |
-| PRG-02 | Phase TBD | Pending |
-| IO-01 | Phase TBD | Pending |
-| IO-02 | Phase TBD | Pending |
-| IO-03 | Phase TBD | Pending |
-| SET-01 | Phase TBD | Pending |
-| SET-02 | Phase TBD | Pending |
-| ADV-01 | Phase TBD | Pending |
-| ADV-02 | Phase TBD | Pending |
+| PWA-01 | Phase 1: PWA + Ajustes Base | Pending |
+| PWA-02 | Phase 1: PWA + Ajustes Base | Pending |
+| PWA-03 | Phase 1: PWA + Ajustes Base | Pending |
+| RTN-01 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
+| RTN-02 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
+| RTN-03 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
+| RTN-04 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
+| RTN-05 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
+| EXE-01 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
+| EXE-02 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
+| EXE-03 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
+| EXE-04 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
+| LOG-01 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
+| LOG-02 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
+| LOG-03 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
+| LOG-04 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
+| LOG-05 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
+| LOG-06 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
+| UX-01 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
+| UX-02 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
+| UX-03 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
+| UX-04 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
+| UX-05 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
+| UX-06 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
+| TMR-01 | Phase 4: Timers + Progresión | Pending |
+| TMR-02 | Phase 4: Timers + Progresión | Pending |
+| ANA-01 | Phase 5: Historial + PRs + Analíticas | Pending |
+| ANA-02 | Phase 5: Historial + PRs + Analíticas | Pending |
+| ANA-03 | Phase 5: Historial + PRs + Analíticas | Pending |
+| PRG-01 | Phase 4: Timers + Progresión | Pending |
+| PRG-02 | Phase 4: Timers + Progresión | Pending |
+| IO-01 | Phase 6: Import/Export + Sets Avanzados | Pending |
+| IO-02 | Phase 6: Import/Export + Sets Avanzados | Pending |
+| IO-03 | Phase 6: Import/Export + Sets Avanzados | Pending |
+| SET-01 | Phase 1: PWA + Ajustes Base | Pending |
+| SET-02 | Phase 1: PWA + Ajustes Base | Pending |
+| ADV-01 | Phase 6: Import/Export + Sets Avanzados | Pending |
+| ADV-02 | Phase 6: Import/Export + Sets Avanzados | Pending |
 
 **Coverage:**
 - v1 requirements: 36 total
-- Mapped to phases: 0
-- Unmapped: 36 ⚠️
+- Mapped to phases: 36
+- Unmapped: 0 ✅
 
 ---
 *Requirements defined: 2026-01-26*
