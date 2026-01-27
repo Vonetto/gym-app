@@ -23,32 +23,84 @@ export function normalizeName(value: string) {
 
 export async function seedExerciseCatalog() {
   const existingCount = await db.exercises.count();
-  if (existingCount > 0) return;
+  if (existingCount === 0) {
+    await db.transaction('rw', db.exercises, db.exerciseTranslations, async () => {
+      const now = new Date().toISOString();
+      for (const exercise of seedData.exercises) {
+        const record: ExerciseRecord = {
+          id: exercise.id,
+          baseName: exercise.baseName,
+          normalizedName: normalizeName(exercise.baseName),
+          muscles: exercise.muscles,
+          equipment: exercise.equipment,
+          metricType: exercise.metricType as ExerciseMetric,
+          isCustom: false,
+          source: 'wger',
+          createdAt: now
+        };
+        await db.exercises.add(record);
+        const translations: ExerciseTranslationRecord[] = Object.entries(exercise.translations).map(
+          ([language, name]) => ({
+            id: `${exercise.id}-${language}`,
+            exerciseId: exercise.id,
+            language: language as ExerciseTranslationRecord['language'],
+            name
+          })
+        );
+        await db.exerciseTranslations.bulkAdd(translations);
+      }
+    });
+    return;
+  }
+
+  await repairWgerCatalog();
+}
+
+async function repairWgerCatalog() {
+  const wgerExercises = await db.exercises
+    .filter((exercise) => exercise.source === 'wger')
+    .toArray();
+  if (!wgerExercises.length) return;
+
+  const needsRepair = wgerExercises.some(
+    (exercise) => exercise.muscles.length === 0 || exercise.equipment.length === 0
+  );
+  if (!needsRepair) return;
+
+  const seedMap = new Map(seedData.exercises.map((exercise) => [exercise.id, exercise]));
 
   await db.transaction('rw', db.exercises, db.exerciseTranslations, async () => {
-    const now = new Date().toISOString();
-    for (const exercise of seedData.exercises) {
-      const record: ExerciseRecord = {
-        id: exercise.id,
-        baseName: exercise.baseName,
-        normalizedName: normalizeName(exercise.baseName),
-        muscles: exercise.muscles,
-        equipment: exercise.equipment,
-        metricType: exercise.metricType as ExerciseMetric,
-        isCustom: false,
-        source: 'wger',
-        createdAt: now
-      };
-      await db.exercises.add(record);
-      const translations: ExerciseTranslationRecord[] = Object.entries(exercise.translations).map(
-        ([language, name]) => ({
+    for (const exercise of wgerExercises) {
+      const seed = seedMap.get(exercise.id);
+      if (!seed) continue;
+      const updatedMuscles = seed.muscles;
+      const updatedEquipment = seed.equipment;
+      if (!updatedMuscles.length && !updatedEquipment.length) continue;
+
+      await db.exercises.update(exercise.id, {
+        baseName: seed.baseName,
+        normalizedName: normalizeName(seed.baseName),
+        muscles: updatedMuscles,
+        equipment: updatedEquipment,
+        metricType: seed.metricType as ExerciseMetric
+      });
+
+      const existingTranslations = await db.exerciseTranslations
+        .where('exerciseId')
+        .equals(exercise.id)
+        .toArray();
+      const existingLanguages = new Set(existingTranslations.map((item) => item.language));
+      const missingTranslations: ExerciseTranslationRecord[] = Object.entries(seed.translations)
+        .filter(([language]) => !existingLanguages.has(language))
+        .map(([language, name]) => ({
           id: `${exercise.id}-${language}`,
           exerciseId: exercise.id,
           language: language as ExerciseTranslationRecord['language'],
           name
-        })
-      );
-      await db.exerciseTranslations.bulkAdd(translations);
+        }));
+      if (missingTranslations.length) {
+        await db.exerciseTranslations.bulkAdd(missingTranslations);
+      }
     }
   });
 }
