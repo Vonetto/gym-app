@@ -2,6 +2,7 @@
 
 ## Phase 1: PWA + Ajustes Base
 **Goal:** App instalada y usable offline con configuración básica lista.
+**Status:** Complete (2026-01-27)
 
 **Requirements**
 - PWA-01, PWA-02, PWA-03

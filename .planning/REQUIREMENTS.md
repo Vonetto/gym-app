@@ -105,9 +105,9 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| PWA-01 | Phase 1: PWA + Ajustes Base | Pending |
-| PWA-02 | Phase 1: PWA + Ajustes Base | Pending |
-| PWA-03 | Phase 1: PWA + Ajustes Base | Pending |
+| PWA-01 | Phase 1: PWA + Ajustes Base | Complete |
+| PWA-02 | Phase 1: PWA + Ajustes Base | Complete |
+| PWA-03 | Phase 1: PWA + Ajustes Base | Complete |
 | RTN-01 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
 | RTN-02 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
 | RTN-03 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
@@ -139,8 +139,8 @@
 | IO-01 | Phase 6: Import/Export + Sets Avanzados | Pending |
 | IO-02 | Phase 6: Import/Export + Sets Avanzados | Pending |
 | IO-03 | Phase 6: Import/Export + Sets Avanzados | Pending |
-| SET-01 | Phase 1: PWA + Ajustes Base | Pending |
-| SET-02 | Phase 1: PWA + Ajustes Base | Pending |
+| SET-01 | Phase 1: PWA + Ajustes Base | Complete |
+| SET-02 | Phase 1: PWA + Ajustes Base | Complete |
 | ADV-01 | Phase 6: Import/Export + Sets Avanzados | Pending |
 | ADV-02 | Phase 6: Import/Export + Sets Avanzados | Pending |
 

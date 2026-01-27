@@ -1,15 +1,15 @@
 ---
 phase: 01-pwa-ajustes-base
-verified: 2026-01-26T00:45:00Z
-status: human_needed
-score: 4/4 must-haves present (code), runtime checks pending
+verified: 2026-01-27T01:05:00Z
+status: passed
+score: 4/4 must-haves verified
 ---
 
 # Phase 1: PWA + Ajustes Base Verification Report
 
 **Phase Goal:** App instalada y usable offline con configuración básica lista.
-**Verified:** 2026-01-26T00:45:00Z
-**Status:** human_needed
+**Verified:** 2026-01-27T01:05:00Z
+**Status:** passed
 
 ## Goal Achievement
 
@@ -17,12 +17,12 @@ score: 4/4 must-haves present (code), runtime checks pending
 
 | # | Truth | Status | Evidence |
 |---|-------|--------|----------|
-| 1 | Offline-first PWA with installable manifest | ? UNCERTAIN | `vite.config.ts` defines manifest + service worker; needs runtime install test |
-| 2 | Persistent settings including theme toggle | ? UNCERTAIN | `SettingsProvider` + `settings` Dexie table; needs runtime persistence check |
-| 3 | Non-blocking offline banner with specified copy | ? UNCERTAIN | `OfflineBanner` renders copy, wired in `Layout`; needs offline test |
-| 4 | Full data reset with confirmation and warning | ? UNCERTAIN | Reset UI exists, `resetAll()` clears IndexedDB/localStorage/cache; needs runtime test |
+| 1 | Offline-first PWA with installable manifest | ✓ VERIFIED | PWA installable from browser in preview build |
+| 2 | Persistent settings including theme toggle | ✓ VERIFIED | Theme toggle persists across reloads |
+| 3 | Non-blocking offline banner with specified copy | ✓ VERIFIED | Banner shows only when offline with “Sin conexión a internet” |
+| 4 | Full data reset with confirmation and warning | ✓ VERIFIED | Double confirmation clears data and returns to Home |
 
-**Score:** 0/4 runtime‑verified (code present; human checks required)
+**Score:** 4/4 truths verified
 
 ### Required Artifacts
 
@@ -52,45 +52,27 @@ score: 4/4 must-haves present (code), runtime checks pending
 
 | Requirement | Status | Blocking Issue |
 |-------------|--------|----------------|
-| PWA-01/02/03 | ? NEEDS HUMAN | Must validate offline behavior and installability |
-| SET-01 | ? NEEDS HUMAN | Confirm theme toggle persists at runtime |
-| SET-02 | ? NEEDS HUMAN | Confirm reset clears data and returns to Home |
+| PWA-01/02/03 | ✓ SATISFIED | - |
+| SET-01 | ✓ SATISFIED | - |
+| SET-02 | ✓ SATISFIED | - |
 
-**Coverage:** 0/5 verified (runtime tests pending)
+**Coverage:** 5/5 requirements satisfied
 
 ## Human Verification Required
 
-### 1. PWA Install
-**Test:** Open app in browser → install to home screen (PWA)
-**Expected:** App opens standalone with manifest metadata.
-**Why human:** Requires browser UI interaction.
-
-### 2. Offline Boot
-**Test:** Load app once, then go offline and refresh.
-**Expected:** App shell loads; “Sin conexión a internet” banner appears.
-**Why human:** Requires network toggling and SW cache verification.
-
-### 3. Theme Persistence
-**Test:** Toggle dark/light in Ajustes, reload.
-**Expected:** Theme persists and loads before UI flash.
-**Why human:** Visual confirmation.
-
-### 4. Reset Flow
-**Test:** Trigger reset with double confirmation.
-**Expected:** Data cleared, returns to Home, empty state visible.
-**Why human:** Requires runtime behavior.
+None — checks completed manually during preview.
 
 ## Gaps Summary
 
-**No code gaps found.** Human verification required before marking phase as complete.
+**No gaps found.** Phase goal achieved. Ready to proceed.
 
 ## Verification Metadata
 
 **Verification approach:** Goal-backward (derived from phase goal)
 **Must-haves source:** 01-PLAN.md frontmatter
 **Automated checks:** 6 artifacts verified, wiring checked
-**Human checks required:** 4
+**Human checks required:** 0
 
 ---
-*Verified: 2026-01-26T00:45:00Z*
-*Verifier: Claude (manual)*
+*Verified: 2026-01-27T01:05:00Z*
+*Verifier: Claude (with user confirmation)*
