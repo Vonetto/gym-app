@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export function Home() {
   return (
     <section className="card">
@@ -6,9 +8,14 @@ export function Home() {
         Empieza creando tu primera rutina para registrar entrenamientos de forma
         rápida y offline.
       </p>
-      <button className="primary-button" type="button">
-        Crear rutina
-      </button>
+      <div className="actions">
+        <Link className="primary-button" to="/routines">
+          Crear rutina
+        </Link>
+        <Link className="ghost-button" to="/catalog">
+          Explorar catálogo
+        </Link>
+      </div>
     </section>
   );
 }

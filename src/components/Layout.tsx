@@ -11,6 +11,12 @@ export function Layout({ children }: { children: ReactNode }) {
           <NavLink to="/" end className={({ isActive }) => (isActive ? 'active' : '')}>
             Inicio
           </NavLink>
+          <NavLink to="/routines" className={({ isActive }) => (isActive ? 'active' : '')}>
+            Rutinas
+          </NavLink>
+          <NavLink to="/catalog" className={({ isActive }) => (isActive ? 'active' : '')}>
+            Catálogo
+          </NavLink>
           <NavLink to="/settings" className={({ isActive }) => (isActive ? 'active' : '')}>
             Ajustes
           </NavLink>
