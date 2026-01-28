@@ -16,6 +16,7 @@ interface WorkoutExercise {
   name: string;
   metricType: string;
   previousSets?: Array<{ weight?: number; reps?: number }>;
+  restSeconds?: number;
   sets: WorkoutSet[];
 }
 
@@ -46,6 +47,9 @@ export function Workout() {
   const [exerciseHistory, setExerciseHistory] = useState<
     Record<string, Array<{ weight?: number; reps?: number }>>
   >({});
+  const [restTimer, setRestTimer] = useState<{ secondsLeft: number; exerciseName: string } | null>(
+    null
+  );
 
   useEffect(() => {
     const stored = localStorage.getItem('active-session');
@@ -87,13 +91,31 @@ export function Workout() {
     return () => window.clearInterval(interval);
   }, [session]);
 
+  useEffect(() => {
+    if (!restTimer) return;
+    if (restTimer.secondsLeft <= 0) {
+      setRestTimer(null);
+      return;
+    }
+    const interval = window.setInterval(() => {
+      setRestTimer((prev) =>
+        prev ? { ...prev, secondsLeft: Math.max(0, prev.secondsLeft - 1) } : prev
+      );
+    }, 1000);
+    return () => window.clearInterval(interval);
+  }, [restTimer]);
+
   const handleAddSet = (exerciseIndex: number) => {
     setSession((prev) => {
       if (!prev) return prev;
-      const next = { ...prev };
-      const exercise = next.exercises[exerciseIndex];
-      exercise.sets = [...exercise.sets, { completed: false }];
-      return { ...next, exercises: [...next.exercises] };
+      const exercises = prev.exercises.map((exercise, index) => {
+        if (index !== exerciseIndex) return exercise;
+        return {
+          ...exercise,
+          sets: [...exercise.sets, { completed: false }]
+        };
+      });
+      return { ...prev, exercises };
     });
   };
 
@@ -105,30 +127,59 @@ export function Workout() {
   ) => {
     setSession((prev) => {
       if (!prev) return prev;
-      const next = { ...prev };
-      const exercise = next.exercises[exerciseIndex];
-      const sets = [...exercise.sets];
-      const numeric = value ? Number(value) : undefined;
-      const updated = { ...sets[setIndex], [field]: numeric };
-      sets[setIndex] = updated;
-      exercise.sets = sets;
-      return { ...next, exercises: [...next.exercises] };
+      const exercises = prev.exercises.map((exercise, index) => {
+        if (index !== exerciseIndex) return exercise;
+        const sets = [...exercise.sets];
+        const numeric = value ? Number(value) : undefined;
+        const updated = { ...sets[setIndex], [field]: numeric };
+        sets[setIndex] = updated;
+        return { ...exercise, sets };
+      });
+      return { ...prev, exercises };
+    });
+  };
+
+  const startRestTimer = (exerciseName: string, restSeconds: number) => {
+    if (restSeconds <= 0) return;
+    setRestTimer({ secondsLeft: restSeconds, exerciseName });
+  };
+
+  const handleRestCycle = (exerciseIndex: number) => {
+    const options = [0, 60, 90, 120, 150, 180];
+    setSession((prev) => {
+      if (!prev) return prev;
+      const exercises = prev.exercises.map((exercise, index) => {
+        if (index !== exerciseIndex) return exercise;
+        const current = exercise.restSeconds ?? 0;
+        const nextIndex = (options.indexOf(current) + 1) % options.length;
+        return { ...exercise, restSeconds: options[nextIndex] };
+      });
+      return { ...prev, exercises };
     });
   };
 
   const toggleComplete = (exerciseIndex: number, setIndex: number) => {
     setSession((prev) => {
       if (!prev) return prev;
-      const next = { ...prev };
-      const exercise = next.exercises[exerciseIndex];
-      const sets = [...exercise.sets];
-      sets[setIndex] = {
-        ...sets[setIndex],
-        completed: !sets[setIndex].completed
-      };
-      exercise.sets = sets;
-      return { ...next, exercises: [...next.exercises] };
+      const exercises = prev.exercises.map((exercise, index) => {
+        if (index !== exerciseIndex) return exercise;
+        const sets = [...exercise.sets];
+        const nextCompleted = !sets[setIndex].completed;
+        sets[setIndex] = {
+          ...sets[setIndex],
+          completed: nextCompleted
+        };
+        if (nextCompleted && (exercise.restSeconds ?? 0) > 0) {
+          startRestTimer(exercise.name, exercise.restSeconds ?? 0);
+        }
+        return { ...exercise, sets };
+      });
+      return { ...prev, exercises };
     });
+  };
+
+  const handleRestStop = () => {
+    setRestTimer(null);
   };
 
   const handleFinish = () => {
@@ -169,6 +220,7 @@ export function Workout() {
         name: selected.label,
         metricType: selected.metricType,
         previousSets: exerciseHistory[selected.id] ?? [],
+        restSeconds: 0,
         sets: Array.from({ length: 3 }, () => ({
           completed: false
         }))
@@ -233,6 +285,16 @@ export function Workout() {
 
   return (
     <section className="stack wide">
+      {restTimer ? (
+        <div className="rest-timer">
+          <span>
+            Descanso {restTimer.exerciseName}: {formatDuration(restTimer.secondsLeft)}
+          </span>
+          <button className="ghost-button" type="button" onClick={handleRestStop}>
+            Detener
+          </button>
+        </div>
+      ) : null}
       <div className="workout-header">
         <div>
           <p className="overline">Entreno</p>
@@ -260,7 +322,9 @@ export function Workout() {
                 <div>
                   <h2 className="exercise-title">{exercise.name}</h2>
                   <p className="muted">Agregar notas aquí...</p>
-                  <p className="rest">Descanso: APAGADO</p>
+                  <button className="rest" type="button" onClick={() => handleRestCycle(exerciseIndex)}>
+                    Descanso: {exercise.restSeconds ? formatDuration(exercise.restSeconds) : 'APAGADO'}
+                  </button>
                 </div>
               </div>
 
@@ -300,13 +364,12 @@ export function Workout() {
                       <button className="pill" type="button">
                         RPE
                       </button>
-                      <button
-                        className={set.completed ? 'check active' : 'check'}
-                        type="button"
-                        onClick={() => toggleComplete(exerciseIndex, setIndex)}
-                      >
-                        ✓
-                      </button>
+                      <input
+                        className="set-check"
+                        type="checkbox"
+                        checked={Boolean(set.completed)}
+                        onChange={() => toggleComplete(exerciseIndex, setIndex)}
+                      />
                     </div>
                   );
                 })}
