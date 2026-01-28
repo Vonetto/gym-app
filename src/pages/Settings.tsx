@@ -1,11 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSettings } from '../data/SettingsProvider';
+import { exportRoutineBackup, importRoutineBackup } from '../data/routineBackup';
+import { listRoutines } from '../data/routines';
 
 export function Settings() {
   const { settings, updateTheme, resetAllData } = useSettings();
   const [confirmingReset, setConfirmingReset] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [importing, setImporting] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const [routines, setRoutines] = useState<Array<{ id: string; name: string }>>([]);
+  const [routineId, setRoutineId] = useState('');
   const navigate = useNavigate();
 
   const handleReset = async () => {
@@ -14,6 +20,51 @@ export function Settings() {
     setResetting(false);
     setConfirmingReset(false);
     navigate('/');
+  };
+
+  const loadRoutines = async () => {
+    const data = await listRoutines();
+    setRoutines(data.map((routine) => ({ id: routine.id, name: routine.name })));
+  };
+
+  useEffect(() => {
+    loadRoutines();
+  }, []);
+
+  const handleExportRoutine = async () => {
+    if (!routineId) return;
+    setExporting(true);
+    try {
+      const payload = await exportRoutineBackup(routineId);
+      const json = JSON.stringify(payload, null, 2);
+      const blob = new Blob([json], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = `gym-tracker-rutina-${new Date().toISOString().slice(0, 10)}.json`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setExporting(false);
+    }
+  };
+
+  const handleImportRoutine = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    setImporting(true);
+    try {
+      const text = await file.text();
+      const payload = JSON.parse(text);
+      await importRoutineBackup(payload);
+      await loadRoutines();
+      alert('Rutina importada.');
+    } catch {
+      alert('No se pudo importar la rutina.');
+    } finally {
+      setImporting(false);
+      event.target.value = '';
+    }
   };
 
   return (
@@ -39,6 +90,52 @@ export function Settings() {
               Claro
             </button>
           </div>
+        </div>
+      </div>
+
+      <div className="card">
+        <h2>Importar / Exportar rutina</h2>
+        <p className="muted">Comparte rutinas como archivo JSON.</p>
+        <div className="field">
+          <label className="label" htmlFor="routine-export">
+            Exportar rutina
+          </label>
+          <select
+            id="routine-export"
+            value={routineId}
+            onChange={(event) => setRoutineId(event.target.value)}
+          >
+            <option value="">Selecciona una rutina</option>
+            {routines.map((routine) => (
+              <option key={routine.id} value={routine.id}>
+                {routine.name}
+              </option>
+            ))}
+          </select>
+          <button
+            className="ghost-button"
+            type="button"
+            onClick={handleExportRoutine}
+            disabled={!routineId || exporting}
+          >
+            {exporting ? 'Exportando...' : 'Exportar rutina'}
+          </button>
+        </div>
+        <div className="field">
+          <label className="label" htmlFor="routine-import">
+            Importar rutina
+          </label>
+          <label className="ghost-button" htmlFor="routine-import">
+            {importing ? 'Importando...' : 'Seleccionar archivo'}
+          </label>
+          <input
+            id="routine-import"
+            type="file"
+            accept="application/json"
+            onChange={handleImportRoutine}
+            style={{ display: 'none' }}
+            disabled={importing}
+          />
         </div>
       </div>
 
