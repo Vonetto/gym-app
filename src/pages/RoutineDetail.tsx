@@ -296,7 +296,7 @@ export function RoutineDetail() {
                       <input
                         type="number"
                         min={0}
-                        step={5}
+                        step={30}
                         value={defaultValues.defaultRestSeconds ?? ''}
                         onChange={(event) =>
                           handleDefaultChange(

@@ -155,13 +155,15 @@ export function Workout() {
     });
   };
 
-  const handleRestChange = (exerciseIndex: number, value: string) => {
-    const numeric = value ? Number(value) : 0;
+  const handleRestCycle = (exerciseIndex: number) => {
+    const options = Array.from({ length: 11 }, (_, index) => index * 30);
     setSession((prev) => {
       if (!prev) return prev;
       const exercises = prev.exercises.map((exercise, index) => {
         if (index !== exerciseIndex) return exercise;
-        return { ...exercise, restSeconds: Number.isFinite(numeric) ? numeric : 0 };
+        const current = exercise.restSeconds ?? 0;
+        const nextIndex = (options.indexOf(current) + 1) % options.length;
+        return { ...exercise, restSeconds: options[nextIndex] };
       });
       return { ...prev, exercises };
     });
@@ -364,23 +366,12 @@ export function Workout() {
                 <div>
                   <h2 className="exercise-title">{exercise.name}</h2>
                   <p className="muted">Agregar notas aquí...</p>
-                  <div className="rest-row">
-                    <label className="rest-label">
-                      Descanso (seg)
-                      <input
-                        type="number"
-                        min={0}
-                        step={5}
-                        value={exercise.restSeconds ?? 0}
-                        onChange={(event) => handleRestChange(exerciseIndex, event.target.value)}
-                      />
-                    </label>
-                    {restTimers[exercise.exerciseId] ? (
-                      <span className="rest-chip">
-                        {formatDuration(restTimers[exercise.exerciseId].secondsLeft)}
-                      </span>
-                    ) : null}
-                  </div>
+                  <button className="rest" type="button" onClick={() => handleRestCycle(exerciseIndex)}>
+                    Descanso: {exercise.restSeconds ? formatDuration(exercise.restSeconds) : 'APAGADO'}
+                    {restTimers[exercise.exerciseId]
+                      ? ` · ${formatDuration(restTimers[exercise.exerciseId].secondsLeft)}`
+                      : ''}
+                  </button>
                 </div>
               </div>
 
