@@ -142,7 +142,14 @@ export function Workout() {
       const exercises = prev.exercises.map((exercise, index) => {
         if (index !== exerciseIndex) return exercise;
         const sets = [...exercise.sets];
-        const numeric = value ? Number(value) : undefined;
+        let numeric: number | undefined;
+        if (field === 'rpe') {
+          numeric = value === '' ? undefined : Number(value);
+        } else if (field === 'weight' || field === 'reps') {
+          numeric = value === '' ? 0 : Number(value);
+        } else {
+          numeric = value === '' ? undefined : Number(value);
+        }
         const nextValue =
           field === 'rpe' && numeric !== undefined
             ? Math.min(10, Math.max(1, numeric))
@@ -176,10 +183,19 @@ export function Workout() {
         if (index !== exerciseIndex) return exercise;
         const sets = [...exercise.sets];
         const nextCompleted = !sets[setIndex].completed;
-        sets[setIndex] = {
+        const nextSet: WorkoutSet = {
           ...sets[setIndex],
-          completed: nextCompleted
+          completed: nextCompleted,
+          weight:
+            nextCompleted && sets[setIndex].weight === undefined
+              ? 0
+              : sets[setIndex].weight,
+          reps:
+            nextCompleted && sets[setIndex].reps === undefined
+              ? 0
+              : sets[setIndex].reps
         };
+        sets[setIndex] = nextSet;
         if (nextCompleted && (exercise.restSeconds ?? 0) > 0) {
           void startRestTimer(exercise.exerciseId, exercise.name, exercise.restSeconds ?? 0);
         }
@@ -191,15 +207,22 @@ export function Workout() {
 
   const handleFinish = () => {
     if (session) {
+      const sanitizedSession: WorkoutSession = {
+        ...session,
+        exercises: session.exercises.map((exercise) => ({
+          ...exercise,
+          sets: exercise.sets.filter((set) => set.completed)
+        }))
+      };
       const existing = localStorage.getItem('workout-history');
       const history = existing ? JSON.parse(existing) : [];
-      history.unshift(session);
+      history.unshift(sanitizedSession);
       localStorage.setItem('workout-history', JSON.stringify(history.slice(0, 50)));
       const historyByExercise = { ...exerciseHistory };
-      session.exercises.forEach((exercise) => {
+      sanitizedSession.exercises.forEach((exercise) => {
         historyByExercise[exercise.exerciseId] = exercise.sets.map((set) => ({
-          weight: set.weight,
-          reps: set.reps
+          weight: set.weight ?? 0,
+          reps: set.reps ?? 0
         }));
       });
       localStorage.setItem('exercise-history', JSON.stringify(historyByExercise));
