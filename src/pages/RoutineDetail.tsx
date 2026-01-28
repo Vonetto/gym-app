@@ -36,6 +36,7 @@ export function RoutineDetail() {
         defaultWeight?: number;
         defaultDuration?: number;
         defaultDistance?: number;
+        defaultRestSeconds?: number;
       }
     >
   >({});
@@ -63,6 +64,7 @@ export function RoutineDetail() {
         defaultWeight?: number;
         defaultDuration?: number;
         defaultDistance?: number;
+        defaultRestSeconds?: number;
       }
     > = {};
     detail.defaults.forEach((item) => {
@@ -71,7 +73,8 @@ export function RoutineDetail() {
         defaultReps: item.defaultReps,
         defaultWeight: item.defaultWeight,
         defaultDuration: item.defaultDuration,
-        defaultDistance: item.defaultDistance
+        defaultDistance: item.defaultDistance,
+        defaultRestSeconds: item.defaultRestSeconds
       };
     });
     setDefaults(defaultsMap);
@@ -146,7 +149,13 @@ export function RoutineDetail() {
 
   const handleDefaultChange = async (
     exerciseIdToUpdate: string,
-    field: 'defaultSets' | 'defaultReps' | 'defaultWeight' | 'defaultDuration' | 'defaultDistance',
+    field:
+      | 'defaultSets'
+      | 'defaultReps'
+      | 'defaultWeight'
+      | 'defaultDuration'
+      | 'defaultDistance'
+      | 'defaultRestSeconds',
     value: string
   ) => {
     if (!routineId) return;
@@ -279,6 +288,22 @@ export function RoutineDetail() {
                         value={defaultValues.defaultReps ?? ''}
                         onChange={(event) =>
                           handleDefaultChange(exercise.exerciseId, 'defaultReps', event.target.value)
+                        }
+                      />
+                    </label>
+                    <label className="muted">
+                      Descanso (seg)
+                      <input
+                        type="number"
+                        min={0}
+                        step={5}
+                        value={defaultValues.defaultRestSeconds ?? ''}
+                        onChange={(event) =>
+                          handleDefaultChange(
+                            exercise.exerciseId,
+                            'defaultRestSeconds',
+                            event.target.value
+                          )
                         }
                       />
                     </label>

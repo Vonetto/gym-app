@@ -12,6 +12,7 @@ export interface RoutineSnapshot {
       defaultWeight?: number;
       defaultDuration?: number;
       defaultDistance?: number;
+      defaultRestSeconds?: number;
     };
   }>;
 }
@@ -150,7 +151,8 @@ export async function duplicateRoutine(routineId: string) {
             defaultReps: item.defaultReps,
             defaultWeight: item.defaultWeight,
             defaultDuration: item.defaultDuration,
-            defaultDistance: item.defaultDistance
+            defaultDistance: item.defaultDistance,
+            defaultRestSeconds: item.defaultRestSeconds
           }))
         );
       }
@@ -235,7 +237,8 @@ export async function updateExerciseDefaults({
   defaultSets,
   defaultWeight,
   defaultDuration,
-  defaultDistance
+  defaultDistance,
+  defaultRestSeconds
 }: {
   routineId: string;
   exerciseId: string;
@@ -244,6 +247,7 @@ export async function updateExerciseDefaults({
   defaultWeight?: number;
   defaultDuration?: number;
   defaultDistance?: number;
+  defaultRestSeconds?: number;
 }) {
   const existing = await db.exerciseDefaults.where({ routineId, exerciseId }).first();
   const payload = {
@@ -254,7 +258,8 @@ export async function updateExerciseDefaults({
     defaultReps,
     defaultWeight,
     defaultDuration,
-    defaultDistance
+    defaultDistance,
+    defaultRestSeconds
   };
   await db.exerciseDefaults.put(payload);
 }

@@ -58,6 +58,7 @@ export interface ExerciseDefaultRecord {
   defaultWeight?: number;
   defaultDuration?: number;
   defaultDistance?: number;
+  defaultRestSeconds?: number;
 }
 
 export interface ExerciseFavoriteRecord {

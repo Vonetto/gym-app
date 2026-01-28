@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { listExercises, getExerciseDisplayName } from '../data/exercises';
 import { useSettings } from '../data/SettingsProvider';
@@ -8,6 +8,7 @@ interface WorkoutSet {
   reps?: number;
   duration?: number;
   distance?: number;
+  rpe?: number;
   completed?: boolean;
 }
 
@@ -47,9 +48,10 @@ export function Workout() {
   const [exerciseHistory, setExerciseHistory] = useState<
     Record<string, Array<{ weight?: number; reps?: number }>>
   >({});
-  const [restTimer, setRestTimer] = useState<{ secondsLeft: number; exerciseName: string } | null>(
-    null
-  );
+  const [restTimers, setRestTimers] = useState<
+    Record<string, { secondsLeft: number; totalSeconds: number; exerciseName: string }>
+  >({});
+  const audioContextRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('active-session');
@@ -92,18 +94,28 @@ export function Workout() {
   }, [session]);
 
   useEffect(() => {
-    if (!restTimer) return;
-    if (restTimer.secondsLeft <= 0) {
-      setRestTimer(null);
-      return;
-    }
+    if (!Object.keys(restTimers).length) return;
     const interval = window.setInterval(() => {
-      setRestTimer((prev) =>
-        prev ? { ...prev, secondsLeft: Math.max(0, prev.secondsLeft - 1) } : prev
-      );
+      setRestTimers((prev) => {
+        const next = { ...prev };
+        const finished: Array<{ exerciseName: string }> = [];
+        Object.entries(next).forEach(([key, timer]) => {
+          const nextSeconds = timer.secondsLeft - 1;
+          if (nextSeconds <= 0) {
+            finished.push({ exerciseName: timer.exerciseName });
+            delete next[key];
+          } else {
+            next[key] = { ...timer, secondsLeft: nextSeconds };
+          }
+        });
+        if (finished.length) {
+          finished.forEach((item) => notifyRestComplete(item.exerciseName));
+        }
+        return next;
+      });
     }, 1000);
     return () => window.clearInterval(interval);
-  }, [restTimer]);
+  }, [restTimers]);
 
   const handleAddSet = (exerciseIndex: number) => {
     setSession((prev) => {
@@ -131,7 +143,11 @@ export function Workout() {
         if (index !== exerciseIndex) return exercise;
         const sets = [...exercise.sets];
         const numeric = value ? Number(value) : undefined;
-        const updated = { ...sets[setIndex], [field]: numeric };
+        const nextValue =
+          field === 'rpe' && numeric !== undefined
+            ? Math.min(10, Math.max(1, numeric))
+            : numeric;
+        const updated = { ...sets[setIndex], [field]: nextValue };
         sets[setIndex] = updated;
         return { ...exercise, sets };
       });
@@ -139,20 +155,13 @@ export function Workout() {
     });
   };
 
-  const startRestTimer = (exerciseName: string, restSeconds: number) => {
-    if (restSeconds <= 0) return;
-    setRestTimer({ secondsLeft: restSeconds, exerciseName });
-  };
-
-  const handleRestCycle = (exerciseIndex: number) => {
-    const options = [0, 60, 90, 120, 150, 180];
+  const handleRestChange = (exerciseIndex: number, value: string) => {
+    const numeric = value ? Number(value) : 0;
     setSession((prev) => {
       if (!prev) return prev;
       const exercises = prev.exercises.map((exercise, index) => {
         if (index !== exerciseIndex) return exercise;
-        const current = exercise.restSeconds ?? 0;
-        const nextIndex = (options.indexOf(current) + 1) % options.length;
-        return { ...exercise, restSeconds: options[nextIndex] };
+        return { ...exercise, restSeconds: Number.isFinite(numeric) ? numeric : 0 };
       });
       return { ...prev, exercises };
     });
@@ -170,16 +179,12 @@ export function Workout() {
           completed: nextCompleted
         };
         if (nextCompleted && (exercise.restSeconds ?? 0) > 0) {
-          startRestTimer(exercise.name, exercise.restSeconds ?? 0);
+          void startRestTimer(exercise.exerciseId, exercise.name, exercise.restSeconds ?? 0);
         }
         return { ...exercise, sets };
       });
       return { ...prev, exercises };
     });
-  };
-
-  const handleRestStop = () => {
-    setRestTimer(null);
   };
 
   const handleFinish = () => {
@@ -269,6 +274,53 @@ export function Workout() {
     });
   };
 
+  const ensureAudioContext = async () => {
+    if (!audioContextRef.current) {
+      audioContextRef.current = new AudioContext();
+    }
+    if (audioContextRef.current.state === 'suspended') {
+      await audioContextRef.current.resume();
+    }
+  };
+
+  const playWhistle = () => {
+    const ctx = audioContextRef.current;
+    if (!ctx) return;
+    const now = ctx.currentTime;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1200, now);
+    osc.frequency.exponentialRampToValueAtTime(1800, now + 0.2);
+    gain.gain.setValueAtTime(0.001, now);
+    gain.gain.exponentialRampToValueAtTime(0.2, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.45);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.5);
+  };
+
+  const notifyRestComplete = (exerciseName: string) => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('Descanso terminado', {
+        body: `Continúa con ${exerciseName}.`
+      });
+    }
+    playWhistle();
+  };
+
+  const startRestTimer = async (exerciseId: string, exerciseName: string, restSeconds: number) => {
+    if (restSeconds <= 0) return;
+    if ('Notification' in window && Notification.permission === 'default') {
+      await Notification.requestPermission();
+    }
+    await ensureAudioContext();
+    setRestTimers((prev) => ({
+      ...prev,
+      [exerciseId]: { secondsLeft: restSeconds, totalSeconds: restSeconds, exerciseName }
+    }));
+  };
+
   const workoutTitle = useMemo(() => session?.routineName ?? 'Entreno', [session?.routineName]);
 
   if (!session) {
@@ -285,16 +337,6 @@ export function Workout() {
 
   return (
     <section className="stack wide">
-      {restTimer ? (
-        <div className="rest-timer">
-          <span>
-            Descanso {restTimer.exerciseName}: {formatDuration(restTimer.secondsLeft)}
-          </span>
-          <button className="ghost-button" type="button" onClick={handleRestStop}>
-            Detener
-          </button>
-        </div>
-      ) : null}
       <div className="workout-header">
         <div>
           <p className="overline">Entreno</p>
@@ -322,9 +364,23 @@ export function Workout() {
                 <div>
                   <h2 className="exercise-title">{exercise.name}</h2>
                   <p className="muted">Agregar notas aquí...</p>
-                  <button className="rest" type="button" onClick={() => handleRestCycle(exerciseIndex)}>
-                    Descanso: {exercise.restSeconds ? formatDuration(exercise.restSeconds) : 'APAGADO'}
-                  </button>
+                  <div className="rest-row">
+                    <label className="rest-label">
+                      Descanso (seg)
+                      <input
+                        type="number"
+                        min={0}
+                        step={5}
+                        value={exercise.restSeconds ?? 0}
+                        onChange={(event) => handleRestChange(exerciseIndex, event.target.value)}
+                      />
+                    </label>
+                    {restTimers[exercise.exerciseId] ? (
+                      <span className="rest-chip">
+                        {formatDuration(restTimers[exercise.exerciseId].secondsLeft)}
+                      </span>
+                    ) : null}
+                  </div>
                 </div>
               </div>
 
@@ -361,9 +417,17 @@ export function Workout() {
                           handleSetChange(exerciseIndex, setIndex, 'reps', event.target.value)
                         }
                       />
-                      <button className="pill" type="button">
-                        RPE
-                      </button>
+                      <input
+                        className="rpe-input"
+                        type="number"
+                        min={1}
+                        max={10}
+                        step={1}
+                        value={set.rpe ?? ''}
+                        onChange={(event) =>
+                          handleSetChange(exerciseIndex, setIndex, 'rpe', event.target.value)
+                        }
+                      />
                       <input
                         className="set-check"
                         type="checkbox"

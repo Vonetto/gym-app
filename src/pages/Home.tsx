@@ -21,6 +21,7 @@ interface WorkoutSession {
     name: string;
     metricType: string;
     previousSets?: Array<{ weight?: number; reps?: number }>;
+    restSeconds?: number;
     sets: Array<{
       weight?: number;
       reps?: number;
@@ -113,6 +114,7 @@ export function Home() {
           exerciseId: entry.exerciseId,
           name: exercise ? getExerciseDisplayName(exercise, settings.language) : 'Ejercicio',
           metricType: exercise?.metricType ?? 'weight_reps',
+          restSeconds: defaults?.defaultRestSeconds ?? 0,
           previousSets: (previous.length
             ? previous
             : exerciseHistory[entry.exerciseId] ?? []
