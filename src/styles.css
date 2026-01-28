@@ -279,6 +279,47 @@ input::placeholder {
   gap: 1rem;
 }
 
+.recent-list {
+  display: grid;
+  gap: 0.5rem;
+  max-height: 220px;
+  overflow: hidden;
+}
+
+.compact-card {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.5rem 0.75rem;
+}
+
+.compact-title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.compact-meta {
+  margin: 0.1rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+.compact-tags {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  margin-top: 0.35rem;
+}
+
+.tag-chip {
+  background: #2d2d2d;
+  color: var(--text-muted);
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+}
+
 .routine-header {
   display: flex;
   justify-content: space-between;
@@ -365,6 +406,20 @@ input::placeholder {
   border-radius: 8px;
   padding: 0.2rem 0.25rem;
   min-width: 0;
+}
+
+.previous-button {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  text-align: left;
+  padding: 0;
+  cursor: pointer;
+}
+
+.previous-button:hover {
+  color: var(--text);
 }
 
 .rpe-input {

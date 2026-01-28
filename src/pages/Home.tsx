@@ -16,6 +16,7 @@ interface WorkoutSession {
   createdAt: string;
   routineId?: string;
   routineName?: string;
+  tags?: string[];
   exercises: Array<{
     exerciseId: string;
     name: string;
@@ -32,10 +33,19 @@ interface WorkoutSession {
   }>;
 }
 
+interface WorkoutSummary {
+  id: string;
+  routineName: string;
+  createdAt: string;
+  setCount: number;
+  tags: string[];
+}
+
 export function Home() {
   const navigate = useNavigate();
   const { settings } = useSettings();
   const [routines, setRoutines] = useState<RoutineSummary[]>([]);
+  const [recentWorkouts, setRecentWorkouts] = useState<WorkoutSummary[]>([]);
 
   const loadRoutines = async () => {
     const baseRoutines = await listRoutines();
@@ -66,6 +76,19 @@ export function Home() {
 
   useEffect(() => {
     loadRoutines();
+    const historyRaw = localStorage.getItem('workout-history');
+    const history = historyRaw ? JSON.parse(historyRaw) : [];
+    const summaries: WorkoutSummary[] = history.slice(0, 8).map((session: WorkoutSession) => {
+      const setCount = session.exercises.reduce((acc, exercise) => acc + exercise.sets.length, 0);
+      return {
+        id: session.id,
+        routineName: session.routineName ?? 'Entreno',
+        createdAt: session.createdAt,
+        setCount,
+        tags: session.tags ?? []
+      };
+    });
+    setRecentWorkouts(summaries);
   }, [settings.language]);
 
   const hasRoutines = routines.length > 0;
@@ -95,6 +118,7 @@ export function Home() {
       createdAt: new Date().toISOString(),
       routineId,
       routineName: detail.routine.name,
+      tags: detail.tags,
       exercises: detail.exercises.map((entry) => {
         const exercise = exerciseMap.get(entry.exerciseId);
         const defaults = detail.defaults.find((item) => item.exerciseId === entry.exerciseId);
@@ -198,11 +222,35 @@ export function Home() {
       <div className="card">
         <div className="card-header">
           <h2>Últimos entrenamientos</h2>
-          <span className="muted">Sin datos</span>
+          <span className="muted">{recentWorkouts.length ? 'Recientes' : 'Sin datos'}</span>
         </div>
-        <p className="muted">
-          Aquí verás el resumen de tus últimas sesiones cuando completes entrenamientos.
-        </p>
+        {recentWorkouts.length ? (
+          <div className="recent-list">
+            {recentWorkouts.slice(0, 4).map((workout) => (
+              <div key={workout.id} className="compact-card">
+                <div>
+                  <p className="compact-title">{workout.routineName}</p>
+                  <p className="compact-meta">
+                    {new Date(workout.createdAt).toLocaleDateString()} · {workout.setCount} sets
+                  </p>
+                  {workout.tags.length ? (
+                    <div className="compact-tags">
+                      {workout.tags.slice(0, 3).map((tag) => (
+                        <span key={tag} className="tag-chip">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="muted">
+            Aquí verás el resumen de tus últimas sesiones cuando completes entrenamientos.
+          </p>
+        )}
       </div>
     </section>
   );

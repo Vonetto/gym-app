@@ -412,11 +412,29 @@ export function Workout() {
                   return (
                     <div key={`${exercise.exerciseId}-${setIndex}`} className="set-row">
                       <span>{setIndex + 1}</span>
-                      <span className="muted">
+                      <button
+                        className="previous-button"
+                        type="button"
+                        onClick={() => {
+                          if (!match) return;
+                          handleSetChange(
+                            exerciseIndex,
+                            setIndex,
+                            'weight',
+                            String(match.weight ?? 0)
+                          );
+                          handleSetChange(
+                            exerciseIndex,
+                            setIndex,
+                            'reps',
+                            String(match.reps ?? 0)
+                          );
+                        }}
+                      >
                         {match?.weight !== undefined && match?.reps !== undefined
                           ? `${match.weight} x ${match.reps}`
                           : '-'}
-                      </span>
+                      </button>
                       <input
                         type="number"
                         value={set.weight ?? ''}
