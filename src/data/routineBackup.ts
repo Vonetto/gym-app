@@ -1,4 +1,5 @@
 import { db } from './db';
+import { getLastWorkoutForRoutine, getWorkoutExercises, getWorkoutSets } from './workouts';
 
 const diacriticRegex = /\p{Diacritic}/gu;
 
@@ -64,16 +65,16 @@ export async function exportRoutineBackup(routineId: string): Promise<RoutineBac
     ])
   );
 
-  type HistorySession = {
-    routineId?: string;
-    exercises?: Array<{ exerciseId: string; sets: Array<{ weight?: number; reps?: number }> }>;
-  };
-  let lastSession: HistorySession | undefined;
-  if (typeof localStorage !== 'undefined') {
-    const historyRaw = localStorage.getItem('workout-history');
-    if (historyRaw) {
-      const history = JSON.parse(historyRaw) as HistorySession[];
-      lastSession = history.find((session) => session.routineId === routineId);
+  const lastWorkout = await getLastWorkoutForRoutine(routineId);
+  const lastSetsByExercise = new Map<string, Array<{ weight?: number; reps?: number }>>();
+  if (lastWorkout) {
+    const workoutExercises = await getWorkoutExercises(lastWorkout.id);
+    for (const workoutExercise of workoutExercises) {
+      const sets = await getWorkoutSets(workoutExercise.id);
+      lastSetsByExercise.set(
+        workoutExercise.exerciseId,
+        sets.map((set) => ({ weight: set.weight, reps: set.reps }))
+      );
     }
   }
 
@@ -96,10 +97,7 @@ export async function exportRoutineBackup(routineId: string): Promise<RoutineBac
       tags: tags.map((tag) => tag.tag),
       exercises: routineExercises.map((entry) => {
         const baseDefaults = defaultsByExercise.get(entry.exerciseId);
-        const lastExercise = lastSession?.exercises?.find(
-          (exercise) => exercise.exerciseId === entry.exerciseId
-        );
-        const lastSets = lastExercise?.sets ?? [];
+        const lastSets = lastSetsByExercise.get(entry.exerciseId) ?? [];
         const lastSet = lastSets.length ? lastSets[lastSets.length - 1] : undefined;
 
         const mergedDefaults = {

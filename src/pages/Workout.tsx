@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { listExercises, getExerciseDisplayName } from '../data/exercises';
 import { useSettings } from '../data/SettingsProvider';
+import { getLatestExerciseSets, saveWorkout } from '../data/workouts';
 
 interface WorkoutSet {
   weight?: number;
@@ -45,9 +46,6 @@ export function Workout() {
   const [exerciseOptions, setExerciseOptions] = useState<
     Array<{ id: string; label: string; metricType: string }>
   >([]);
-  const [exerciseHistory, setExerciseHistory] = useState<
-    Record<string, Array<{ weight?: number; reps?: number }>>
-  >({});
   const [restTimers, setRestTimers] = useState<
     Record<string, { secondsLeft: number; totalSeconds: number; exerciseName: string }>
   >({});
@@ -58,8 +56,6 @@ export function Workout() {
     if (stored) {
       setSession(JSON.parse(stored));
     }
-    const history = localStorage.getItem('exercise-history');
-    setExerciseHistory(history ? JSON.parse(history) : {});
   }, []);
 
   useEffect(() => {
@@ -205,7 +201,7 @@ export function Workout() {
     });
   };
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
     if (session) {
       const sanitizedSession: WorkoutSession = {
         ...session,
@@ -214,19 +210,7 @@ export function Workout() {
           sets: exercise.sets.filter((set) => set.completed)
         }))
       };
-      const existing = localStorage.getItem('workout-history');
-      const history = existing ? JSON.parse(existing) : [];
-      history.unshift(sanitizedSession);
-      localStorage.setItem('workout-history', JSON.stringify(history.slice(0, 50)));
-      const historyByExercise = { ...exerciseHistory };
-      sanitizedSession.exercises.forEach((exercise) => {
-        historyByExercise[exercise.exerciseId] = exercise.sets.map((set) => ({
-          weight: set.weight ?? 0,
-          reps: set.reps ?? 0
-        }));
-      });
-      localStorage.setItem('exercise-history', JSON.stringify(historyByExercise));
-      setExerciseHistory(historyByExercise);
+      await saveWorkout(sanitizedSession);
     }
     localStorage.removeItem('active-session');
     setSession(null);
@@ -239,17 +223,18 @@ export function Workout() {
     navigate('/');
   };
 
-  const handleAddExercise = () => {
+  const handleAddExercise = async () => {
     if (!session || !exercisePicker) return;
     const selected = exerciseOptions.find((option) => option.id === exercisePicker);
     if (!selected) return;
+    const previousSets = await getLatestExerciseSets(selected.id);
     setSession((prev) => {
       if (!prev) return prev;
       const nextExercise: WorkoutExercise = {
         exerciseId: selected.id,
         name: selected.label,
         metricType: selected.metricType,
-        previousSets: exerciseHistory[selected.id] ?? [],
+        previousSets: previousSets.map((set) => ({ weight: set.weight, reps: set.reps })),
         restSeconds: 0,
         sets: Array.from({ length: 3 }, () => ({
           completed: false

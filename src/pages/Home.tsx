@@ -2,6 +2,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { listRoutines, getRoutineDetail } from '../data/routines';
 import { listExercises, getExerciseDisplayName } from '../data/exercises';
+import {
+  getLatestExerciseSets,
+  getLastWorkoutForRoutine,
+  getWorkoutExercises,
+  getWorkoutSets,
+  listRecentWorkouts
+} from '../data/workouts';
 import { useSettings } from '../data/SettingsProvider';
 
 interface RoutineSummary {
@@ -50,8 +57,7 @@ export function Home() {
   const loadRoutines = async () => {
     const baseRoutines = await listRoutines();
     if (!baseRoutines.length) {
-      setRoutines([]);
-      return;
+      return [];
     }
     const exercises = await listExercises();
     const exerciseMap = new Map(
@@ -71,24 +77,37 @@ export function Home() {
         exercises: exerciseNames
       });
     }
-    setRoutines(summaries);
+    return summaries;
   };
 
   useEffect(() => {
-    loadRoutines();
-    const historyRaw = localStorage.getItem('workout-history');
-    const history = historyRaw ? JSON.parse(historyRaw) : [];
-    const summaries: WorkoutSummary[] = history.slice(0, 8).map((session: WorkoutSession) => {
-      const setCount = session.exercises.reduce((acc, exercise) => acc + exercise.sets.length, 0);
-      return {
-        id: session.id,
-        routineName: session.routineName ?? 'Entreno',
-        createdAt: session.createdAt,
-        setCount,
-        tags: session.tags ?? []
-      };
-    });
-    setRecentWorkouts(summaries);
+    let active = true;
+    const loadData = async () => {
+      const routineSummaries = await loadRoutines();
+      const workouts = await listRecentWorkouts(8);
+      const summaries: WorkoutSummary[] = [];
+      for (const workout of workouts) {
+        const workoutExercises = await getWorkoutExercises(workout.id);
+        const setCounts = await Promise.all(
+          workoutExercises.map((exercise) => getWorkoutSets(exercise.id))
+        );
+        const setCount = setCounts.reduce((acc, sets) => acc + sets.length, 0);
+        summaries.push({
+          id: workout.id,
+          routineName: workout.routineName ?? 'Entreno',
+          createdAt: workout.endedAt,
+          setCount,
+          tags: workout.tags ?? []
+        });
+      }
+      if (!active) return;
+      setRoutines(routineSummaries);
+      setRecentWorkouts(summaries);
+    };
+    void loadData();
+    return () => {
+      active = false;
+    };
   }, [settings.language]);
 
   const hasRoutines = routines.length > 0;
@@ -108,11 +127,7 @@ export function Home() {
     if (!detail) return;
     const exercises = await listExercises();
     const exerciseMap = new Map(exercises.map((exercise) => [exercise.id, exercise]));
-    const historyRaw = localStorage.getItem('workout-history');
-    const history = historyRaw ? JSON.parse(historyRaw) : [];
-    const lastSession = history.find((entry: WorkoutSession) => entry.routineId === routineId);
-    const exerciseHistoryRaw = localStorage.getItem('exercise-history');
-    const exerciseHistory = exerciseHistoryRaw ? JSON.parse(exerciseHistoryRaw) : {};
+    const lastWorkout = await getLastWorkoutForRoutine(routineId);
     const session: WorkoutSession = {
       id: `session-${crypto.randomUUID()}`,
       createdAt: new Date().toISOString(),
@@ -130,26 +145,40 @@ export function Home() {
           distance: defaults?.defaultDistance,
           completed: false
         }));
-        const previous =
-          lastSession?.exercises.find(
-            (exerciseEntry: { exerciseId: string }) => exerciseEntry.exerciseId === entry.exerciseId
-          )?.sets ?? [];
         return {
           exerciseId: entry.exerciseId,
           name: exercise ? getExerciseDisplayName(exercise, settings.language) : 'Ejercicio',
           metricType: exercise?.metricType ?? 'weight_reps',
           restSeconds: defaults?.defaultRestSeconds ?? 0,
-          previousSets: (previous.length
-            ? previous
-            : exerciseHistory[entry.exerciseId] ?? []
-          ).map((set: { weight?: number; reps?: number }) => ({
-            weight: set.weight,
-            reps: set.reps
-          })),
+          previousSets: [],
           sets
         };
       })
     };
+    const previousSetsByExercise = new Map<string, Array<{ weight?: number; reps?: number }>>();
+    const workoutExerciseMap = new Map<string, Array<{ weight?: number; reps?: number }>>();
+    if (lastWorkout) {
+      const workoutExercises = await getWorkoutExercises(lastWorkout.id);
+      for (const workoutExercise of workoutExercises) {
+        const sets = await getWorkoutSets(workoutExercise.id);
+        workoutExerciseMap.set(
+          workoutExercise.exerciseId,
+          sets.map((set) => ({ weight: set.weight, reps: set.reps }))
+        );
+      }
+    }
+    for (const entry of detail.exercises) {
+      let sets = workoutExerciseMap.get(entry.exerciseId) ?? [];
+      if (!sets.length) {
+        const latestSets = await getLatestExerciseSets(entry.exerciseId);
+        sets = latestSets.map((set) => ({ weight: set.weight, reps: set.reps }));
+      }
+      previousSetsByExercise.set(entry.exerciseId, sets);
+    }
+    session.exercises = session.exercises.map((exercise) => ({
+      ...exercise,
+      previousSets: previousSetsByExercise.get(exercise.exerciseId) ?? []
+    }));
     localStorage.setItem('active-session', JSON.stringify(session));
     navigate('/workout');
   };

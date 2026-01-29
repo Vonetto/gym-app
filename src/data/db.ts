@@ -79,6 +79,35 @@ export interface RoutineVersionRecord {
   snapshot: string;
 }
 
+export interface WorkoutRecord {
+  id: string;
+  routineId?: string;
+  routineName?: string;
+  tags?: string[];
+  startedAt: string;
+  endedAt: string;
+}
+
+export interface WorkoutExerciseRecord {
+  id: string;
+  workoutId: string;
+  exerciseId: string;
+  name: string;
+  order: number;
+}
+
+export interface WorkoutSetRecord {
+  id: string;
+  workoutExerciseId: string;
+  order: number;
+  weight?: number;
+  reps?: number;
+  duration?: number;
+  distance?: number;
+  rpe?: number;
+  completed: boolean;
+}
+
 class AppDB extends Dexie {
   settings!: Table<SettingsRecord, 'app'>;
   routines!: Table<RoutineRecord, string>;
@@ -90,6 +119,9 @@ class AppDB extends Dexie {
   exerciseFavorites!: Table<ExerciseFavoriteRecord, string>;
   exerciseRecents!: Table<ExerciseRecentRecord, string>;
   routineVersions!: Table<RoutineVersionRecord, string>;
+  workouts!: Table<WorkoutRecord, string>;
+  workoutExercises!: Table<WorkoutExerciseRecord, string>;
+  workoutSets!: Table<WorkoutSetRecord, string>;
 
   constructor() {
     super('gym-tracker');
@@ -108,7 +140,10 @@ class AppDB extends Dexie {
         exerciseDefaults: 'id, routineId, exerciseId, [routineId+exerciseId]',
         exerciseFavorites: 'exerciseId, createdAt',
         exerciseRecents: 'exerciseId, lastUsedAt',
-        routineVersions: 'id, routineId, createdAt'
+        routineVersions: 'id, routineId, createdAt',
+        workouts: 'id, routineId, startedAt, endedAt',
+        workoutExercises: 'id, workoutId, exerciseId, [workoutId+order]',
+        workoutSets: 'id, workoutExerciseId, [workoutExerciseId+order]'
       })
       .upgrade(async (tx) => {
         const routineTable = tx.table<RoutineRecord, string>('routines');
