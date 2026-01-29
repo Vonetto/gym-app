@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { listRoutines, getRoutineDetail } from '../data/routines';
+import { createRoutine, getRoutineDetail, listRoutines } from '../data/routines';
 import { listExercises, getExerciseDisplayName } from '../data/exercises';
 import {
   getLatestExerciseSets,
@@ -53,6 +53,9 @@ export function Home() {
   const { settings } = useSettings();
   const [routines, setRoutines] = useState<RoutineSummary[]>([]);
   const [recentWorkouts, setRecentWorkouts] = useState<WorkoutSummary[]>([]);
+  const [showCreate, setShowCreate] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newTags, setNewTags] = useState('');
 
   const loadRoutines = async () => {
     const baseRoutines = await listRoutines();
@@ -111,6 +114,23 @@ export function Home() {
   }, [settings.language]);
 
   const hasRoutines = routines.length > 0;
+
+  const handleCreateRoutine = async () => {
+    if (!newName.trim()) return;
+    const routine = await createRoutine(
+      newName.trim(),
+      newTags
+        .split(',')
+        .map((tag) => tag.trim())
+        .filter(Boolean)
+    );
+    setNewName('');
+    setNewTags('');
+    setShowCreate(false);
+    const summaries = await loadRoutines();
+    setRoutines(summaries);
+    navigate(`/routines/${routine.id}`);
+  };
 
   const handleStartEmpty = () => {
     const payload: WorkoutSession = {
@@ -206,16 +226,36 @@ export function Home() {
           <h2>Rutinas</h2>
         </div>
         <div className="inline">
-          <Link className="ghost-button" to="/routines">
+          <button className="ghost-button" type="button" onClick={() => setShowCreate((prev) => !prev)}>
             + Nueva rutina
-          </Link>
+          </button>
           <button className="ghost-button" type="button" disabled>
             Explorar (próximamente)
           </button>
         </div>
-        <div className="info-banner">
-          Presiona una rutina para reordenar
-        </div>
+        {showCreate ? (
+          <div className="field">
+            <label className="label" htmlFor="routine-name-home">
+              Nombre de la rutina
+            </label>
+            <input
+              id="routine-name-home"
+              type="text"
+              value={newName}
+              placeholder="Ej: Día de empuje"
+              onChange={(event) => setNewName(event.target.value)}
+            />
+            <input
+              type="text"
+              value={newTags}
+              placeholder="Tags o días (separados por coma)"
+              onChange={(event) => setNewTags(event.target.value)}
+            />
+            <button className="primary-button" type="button" onClick={handleCreateRoutine}>
+              Crear rutina
+            </button>
+          </div>
+        ) : null}
         <div className="section-label">{routineCountLabel}</div>
         {hasRoutines ? (
           <div className="stack">

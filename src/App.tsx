@@ -1,11 +1,10 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { useEffect } from 'react';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { Settings } from './pages/Settings';
 import { useSettings } from './data/SettingsProvider';
 import { seedExerciseCatalog } from './data/exercises';
-import { Routines } from './pages/Routines';
 import { RoutineDetail } from './pages/RoutineDetail';
 import { ExerciseCatalog } from './pages/ExerciseCatalog';
 import { Workout } from './pages/Workout';
@@ -32,7 +31,7 @@ export function App() {
     <Layout>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/routines" element={<Routines />} />
+        <Route path="/routines" element={<Navigate to="/" replace />} />
         <Route path="/routines/:routineId" element={<RoutineDetail />} />
         <Route path="/catalog" element={<ExerciseCatalog />} />
         <Route path="/workout" element={<Workout />} />

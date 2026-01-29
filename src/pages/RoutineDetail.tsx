@@ -50,7 +50,7 @@ export function RoutineDetail() {
     if (!routineId) return;
     const detail = await getRoutineDetail(routineId);
     if (!detail) {
-      navigate('/routines');
+      navigate('/');
       return;
     }
     setName(detail.routine.name);
@@ -125,7 +125,7 @@ export function RoutineDetail() {
           .filter(Boolean)
       }
     );
-    await loadDetail();
+    navigate('/');
   };
 
   const handleAddExercise = async () => {
@@ -171,8 +171,8 @@ export function RoutineDetail() {
       <div className="card">
         <div className="card-header">
           <h1>Editar rutina</h1>
-          <Link className="ghost-button" to="/routines">
-            Volver a rutinas
+          <Link className="ghost-button" to="/">
+            Volver al inicio
           </Link>
         </div>
         <div className="field">
@@ -195,7 +195,7 @@ export function RoutineDetail() {
             onChange={(event) => setTags(event.target.value)}
           />
           <button className="primary-button" type="button" onClick={handleSave}>
-            Guardar cambios
+            Guardar y salir
           </button>
         </div>
       </div>
