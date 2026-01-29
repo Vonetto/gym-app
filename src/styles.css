@@ -349,6 +349,69 @@ input::placeholder {
 .exercise-header {
   display: flex;
   gap: 0.75rem;
+  align-items: flex-start;
+  justify-content: space-between;
+  position: relative;
+}
+
+.exercise-header-left {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.exercise-menu-wrapper {
+  position: relative;
+}
+
+.menu-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  color: var(--text);
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.exercise-menu {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.5rem;
+  display: grid;
+  gap: 0.25rem;
+  min-width: 180px;
+  z-index: 5;
+}
+
+.exercise-menu button {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  padding: 0.45rem 0.6rem;
+  text-align: left;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.exercise-menu button:hover {
+  background: var(--surface-muted);
+}
+
+.exercise-menu button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.exercise-menu .danger {
+  color: #ff6b6b;
+}
 }
 
 .avatar {
@@ -460,6 +523,56 @@ input::placeholder {
   background: var(--surface-muted);
   border: 1px solid var(--border);
   font-weight: 600;
+}
+
+.exercise-search-list {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.exercise-search-item {
+  background: var(--surface-muted);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.6rem 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  text-align: left;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.exercise-search-item:hover {
+  border-color: var(--accent);
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 10, 0.7);
+  display: flex;
+  justify-content: center;
+  z-index: 50;
+  padding: 1.5rem;
+}
+
+.modal-overlay.center {
+  align-items: center;
+}
+
+.modal-overlay.bottom {
+  align-items: flex-end;
+  padding-bottom: 6rem;
+}
+
+.modal-card {
+  background: var(--surface-elevated);
+  border-radius: 20px 20px 0 0;
+  width: min(520px, 100%);
+  padding: 1rem;
+  border: 1px solid var(--border);
 }
 
 .profile-name {

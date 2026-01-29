@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { listExercises, getExerciseDisplayName } from '../data/exercises';
+import { listExercises, getExerciseDisplayName, normalizeName } from '../data/exercises';
 import { useSettings } from '../data/SettingsProvider';
 import { getLatestExerciseSets, saveWorkout } from '../data/workouts';
+import { getRoutineDetail, overwriteRoutineExercises } from '../data/routines';
 
 interface WorkoutSet {
   weight?: number;
@@ -22,11 +23,21 @@ interface WorkoutExercise {
   sets: WorkoutSet[];
 }
 
+interface ExerciseOption {
+  id: string;
+  label: string;
+  metricType: string;
+  muscles: string[];
+  equipment: string[];
+  normalizedLabel: string;
+}
+
 interface WorkoutSession {
   id: string;
   createdAt: string;
   routineId?: string;
   routineName?: string;
+  originalExerciseIds?: string[];
   exercises: WorkoutExercise[];
 }
 
@@ -42,10 +53,14 @@ export function Workout() {
   const { settings } = useSettings();
   const [session, setSession] = useState<WorkoutSession | null>(null);
   const [elapsed, setElapsed] = useState(0);
-  const [exercisePicker, setExercisePicker] = useState('');
-  const [exerciseOptions, setExerciseOptions] = useState<
-    Array<{ id: string; label: string; metricType: string }>
-  >([]);
+  const [exerciseQuery, setExerciseQuery] = useState('');
+  const [exerciseOptions, setExerciseOptions] = useState<ExerciseOption[]>([]);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [replaceTarget, setReplaceTarget] = useState<{ exerciseId: string; index: number } | null>(
+    null
+  );
+  const [replaceQuery, setReplaceQuery] = useState('');
+  const [showFinishPrompt, setShowFinishPrompt] = useState(false);
   const [restTimers, setRestTimers] = useState<
     Record<string, { secondsLeft: number; totalSeconds: number; exerciseName: string }>
   >({});
@@ -67,11 +82,17 @@ export function Workout() {
     const loadExercises = async () => {
       const exercises = await listExercises();
       setExerciseOptions(
-        exercises.map((exercise) => ({
-          id: exercise.id,
-          label: getExerciseDisplayName(exercise, settings.language),
-          metricType: exercise.metricType
-        }))
+        exercises.map((exercise) => {
+          const label = getExerciseDisplayName(exercise, settings.language);
+          return {
+            id: exercise.id,
+            label,
+            metricType: exercise.metricType,
+            muscles: exercise.muscles,
+            equipment: exercise.equipment,
+            normalizedLabel: normalizeName(label)
+          };
+        })
       );
     };
     loadExercises();
@@ -201,7 +222,7 @@ export function Workout() {
     });
   };
 
-  const handleFinish = async () => {
+  const finalizeWorkout = async (updateRoutine: boolean) => {
     if (session) {
       const sanitizedSession: WorkoutSession = {
         ...session,
@@ -212,9 +233,63 @@ export function Workout() {
       };
       await saveWorkout(sanitizedSession);
     }
+
+    if (updateRoutine && session?.routineId) {
+      const detail = await getRoutineDetail(session.routineId);
+      const defaultsByExercise = new Map(
+        detail?.defaults.map((item) => [item.exerciseId, item]) ?? []
+      );
+      const exercises = session.exercises.map((exercise, index) => {
+        const existingDefaults = defaultsByExercise.get(exercise.exerciseId);
+        if (existingDefaults) {
+          return {
+            exerciseId: exercise.exerciseId,
+            order: index,
+            defaults: {
+              defaultSets: existingDefaults.defaultSets,
+              defaultReps: existingDefaults.defaultReps,
+              defaultWeight: existingDefaults.defaultWeight,
+              defaultDuration: existingDefaults.defaultDuration,
+              defaultDistance: existingDefaults.defaultDistance,
+              defaultRestSeconds: existingDefaults.defaultRestSeconds
+            }
+          };
+        }
+        const lastSet = exercise.sets[exercise.sets.length - 1];
+        return {
+          exerciseId: exercise.exerciseId,
+          order: index,
+          defaults: {
+            defaultSets: exercise.sets.length,
+            defaultReps: lastSet?.reps,
+            defaultWeight: lastSet?.weight,
+            defaultRestSeconds: exercise.restSeconds ?? 0
+          }
+        };
+      });
+      await overwriteRoutineExercises(session.routineId, exercises);
+    }
+
     localStorage.removeItem('active-session');
     setSession(null);
+    setShowFinishPrompt(false);
     navigate('/');
+  };
+
+  const handleFinish = () => {
+    if (session) {
+      const original = session.originalExerciseIds ?? [];
+      const current = session.exercises.map((exercise) => exercise.exerciseId);
+      const hasChanges =
+        original.length > 0 &&
+        (original.length !== current.length ||
+          original.some((exerciseId, index) => exerciseId !== current[index]));
+      if (session.routineId && hasChanges) {
+        setShowFinishPrompt(true);
+        return;
+      }
+    }
+    void finalizeWorkout(false);
   };
 
   const handleDiscard = () => {
@@ -223,29 +298,86 @@ export function Workout() {
     navigate('/');
   };
 
-  const handleAddExercise = async () => {
-    if (!session || !exercisePicker) return;
-    const selected = exerciseOptions.find((option) => option.id === exercisePicker);
+  const buildWorkoutExercise = async (option: ExerciseOption): Promise<WorkoutExercise> => {
+    const previousSets = await getLatestExerciseSets(option.id);
+    return {
+      exerciseId: option.id,
+      name: option.label,
+      metricType: option.metricType,
+      previousSets: previousSets.map((set) => ({ weight: set.weight, reps: set.reps })),
+      restSeconds: 0,
+      sets: Array.from({ length: 3 }, () => ({
+        completed: false
+      }))
+    };
+  };
+
+  const handleAddExercise = async (optionId: string) => {
+    if (!session) return;
+    const selected = exerciseOptions.find((option) => option.id === optionId);
     if (!selected) return;
-    const previousSets = await getLatestExerciseSets(selected.id);
+    const nextExercise = await buildWorkoutExercise(selected);
     setSession((prev) => {
       if (!prev) return prev;
-      const nextExercise: WorkoutExercise = {
-        exerciseId: selected.id,
-        name: selected.label,
-        metricType: selected.metricType,
-        previousSets: previousSets.map((set) => ({ weight: set.weight, reps: set.reps })),
-        restSeconds: 0,
-        sets: Array.from({ length: 3 }, () => ({
-          completed: false
-        }))
-      };
       return {
         ...prev,
         exercises: [...prev.exercises, nextExercise]
       };
     });
-    setExercisePicker('');
+    setExerciseQuery('');
+  };
+
+  const handleRemoveExercise = (exerciseIndex: number) => {
+    if (!session) return;
+    if (!window.confirm('¿Eliminar este ejercicio del entreno?')) return;
+    const exercise = session.exercises[exerciseIndex];
+    setSession((prev) => {
+      if (!prev) return prev;
+      const nextExercises = prev.exercises.filter((_, index) => index !== exerciseIndex);
+      return { ...prev, exercises: nextExercises };
+    });
+    setRestTimers((prev) => {
+      const next = { ...prev };
+      delete next[exercise.exerciseId];
+      return next;
+    });
+    setOpenMenuId(null);
+  };
+
+  const handleMoveExercise = (exerciseIndex: number, direction: 'up' | 'down') => {
+    if (!session) return;
+    setSession((prev) => {
+      if (!prev) return prev;
+      const nextExercises = [...prev.exercises];
+      const swapIndex = direction === 'up' ? exerciseIndex - 1 : exerciseIndex + 1;
+      if (swapIndex < 0 || swapIndex >= nextExercises.length) return prev;
+      const temp = nextExercises[swapIndex];
+      nextExercises[swapIndex] = nextExercises[exerciseIndex];
+      nextExercises[exerciseIndex] = temp;
+      return { ...prev, exercises: nextExercises };
+    });
+    setOpenMenuId(null);
+  };
+
+  const handleReplaceExercise = async (exerciseIndex: number, optionId: string) => {
+    if (!session) return;
+    const selected = exerciseOptions.find((option) => option.id === optionId);
+    if (!selected) return;
+    const nextExercise = await buildWorkoutExercise(selected);
+    const oldExercise = session.exercises[exerciseIndex];
+    setSession((prev) => {
+      if (!prev) return prev;
+      const nextExercises = [...prev.exercises];
+      nextExercises[exerciseIndex] = nextExercise;
+      return { ...prev, exercises: nextExercises };
+    });
+    setRestTimers((prev) => {
+      const next = { ...prev };
+      delete next[oldExercise.exerciseId];
+      return next;
+    });
+    setReplaceTarget(null);
+    setReplaceQuery('');
   };
 
   const buildPreviousMatches = (
@@ -283,6 +415,48 @@ export function Workout() {
       return match;
     });
   };
+
+  const exerciseOptionMap = useMemo(
+    () => new Map(exerciseOptions.map((option) => [option.id, option])),
+    [exerciseOptions]
+  );
+
+  const filteredExercises = useMemo(() => {
+    const query = normalizeName(exerciseQuery);
+    const list = exerciseOptions.filter(
+      (option) => !query || option.normalizedLabel.includes(query)
+    );
+    return list.slice(0, 8);
+  }, [exerciseOptions, exerciseQuery]);
+
+  const replaceOptions = useMemo(() => {
+    if (!replaceTarget) return [];
+    const target = exerciseOptionMap.get(replaceTarget.exerciseId);
+    const query = normalizeName(replaceQuery);
+    const candidates = exerciseOptions.filter((option) => option.id !== replaceTarget.exerciseId);
+    if (query) {
+      return candidates
+        .filter((option) => option.normalizedLabel.includes(query))
+        .slice(0, 8);
+    }
+    if (!target) {
+      return candidates.slice(0, 8);
+    }
+    const targetMuscles = new Set(target.muscles);
+    const targetEquipment = new Set(target.equipment);
+    const scored = candidates
+      .map((option) => {
+        const muscleScore = option.muscles.filter((muscle) => targetMuscles.has(muscle)).length;
+        const equipmentScore = option.equipment.filter((item) => targetEquipment.has(item)).length;
+        return {
+          option,
+          score: muscleScore * 3 + equipmentScore * 2
+        };
+      })
+      .filter((item) => item.score > 0)
+      .sort((a, b) => b.score - a.score || a.option.label.localeCompare(b.option.label));
+    return (scored.length ? scored.map((item) => item.option) : candidates).slice(0, 8);
+  }, [exerciseOptions, exerciseOptionMap, replaceQuery, replaceTarget]);
 
   const ensureAudioContext = async () => {
     if (!audioContextRef.current) {
@@ -367,19 +541,68 @@ export function Workout() {
       ) : (
         session.exercises.map((exercise, exerciseIndex) => {
           const matches = buildPreviousMatches(exercise.previousSets ?? [], exercise.sets);
+          const isMenuOpen = openMenuId === exercise.exerciseId;
           return (
             <div key={exercise.exerciseId} className="exercise-card">
               <div className="exercise-header">
-                <div className="avatar">{exercise.name.charAt(0)}</div>
-                <div>
-                  <h2 className="exercise-title">{exercise.name}</h2>
-                  <p className="muted">Agregar notas aquí...</p>
-                  <button className="rest" type="button" onClick={() => handleRestCycle(exerciseIndex)}>
-                    Descanso: {exercise.restSeconds ? formatDuration(exercise.restSeconds) : 'APAGADO'}
-                    {restTimers[exercise.exerciseId]
-                      ? ` · ${formatDuration(restTimers[exercise.exerciseId].secondsLeft)}`
-                      : ''}
+                <div className="exercise-header-left">
+                  <div className="avatar">{exercise.name.charAt(0)}</div>
+                  <div>
+                    <h2 className="exercise-title">{exercise.name}</h2>
+                    <p className="muted">Agregar notas aquí...</p>
+                    <button className="rest" type="button" onClick={() => handleRestCycle(exerciseIndex)}>
+                      Descanso: {exercise.restSeconds ? formatDuration(exercise.restSeconds) : 'APAGADO'}
+                      {restTimers[exercise.exerciseId]
+                        ? ` · ${formatDuration(restTimers[exercise.exerciseId].secondsLeft)}`
+                        : ''}
+                    </button>
+                  </div>
+                </div>
+                <div className="exercise-menu-wrapper">
+                  <button
+                    className="menu-button"
+                    type="button"
+                    onClick={() =>
+                      setOpenMenuId((prev) => (prev === exercise.exerciseId ? null : exercise.exerciseId))
+                    }
+                  >
+                    ⋯
                   </button>
+                  {isMenuOpen ? (
+                    <div className="exercise-menu">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setReplaceTarget({ exerciseId: exercise.exerciseId, index: exerciseIndex });
+                          setReplaceQuery('');
+                          setOpenMenuId(null);
+                        }}
+                      >
+                        Reemplazar ejercicio
+                      </button>
+                      <button
+                        type="button"
+                        disabled={exerciseIndex === 0}
+                        onClick={() => handleMoveExercise(exerciseIndex, 'up')}
+                      >
+                        Mover arriba
+                      </button>
+                      <button
+                        type="button"
+                        disabled={exerciseIndex === session.exercises.length - 1}
+                        onClick={() => handleMoveExercise(exerciseIndex, 'down')}
+                      >
+                        Mover abajo
+                      </button>
+                      <button
+                        className="danger"
+                        type="button"
+                        onClick={() => handleRemoveExercise(exerciseIndex)}
+                      >
+                        Eliminar ejercicio
+                      </button>
+                    </div>
+                  ) : null}
                 </div>
               </div>
 
@@ -466,18 +689,36 @@ export function Workout() {
 
       <div className="card">
         <h2>Agregar ejercicio</h2>
-        <div className="field inline">
-          <select value={exercisePicker} onChange={(event) => setExercisePicker(event.target.value)}>
-            <option value="">Selecciona ejercicio</option>
-            {exerciseOptions.map((exercise) => (
-              <option key={exercise.id} value={exercise.id}>
-                {exercise.label}
-              </option>
-            ))}
-          </select>
-          <button className="primary-button" type="button" onClick={handleAddExercise}>
-            Añadir
-          </button>
+        <div className="field">
+          <label className="label" htmlFor="workout-exercise-search">
+            Buscar ejercicio
+          </label>
+          <input
+            id="workout-exercise-search"
+            type="search"
+            placeholder="Ej: Sentadilla, remo..."
+            value={exerciseQuery}
+            onChange={(event) => setExerciseQuery(event.target.value)}
+          />
+          {filteredExercises.length ? (
+            <div className="exercise-search-list">
+              {filteredExercises.map((exercise) => (
+                <button
+                  key={exercise.id}
+                  className="exercise-search-item"
+                  type="button"
+                  onClick={() => handleAddExercise(exercise.id)}
+                >
+                  <span>{exercise.label}</span>
+                  <span className="muted">
+                    {exercise.muscles.length ? exercise.muscles.slice(0, 2).join(', ') : 'Sin grupo'}
+                  </span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <p className="muted">No hay ejercicios que coincidan.</p>
+          )}
         </div>
       </div>
       <div className="actions">
@@ -488,6 +729,90 @@ export function Workout() {
           Descartar entreno
         </button>
       </div>
+
+      {replaceTarget ? (
+        <div
+          className="modal-overlay bottom"
+          onClick={() => {
+            setReplaceTarget(null);
+            setReplaceQuery('');
+          }}
+        >
+          <div className="modal-card" onClick={(event) => event.stopPropagation()}>
+            <div className="card-header">
+              <h2>Reemplazar ejercicio</h2>
+              <button
+                className="ghost-button"
+                type="button"
+                onClick={() => {
+                  setReplaceTarget(null);
+                  setReplaceQuery('');
+                }}
+              >
+                Cerrar
+              </button>
+            </div>
+            <div className="field">
+              <label className="label" htmlFor="replace-exercise-search">
+                Buscar ejercicio
+              </label>
+              <input
+                id="replace-exercise-search"
+                type="search"
+                placeholder="Busca un reemplazo..."
+                value={replaceQuery}
+                onChange={(event) => setReplaceQuery(event.target.value)}
+              />
+              {replaceOptions.length ? (
+                <div className="exercise-search-list">
+                  {replaceOptions.map((exercise) => (
+                    <button
+                      key={exercise.id}
+                      className="exercise-search-item"
+                      type="button"
+                      onClick={() => handleReplaceExercise(replaceTarget.index, exercise.id)}
+                    >
+                      <span>{exercise.label}</span>
+                      <span className="muted">
+                        {exercise.muscles.length
+                          ? exercise.muscles.slice(0, 2).join(', ')
+                          : 'Sin grupo'}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="muted">No hay ejercicios para reemplazar.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {showFinishPrompt ? (
+        <div className="modal-overlay center" onClick={() => setShowFinishPrompt(false)}>
+          <div className="modal-card" onClick={(event) => event.stopPropagation()}>
+            <div className="card-header">
+              <h2>¿Actualizar rutina?</h2>
+              <button className="ghost-button" type="button" onClick={() => setShowFinishPrompt(false)}>
+                Cancelar
+              </button>
+            </div>
+            <p className="muted">
+              Cambiaste los ejercicios de esta rutina durante el entreno. ¿Quieres actualizar la
+              rutina o guardar solo este entrenamiento?
+            </p>
+            <div className="actions">
+              <button className="ghost-button" type="button" onClick={() => finalizeWorkout(false)}>
+                Guardar solo entreno
+              </button>
+              <button className="primary-button" type="button" onClick={() => finalizeWorkout(true)}>
+                Actualizar rutina
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }
