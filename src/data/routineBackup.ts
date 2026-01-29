@@ -50,6 +50,32 @@ export async function exportRoutineBackup(routineId: string): Promise<RoutineBac
     .equals(routineId)
     .sortBy('order');
   const defaults = await db.exerciseDefaults.where('routineId').equals(routineId).toArray();
+  const defaultsByExercise = new Map(
+    defaults.map((item) => [
+      item.exerciseId,
+      {
+        defaultSets: item.defaultSets,
+        defaultReps: item.defaultReps,
+        defaultWeight: item.defaultWeight,
+        defaultDuration: item.defaultDuration,
+        defaultDistance: item.defaultDistance,
+        defaultRestSeconds: item.defaultRestSeconds
+      }
+    ])
+  );
+
+  type HistorySession = {
+    routineId?: string;
+    exercises?: Array<{ exerciseId: string; sets: Array<{ weight?: number; reps?: number }> }>;
+  };
+  let lastSession: HistorySession | undefined;
+  if (typeof localStorage !== 'undefined') {
+    const historyRaw = localStorage.getItem('workout-history');
+    if (historyRaw) {
+      const history = JSON.parse(historyRaw) as HistorySession[];
+      lastSession = history.find((session) => session.routineId === routineId);
+    }
+  }
 
   const exerciseIds = routineExercises.map((entry) => entry.exerciseId);
   const customExercises = await db.exercises
@@ -69,19 +95,25 @@ export async function exportRoutineBackup(routineId: string): Promise<RoutineBac
       name: routine.name,
       tags: tags.map((tag) => tag.tag),
       exercises: routineExercises.map((entry) => {
-        const item = defaults.find((defaultsItem) => defaultsItem.exerciseId === entry.exerciseId);
+        const baseDefaults = defaultsByExercise.get(entry.exerciseId);
+        const lastExercise = lastSession?.exercises?.find(
+          (exercise) => exercise.exerciseId === entry.exerciseId
+        );
+        const lastSets = lastExercise?.sets ?? [];
+        const lastSet = lastSets.length ? lastSets[lastSets.length - 1] : undefined;
+
+        const mergedDefaults = {
+          ...baseDefaults,
+          defaultSets: lastSets.length || baseDefaults?.defaultSets,
+          defaultWeight: lastSet?.weight ?? baseDefaults?.defaultWeight,
+          defaultReps: lastSet?.reps ?? baseDefaults?.defaultReps
+        };
+
         return {
           exerciseId: entry.exerciseId,
           order: entry.order,
-          defaults: item
-            ? {
-                defaultSets: item.defaultSets,
-                defaultReps: item.defaultReps,
-                defaultWeight: item.defaultWeight,
-                defaultDuration: item.defaultDuration,
-                defaultDistance: item.defaultDistance,
-                defaultRestSeconds: item.defaultRestSeconds
-              }
+          defaults: Object.values(mergedDefaults).some((value) => value !== undefined)
+            ? mergedDefaults
             : undefined
         };
       })
