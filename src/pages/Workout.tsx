@@ -60,6 +60,7 @@ export function Workout() {
     null
   );
   const [replaceQuery, setReplaceQuery] = useState('');
+  const [showAddExercise, setShowAddExercise] = useState(false);
   const [showFinishPrompt, setShowFinishPrompt] = useState(false);
   const [restTimers, setRestTimers] = useState<
     Record<string, { secondsLeft: number; totalSeconds: number; exerciseName: string }>
@@ -325,6 +326,7 @@ export function Workout() {
       };
     });
     setExerciseQuery('');
+    setShowAddExercise(false);
   };
 
   const handleRemoveExercise = (exerciseIndex: number) => {
@@ -687,40 +689,9 @@ export function Workout() {
         })
       )}
 
-      <div className="card">
-        <h2>Agregar ejercicio</h2>
-        <div className="field">
-          <label className="label" htmlFor="workout-exercise-search">
-            Buscar ejercicio
-          </label>
-          <input
-            id="workout-exercise-search"
-            type="search"
-            placeholder="Ej: Sentadilla, remo..."
-            value={exerciseQuery}
-            onChange={(event) => setExerciseQuery(event.target.value)}
-          />
-          {filteredExercises.length ? (
-            <div className="exercise-search-list">
-              {filteredExercises.map((exercise) => (
-                <button
-                  key={exercise.id}
-                  className="exercise-search-item"
-                  type="button"
-                  onClick={() => handleAddExercise(exercise.id)}
-                >
-                  <span>{exercise.label}</span>
-                  <span className="muted">
-                    {exercise.muscles.length ? exercise.muscles.slice(0, 2).join(', ') : 'Sin grupo'}
-                  </span>
-                </button>
-              ))}
-            </div>
-          ) : (
-            <p className="muted">No hay ejercicios que coincidan.</p>
-          )}
-        </div>
-      </div>
+      <button className="ghost-button full" type="button" onClick={() => setShowAddExercise(true)}>
+        + Agregar ejercicio
+      </button>
       <div className="actions">
         <button className="ghost-button" type="button">
           Configuración
@@ -729,6 +700,52 @@ export function Workout() {
           Descartar entreno
         </button>
       </div>
+
+      {showAddExercise ? (
+        <div className="modal-overlay bottom" onClick={() => setShowAddExercise(false)}>
+          <div className="modal-card" onClick={(event) => event.stopPropagation()}>
+            <div className="card-header">
+              <h2>Agregar ejercicio</h2>
+              <button className="ghost-button" type="button" onClick={() => setShowAddExercise(false)}>
+                Cerrar
+              </button>
+            </div>
+            <div className="field">
+              <label className="label" htmlFor="workout-exercise-search">
+                Buscar ejercicio
+              </label>
+              <input
+                id="workout-exercise-search"
+                type="search"
+                placeholder="Ej: Sentadilla, remo..."
+                value={exerciseQuery}
+                onChange={(event) => setExerciseQuery(event.target.value)}
+              />
+              {filteredExercises.length ? (
+                <div className="exercise-search-list">
+                  {filteredExercises.map((exercise) => (
+                    <button
+                      key={exercise.id}
+                      className="exercise-search-item"
+                      type="button"
+                      onClick={() => handleAddExercise(exercise.id)}
+                    >
+                      <span>{exercise.label}</span>
+                      <span className="muted">
+                        {exercise.muscles.length
+                          ? exercise.muscles.slice(0, 2).join(', ')
+                          : 'Sin grupo'}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="muted">No hay ejercicios que coincidan.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      ) : null}
 
       {replaceTarget ? (
         <div

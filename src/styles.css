@@ -293,6 +293,18 @@ input::placeholder {
   padding: 0.5rem 0.75rem;
 }
 
+.compact-card-button {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.compact-card-button:hover {
+  border-color: var(--accent);
+}
+
 .compact-title {
   margin: 0;
   font-weight: 600;
@@ -324,6 +336,12 @@ input::placeholder {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
+}
+
+.routine-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
 }
 
 .workout-actions {
@@ -573,6 +591,64 @@ input::placeholder {
   width: min(520px, 100%);
   padding: 1rem;
   border: 1px solid var(--border);
+}
+
+.modal-overlay.center .modal-card {
+  border-radius: 20px;
+}
+
+.modal-scroll {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.5rem;
+  max-height: 60vh;
+  overflow: auto;
+  padding-right: 0.25rem;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.metric-label {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.metric-value {
+  margin: 0.15rem 0 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.modal-section {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.modal-exercise h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1rem;
+}
+
+.modal-sets {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.modal-set-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
 }
 
 .profile-name {

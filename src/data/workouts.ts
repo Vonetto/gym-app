@@ -35,6 +35,7 @@ export async function saveWorkout(session: WorkoutSessionPayload) {
 
   const exerciseRecords: WorkoutExerciseRecord[] = [];
   const setRecords: WorkoutSetRecord[] = [];
+  let completedSets = 0;
 
   session.exercises.forEach((exercise, exerciseIndex) => {
     const workoutExerciseId = `workout-exercise-${crypto.randomUUID()}`;
@@ -47,6 +48,7 @@ export async function saveWorkout(session: WorkoutSessionPayload) {
     });
     exercise.sets.forEach((set, setIndex) => {
       if (!set.completed) return;
+      completedSets += 1;
       setRecords.push({
         id: `workout-set-${crypto.randomUUID()}`,
         workoutExerciseId,
@@ -60,6 +62,10 @@ export async function saveWorkout(session: WorkoutSessionPayload) {
       });
     });
   });
+
+  if (completedSets === 0) {
+    return;
+  }
 
   await db.transaction('rw', [db.workouts, db.workoutExercises, db.workoutSets], async () => {
     await db.workouts.add(workout);
@@ -75,6 +81,14 @@ export async function saveWorkout(session: WorkoutSessionPayload) {
 export async function listRecentWorkouts(limit = 8) {
   const workouts = await db.workouts.orderBy('endedAt').reverse().limit(limit).toArray();
   return workouts;
+}
+
+export async function listAllWorkouts() {
+  return db.workouts.orderBy('endedAt').reverse().toArray();
+}
+
+export async function getWorkoutById(workoutId: string) {
+  return db.workouts.get(workoutId);
 }
 
 export async function getLastWorkoutForRoutine(routineId: string) {
