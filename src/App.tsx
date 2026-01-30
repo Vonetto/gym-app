@@ -9,6 +9,7 @@ import { RoutineDetail } from './pages/RoutineDetail';
 import { ExerciseCatalog } from './pages/ExerciseCatalog';
 import { Workout } from './pages/Workout';
 import { Profile } from './pages/Profile';
+import { Stats } from './pages/Stats';
 
 export function App() {
   const { ready } = useSettings();
@@ -36,6 +37,7 @@ export function App() {
         <Route path="/catalog" element={<ExerciseCatalog />} />
         <Route path="/workout" element={<Workout />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/stats" element={<Stats />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
     </Layout>

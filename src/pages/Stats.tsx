@@ -35,10 +35,9 @@ const formatShortDate = (value: string) => {
   return `${month}-${day}`;
 };
 
-export function Profile() {
+export function Stats() {
   const { settings } = useSettings();
   const [metric, setMetric] = useState<MetricKey>('duration');
-  const [activeBar, setActiveBar] = useState<number | null>(null);
   const [summary, setSummary] = useState({
     workouts: 0,
     minutes: 0,
@@ -50,6 +49,7 @@ export function Profile() {
   const [recentWorkouts, setRecentWorkouts] = useState<WorkoutSummary[]>([]);
   const [chartWorkouts, setChartWorkouts] = useState<WorkoutSummary[]>([]);
   const [loading, setLoading] = useState(true);
+  const [activeBar, setActiveBar] = useState<number | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -116,7 +116,6 @@ export function Profile() {
           volume: workoutVolume,
           reps: workoutReps
         });
-
       }
 
       if (!active) return;
@@ -130,9 +129,9 @@ export function Profile() {
       setPrs(
         Array.from(prMap.values())
           .sort((a, b) => b.oneRm - a.oneRm)
-          .slice(0, 5)
+          .slice(0, 8)
       );
-      setRecentWorkouts(summaries.slice(0, 5));
+      setRecentWorkouts(summaries.slice(0, 10));
       setChartWorkouts([...summaries].reverse());
       setLoading(false);
     };
@@ -151,16 +150,12 @@ export function Profile() {
     const max = Math.max(1, ...values);
     const count = chartWorkouts.length;
     const labelStep = Math.max(1, Math.ceil(count / 8));
-    return chartWorkouts.map((workout, index) => {
-      const showLabel = index % labelStep === 0 || index === count - 1;
-      return {
-        label: formatShortDate(workout.endedAt),
-        showLabel,
-        value: values[index],
-        raw: values[index],
-        height: Math.round((values[index] / max) * 100)
-      };
-    });
+    return chartWorkouts.map((workout, index) => ({
+      label: formatShortDate(workout.endedAt),
+      showLabel: index % labelStep === 0 || index === count - 1,
+      raw: values[index],
+      height: Math.round((values[index] / max) * 100)
+    }));
   }, [chartWorkouts, metric]);
 
   const chartMax = useMemo(() => {
@@ -182,18 +177,17 @@ export function Profile() {
     return `${value}`;
   };
 
-
   return (
     <section className="stack wide">
       <div className="profile-header">
         <div>
-          <p className="profile-name">Tu perfil</p>
+          <p className="profile-name">Estadísticas</p>
           <p className="muted">
-            Resumen de entrenamientos (últimos {settings.statsRangeDays ?? 30} días)
+            Últimos {settings.statsRangeDays ?? 30} días · resumen general
           </p>
         </div>
-        <Link className="ghost-button" to="/settings">
-          Ajustes
+        <Link className="ghost-button" to="/profile">
+          Volver
         </Link>
       </div>
 
@@ -289,24 +283,6 @@ export function Profile() {
       </div>
 
       <div className="card">
-        <h2>Información</h2>
-        <div className="profile-cards">
-          <Link className="profile-card" to="/stats">
-            Estadísticas
-          </Link>
-          <button className="profile-card" type="button">
-            <span>Ejercicios</span>
-          </button>
-          <button className="profile-card" type="button">
-            <span>Medidas</span>
-          </button>
-          <button className="profile-card" type="button">
-            <span>Calendario</span>
-          </button>
-        </div>
-      </div>
-
-      <div className="card">
         <h2>PRs (1RM estimado)</h2>
         {prs.length ? (
           <ul className="list">
@@ -328,7 +304,7 @@ export function Profile() {
       </div>
 
       <div className="card">
-        <h2>Historial</h2>
+        <h2>Historial reciente</h2>
         {recentWorkouts.length ? (
           <ul className="list">
             {recentWorkouts.map((workout) => (
