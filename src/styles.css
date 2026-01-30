@@ -660,15 +660,99 @@ input::placeholder {
 .chart {
   display: grid;
   grid-auto-flow: column;
+  grid-auto-columns: 1fr;
   gap: 0.5rem;
   align-items: end;
   height: 140px;
+  margin-top: 0;
+}
+
+.chart-wrapper {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  align-items: end;
   margin-top: 1rem;
+}
+
+.chart-axis {
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  justify-items: end;
+  gap: 0.2rem;
+  padding-top: 0.8rem;
+  padding-bottom: 0.4rem;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  height: 140px;
+}
+
+.chart-axis-label {
+  line-height: 1;
+}
+
+.chart-scroll {
+  overflow-x: auto;
+  overflow-y: visible;
+  padding-top: 0.8rem;
+  padding-bottom: 0.5rem;
+}
+
+.chart-scroll .chart {
+  min-width: 320px;
+  grid-auto-columns: 52px;
+  gap: 0.4rem;
+}
+
+.chart-column {
+  display: grid;
+  gap: 0.35rem;
+  align-items: end;
+  height: 100%;
 }
 
 .chart-bar {
   background: #2d8cff;
-  border-radius: 12px 12px 4px 4px;
+  border-radius: 10px;
+  width: 12px;
+  justify-self: center;
+  border: none;
+  padding: 0;
+  position: relative;
+  cursor: pointer;
+}
+
+.chart-bar.active {
+  background: #5bb8ff;
+}
+
+.chart-value {
+  position: absolute;
+  top: -1.6rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a1a;
+  color: var(--text);
+  font-size: 0.6rem;
+  padding: 0.15rem 0.35rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.chart-label {
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  text-align: center;
+  text-transform: capitalize;
+  white-space: nowrap;
+  min-height: 1rem;
+  width: 6ch;
+}
+
+.chart-label.hidden {
+  visibility: hidden;
 }
 
 .pill-row {
@@ -693,6 +777,31 @@ input::placeholder {
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 0.75rem;
   margin-top: 1rem;
+}
+
+.profile-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.profile-card {
+  display: flex;
+  align-items: center;
+  padding: 0.85rem 1rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.profile-card:hover {
+  border-color: var(--accent);
 }
 
 .wide {

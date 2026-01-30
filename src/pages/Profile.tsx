@@ -289,6 +289,24 @@ export function Profile() {
       </div>
 
       <div className="card">
+        <h2>Información</h2>
+        <div className="profile-cards">
+          <button className="profile-card" type="button">
+            <span>Estadísticas</span>
+          </button>
+          <button className="profile-card" type="button">
+            <span>Ejercicios</span>
+          </button>
+          <button className="profile-card" type="button">
+            <span>Medidas</span>
+          </button>
+          <button className="profile-card" type="button">
+            <span>Calendario</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="card">
         <h2>PRs (1RM estimado)</h2>
         {prs.length ? (
           <ul className="list">
