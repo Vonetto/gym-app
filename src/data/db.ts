@@ -5,6 +5,7 @@ export interface SettingsRecord {
   theme: 'dark' | 'light';
   language: 'es';
   units: 'kg';
+  statsRangeDays?: 7 | 30 | 180 | 365;
 }
 
 export interface RoutineRecord {

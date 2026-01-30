@@ -1,12 +1,14 @@
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
 import { defaultSettings, loadSettings, saveSettings, setTheme } from './settings';
 import { resetAll } from './db';
+import { seedExerciseCatalog } from './exercises';
 import { Theme } from '../theme/theme';
 
 interface SettingsContextValue {
   settings: typeof defaultSettings;
   ready: boolean;
   updateTheme: (theme: Theme) => Promise<void>;
+  updateStatsRange: (days: 7 | 30 | 180 | 365) => Promise<void>;
   resetAllData: () => Promise<void>;
 }
 
@@ -36,8 +38,15 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     await saveSettings(next);
   };
 
+  const updateStatsRange = async (days: 7 | 30 | 180 | 365) => {
+    const next = { ...settings, statsRangeDays: days };
+    setSettings(next);
+    await saveSettings(next);
+  };
+
   const resetAllData = async () => {
     await resetAll();
+    await seedExerciseCatalog();
     await saveSettings(defaultSettings);
     setSettings(defaultSettings);
     setTheme(defaultSettings.theme);
@@ -48,6 +57,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       settings,
       ready,
       updateTheme,
+      updateStatsRange,
       resetAllData
     }),
     [settings, ready]

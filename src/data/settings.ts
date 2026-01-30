@@ -5,13 +5,14 @@ export const defaultSettings: SettingsRecord = {
   id: 'app',
   theme: 'dark',
   language: 'es',
-  units: 'kg'
+  units: 'kg',
+  statsRangeDays: 30
 };
 
 export async function loadSettings(): Promise<SettingsRecord> {
   const stored = await db.settings.get('app');
   if (stored) {
-    return stored;
+    return { ...defaultSettings, ...stored };
   }
   await db.settings.put(defaultSettings);
   return defaultSettings;

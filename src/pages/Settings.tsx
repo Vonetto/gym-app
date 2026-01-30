@@ -5,7 +5,7 @@ import { exportRoutineBackup, importRoutineBackup } from '../data/routineBackup'
 import { listRoutines } from '../data/routines';
 
 export function Settings() {
-  const { settings, updateTheme, resetAllData } = useSettings();
+  const { settings, updateTheme, updateStatsRange, resetAllData } = useSettings();
   const [confirmingReset, setConfirmingReset] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [importing, setImporting] = useState(false);
@@ -13,6 +13,7 @@ export function Settings() {
   const [routines, setRoutines] = useState<Array<{ id: string; name: string }>>([]);
   const [routineId, setRoutineId] = useState('');
   const navigate = useNavigate();
+  const statsRangeDays = settings.statsRangeDays ?? 30;
 
   const handleReset = async () => {
     setResetting(true);
@@ -89,6 +90,21 @@ export function Settings() {
             >
               Claro
             </button>
+          </div>
+        </div>
+        <div className="field">
+          <span className="label">Rango de estadísticas</span>
+          <div className="toggle-group" role="group" aria-label="Rango de estadísticas">
+            {[7, 30, 180, 365].map((days) => (
+              <button
+                key={days}
+                type="button"
+                className={statsRangeDays === days ? 'toggle active' : 'toggle'}
+                onClick={() => updateStatsRange(days as 7 | 30 | 180 | 365)}
+              >
+                {days} días
+              </button>
+            ))}
           </div>
         </div>
       </div>
