@@ -26,6 +26,12 @@
 - [ ] **EXE-03**: Usuario puede editar ejercicios personalizados.
 - [ ] **EXE-04**: Sistema previene duplicados evidentes en ejercicios personalizados (normalización básica).
 
+### Directorio de Ejercicios
+
+- [x] **EXD-01**: Directorio con tabs A‑Z / Músculo / Equipo.
+- [x] **EXD-02**: Detalle de ejercicio con historial y 1RM/mejor marca.
+- [x] **EXD-03**: Tips externos con fallback local.
+
 ### Logging de Sets
 
 - [ ] **LOG-01**: Usuario puede registrar sets con métricas mixtas (peso+reps, reps, tiempo, distancia, RPE).
@@ -117,6 +123,9 @@
 | EXE-02 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
 | EXE-03 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
 | EXE-04 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
+| EXD-01 | Phase 3: Ejercicios — Directorio + Detalle | Complete |
+| EXD-02 | Phase 3: Ejercicios — Directorio + Detalle | Complete |
+| EXD-03 | Phase 3: Ejercicios — Directorio + Detalle | Complete |
 | LOG-01 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
 | LOG-02 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
 | LOG-03 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
@@ -151,4 +160,4 @@
 
 ---
 *Requirements defined: 2026-01-26*
-*Last updated: 2026-01-26 after initial definition*
+*Last updated: 2026-02-02 after Phase 3 delivery*

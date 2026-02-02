@@ -19,6 +19,7 @@
 
 ## Phase 2: Rutinas + Catálogo de Ejercicios
 **Goal:** Plantillas de entrenamiento y catálogo editable listos para usarse.
+**Status:** Complete (2026-02-02)
 
 **Requirements**
 - RTN-01, RTN-02, RTN-03, RTN-04, RTN-05
@@ -32,7 +33,21 @@
 
 ---
 
-## Phase 3: Logging de Sesión + UX Hevy-like
+## Phase 3: Ejercicios — Directorio + Detalle
+**Goal:** Directorio navegable de ejercicios y vista detalle con historial, 1RM y tips.
+**Status:** Complete (2026-02-02)
+
+**Requirements**
+- EXD-01, EXD-02, EXD-03
+
+**Success Criteria (observable)**
+1. El usuario navega ejercicios por A‑Z, por músculo y por equipo.
+2. El usuario abre el detalle y ve historial + 1RM.
+3. El usuario ve tips (o estado “sin tips”) por ejercicio.
+
+---
+
+## Phase 4: Logging de Sesión + UX Hevy-like
 **Goal:** Flujo de sesión rápido con sets editables y controles principales.
 
 **Requirements**
@@ -48,7 +63,7 @@
 
 ---
 
-## Phase 4: Timers + Progresión
+## Phase 5: Timers + Progresión
 **Goal:** Descansos configurables y sugerencias de progresión por set.
 
 **Requirements**
@@ -63,7 +78,7 @@
 
 ---
 
-## Phase 5: Historial + PRs + Analíticas
+## Phase 6: Historial + PRs + Analíticas
 **Goal:** Insight de progreso con historial y gráficos claros.
 
 **Requirements**
@@ -76,7 +91,7 @@
 
 ---
 
-## Phase 6: Import/Export + Sets Avanzados
+## Phase 7: Import/Export + Sets Avanzados
 **Goal:** Portabilidad total y soporte de sets avanzados sin romper historial.
 
 **Requirements**
