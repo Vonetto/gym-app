@@ -92,6 +92,69 @@ export async function updateRoutine(
   });
 }
 
+export async function overwriteRoutineExercises(
+  routineId: string,
+  exercises: Array<{
+    exerciseId: string;
+    order: number;
+    defaults?: {
+      defaultSets?: number;
+      defaultReps?: number;
+      defaultWeight?: number;
+      defaultDuration?: number;
+      defaultDistance?: number;
+      defaultRestSeconds?: number;
+    };
+  }>
+) {
+  const routine = await db.routines.get(routineId);
+  if (!routine) return;
+  const tags = await db.routineTags.where('routineId').equals(routineId).toArray();
+  const now = new Date().toISOString();
+  const nextRoutine: RoutineRecord = {
+    ...routine,
+    updatedAt: now
+  };
+
+  await db.transaction(
+    'rw',
+    [db.routines, db.routineTags, db.routineExercises, db.exerciseDefaults, db.routineVersions],
+    async () => {
+      await db.routines.update(routineId, nextRoutine);
+      await db.routineExercises.where('routineId').equals(routineId).delete();
+      await db.exerciseDefaults.where('routineId').equals(routineId).delete();
+      if (exercises.length) {
+        await db.routineExercises.bulkAdd(
+          exercises.map((exercise) => ({
+            id: `routine-exercise-${crypto.randomUUID()}`,
+            routineId,
+            exerciseId: exercise.exerciseId,
+            order: exercise.order
+          }))
+        );
+        const defaults = exercises
+          .filter((exercise) => exercise.defaults)
+          .map((exercise) => ({
+            id: `default-${crypto.randomUUID()}`,
+            routineId,
+            exerciseId: exercise.exerciseId,
+            ...exercise.defaults
+          }));
+        if (defaults.length) {
+          await db.exerciseDefaults.bulkAdd(defaults);
+        }
+      }
+      await db.routineVersions.add({
+        id: `${routineId}-${now}`,
+        routineId,
+        createdAt: now,
+        name: routine.name,
+        snapshot: buildRoutineSnapshot(nextRoutine, tags.map((tag) => tag.tag), exercises)
+      });
+    }
+  );
+}
+
 export async function deleteRoutine(routineId: string) {
   await db.transaction(
     'rw',
