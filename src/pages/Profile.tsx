@@ -294,9 +294,9 @@ export function Profile() {
           <Link className="profile-card" to="/stats">
             Estadísticas
           </Link>
-          <button className="profile-card" type="button">
+          <Link className="profile-card" to="/catalog">
             <span>Ejercicios</span>
-          </button>
+          </Link>
           <Link className="profile-card" to="/measures">
             <span>Medidas</span>
           </Link>

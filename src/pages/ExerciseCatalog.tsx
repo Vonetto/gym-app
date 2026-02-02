@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   createCustomExercise,
   deleteCustomExercise,
@@ -6,6 +7,7 @@ import {
   listExercises,
   listFavorites,
   listRecents,
+  normalizeName,
   recordRecent,
   toggleFavorite,
   updateCustomExercise
@@ -20,13 +22,15 @@ interface ExerciseSummary {
   equipment: string[];
   metricType: ExerciseMetric;
   isCustom: boolean;
+  normalizedLabel: string;
 }
 
 export function ExerciseCatalog() {
   const { settings } = useSettings();
   const [query, setQuery] = useState('');
-  const [muscle, setMuscle] = useState('');
-  const [equipment, setEquipment] = useState('');
+  const [directoryTab, setDirectoryTab] = useState<'az' | 'muscle' | 'equipment'>('az');
+  const [selectedMuscle, setSelectedMuscle] = useState('');
+  const [selectedEquipment, setSelectedEquipment] = useState('');
   const [exercises, setExercises] = useState<ExerciseSummary[]>([]);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [recents, setRecents] = useState<string[]>([]);
@@ -36,22 +40,24 @@ export function ExerciseCatalog() {
   const [customMetric, setCustomMetric] = useState<ExerciseMetric>('weight_reps');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState('');
-  const [catalogMuscles, setCatalogMuscles] = useState<string[]>([]);
-  const [catalogEquipment, setCatalogEquipment] = useState<string[]>([]);
   const [showMuscleOptions, setShowMuscleOptions] = useState(false);
   const [showEquipmentOptions, setShowEquipmentOptions] = useState(false);
 
   const loadExercises = async () => {
-    const items = await listExercises({ query, muscle, equipment });
+    const items = await listExercises();
     setExercises(
-      items.map((item) => ({
-        id: item.id,
-        label: getExerciseDisplayName(item, settings.language),
-        muscles: item.muscles,
-        equipment: item.equipment,
-        metricType: item.metricType,
-        isCustom: item.isCustom
-      }))
+      items.map((item) => {
+        const label = getExerciseDisplayName(item, settings.language);
+        return {
+          id: item.id,
+          label,
+          muscles: item.muscles,
+          equipment: item.equipment,
+          metricType: item.metricType,
+          isCustom: item.isCustom,
+          normalizedLabel: normalizeName(label)
+        };
+      })
     );
   };
 
@@ -67,53 +73,71 @@ export function ExerciseCatalog() {
 
   useEffect(() => {
     loadExercises();
-  }, [query, muscle, equipment, settings.language]);
+  }, [settings.language]);
 
   useEffect(() => {
     loadFavorites();
     loadRecents();
   }, []);
 
-  useEffect(() => {
-    let active = true;
-    const loadCatalogOptions = async () => {
-      const items = await listExercises();
-      const muscleSet = new Set<string>();
-      const equipmentSet = new Set<string>();
-      items.forEach((exercise) => {
-        exercise.muscles.forEach((item) => muscleSet.add(item));
-        exercise.equipment.forEach((item) => equipmentSet.add(item));
-      });
-      if (!active) return;
-      setCatalogMuscles(Array.from(muscleSet).sort());
-      setCatalogEquipment(Array.from(equipmentSet).sort());
-    };
-    void loadCatalogOptions();
-    return () => {
-      active = false;
-    };
-  }, []);
+  const allMuscles = useMemo(() => {
+    const set = new Set<string>();
+    exercises.forEach((exercise) => exercise.muscles.forEach((item) => set.add(item)));
+    return Array.from(set).sort();
+  }, [exercises]);
 
-  const allMuscles = useMemo(() => catalogMuscles, [catalogMuscles]);
-  const allEquipment = useMemo(() => catalogEquipment, [catalogEquipment]);
+  const allEquipment = useMemo(() => {
+    const set = new Set<string>();
+    exercises.forEach((exercise) => exercise.equipment.forEach((item) => set.add(item)));
+    return Array.from(set).sort();
+  }, [exercises]);
 
   const muscleOptions = useMemo(() => {
-    const set = new Set([...catalogMuscles, ...customMuscles]);
+    const set = new Set([...allMuscles, ...customMuscles]);
     return Array.from(set).sort();
-  }, [catalogMuscles, customMuscles]);
+  }, [allMuscles, customMuscles]);
 
   const equipmentOptions = useMemo(() => {
-    const set = new Set([...catalogEquipment, ...customEquipment]);
+    const set = new Set([...allEquipment, ...customEquipment]);
     return Array.from(set).sort();
-  }, [catalogEquipment, customEquipment]);
+  }, [allEquipment, customEquipment]);
 
-  const visibleExercises = useMemo(() => {
+  const sortedExercises = useMemo(() => {
     const sorted = [...exercises].sort((a, b) => a.label.localeCompare(b.label));
     return sorted;
   }, [exercises]);
 
-  const favoriteExercises = visibleExercises.filter((exercise) => favorites.includes(exercise.id));
-  const recentExercises = visibleExercises.filter((exercise) => recents.includes(exercise.id));
+  const filteredExercises = useMemo(() => {
+    const normalizedQuery = normalizeName(query);
+    return sortedExercises.filter((exercise) => {
+      if (normalizedQuery && !exercise.normalizedLabel.includes(normalizedQuery)) {
+        return false;
+      }
+      if (directoryTab === 'muscle' && selectedMuscle) {
+        return exercise.muscles.includes(selectedMuscle);
+      }
+      if (directoryTab === 'equipment' && selectedEquipment) {
+        return exercise.equipment.includes(selectedEquipment);
+      }
+      return true;
+    });
+  }, [sortedExercises, query, directoryTab, selectedMuscle, selectedEquipment]);
+
+  const groupedByLetter = useMemo(() => {
+    const groups = new Map<string, ExerciseSummary[]>();
+    filteredExercises.forEach((exercise) => {
+      const letter = exercise.normalizedLabel ? exercise.normalizedLabel[0].toUpperCase() : '#';
+      const key = letter.match(/[A-Z]/) ? letter : '#';
+      if (!groups.has(key)) {
+        groups.set(key, []);
+      }
+      groups.get(key)?.push(exercise);
+    });
+    return Array.from(groups.entries()).sort(([a], [b]) => a.localeCompare(b));
+  }, [filteredExercises]);
+
+  const favoriteExercises = sortedExercises.filter((exercise) => favorites.includes(exercise.id));
+  const recentExercises = sortedExercises.filter((exercise) => recents.includes(exercise.id));
 
   const handleFavorite = async (exerciseId: string) => {
     await toggleFavorite(exerciseId);
@@ -211,37 +235,90 @@ export function ExerciseCatalog() {
     }
   };
 
+  const getMetaLabel = (exercise: ExerciseSummary) => {
+    const primaryMuscle = exercise.muscles[0] ?? 'Sin músculo';
+    const primaryEquipment = exercise.equipment[0] ?? 'Sin equipo';
+    return `${primaryMuscle} · ${primaryEquipment}`;
+  };
+
   return (
     <section className="stack wide">
       <div className="card">
         <h1>Ejercicios</h1>
-        <p className="muted">
-          Busca por nombre, filtra por músculo o equipo y crea ejercicios personalizados.
-        </p>
-        <div className="field grid">
+        <p className="muted">Explora ejercicios por A‑Z, músculo o equipo.</p>
+        <div className="field">
           <input
             type="search"
             placeholder="Buscar ejercicio"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
           />
-          <select value={muscle} onChange={(event) => setMuscle(event.target.value)}>
-            <option value="">Todos los músculos</option>
-            {allMuscles.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-          <select value={equipment} onChange={(event) => setEquipment(event.target.value)}>
-            <option value="">Todo el equipo</option>
-            {allEquipment.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
         </div>
+        <div className="pill-row">
+          <button
+            className={`pill ${directoryTab === 'az' ? 'active' : ''}`}
+            type="button"
+            onClick={() => setDirectoryTab('az')}
+          >
+            A‑Z
+          </button>
+          <button
+            className={`pill ${directoryTab === 'muscle' ? 'active' : ''}`}
+            type="button"
+            onClick={() => setDirectoryTab('muscle')}
+          >
+            Músculo
+          </button>
+          <button
+            className={`pill ${directoryTab === 'equipment' ? 'active' : ''}`}
+            type="button"
+            onClick={() => setDirectoryTab('equipment')}
+          >
+            Equipo
+          </button>
+        </div>
+        {directoryTab === 'muscle' ? (
+          <div className="chip-grid directory-chips">
+            <button
+              className={`select-chip ${!selectedMuscle ? 'active' : ''}`}
+              type="button"
+              onClick={() => setSelectedMuscle('')}
+            >
+              Todos
+            </button>
+            {allMuscles.map((item) => (
+              <button
+                key={item}
+                className={`select-chip ${selectedMuscle === item ? 'active' : ''}`}
+                type="button"
+                onClick={() => setSelectedMuscle(item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        ) : null}
+        {directoryTab === 'equipment' ? (
+          <div className="chip-grid directory-chips">
+            <button
+              className={`select-chip ${!selectedEquipment ? 'active' : ''}`}
+              type="button"
+              onClick={() => setSelectedEquipment('')}
+            >
+              Todo
+            </button>
+            {allEquipment.map((item) => (
+              <button
+                key={item}
+                className={`select-chip ${selectedEquipment === item ? 'active' : ''}`}
+                type="button"
+                onClick={() => setSelectedEquipment(item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        ) : null}
       </div>
 
       <div className="card">
@@ -339,8 +416,10 @@ export function ExerciseCatalog() {
             {favoriteExercises.map((exercise) => (
               <li key={exercise.id} className="list-row">
                 <div>
-                  <p className="list-title">{exercise.label}</p>
-                  <p className="muted">{exercise.muscles.join(', ') || 'Sin músculos'}</p>
+                  <Link className="list-link" to={`/exercises/${exercise.id}`}>
+                    <p className="list-title">{exercise.label}</p>
+                    <p className="muted">{getMetaLabel(exercise)}</p>
+                  </Link>
                 </div>
                 <div className="actions">
                   <button
@@ -373,8 +452,10 @@ export function ExerciseCatalog() {
             {recentExercises.map((exercise) => (
               <li key={exercise.id} className="list-row">
                 <div>
-                  <p className="list-title">{exercise.label}</p>
-                  <p className="muted">{exercise.equipment.join(', ') || 'Sin equipo'}</p>
+                  <Link className="list-link" to={`/exercises/${exercise.id}`}>
+                    <p className="list-title">{exercise.label}</p>
+                    <p className="muted">{getMetaLabel(exercise)}</p>
+                  </Link>
                 </div>
                 <div className="actions">
                   <button
@@ -392,19 +473,74 @@ export function ExerciseCatalog() {
       </div>
 
       <div className="card">
-        <h2>Todos los ejercicios</h2>
-        {visibleExercises.length === 0 ? (
+        <h2>Directorio</h2>
+        {filteredExercises.length === 0 ? (
           <p className="muted">No hay ejercicios que coincidan con la búsqueda.</p>
+        ) : directoryTab === 'az' ? (
+          <div className="list-sections">
+            {groupedByLetter.map(([letter, items]) => (
+              <div key={letter} className="list-section">
+                <p className="section-title">{letter}</p>
+                <ul className="list">
+                  {items.map((exercise) => (
+                    <li key={exercise.id} className="list-row">
+                      <div>
+                        <Link className="list-link" to={`/exercises/${exercise.id}`}>
+                          <p className="list-title">{exercise.label}</p>
+                          <p className="muted">{getMetaLabel(exercise)}</p>
+                        </Link>
+                      </div>
+                      <div className="actions-stack">
+                        <div className="actions">
+                          <button
+                            className="ghost-button"
+                            type="button"
+                            onClick={() => handleFavorite(exercise.id)}
+                          >
+                            {favorites.includes(exercise.id) ? 'Quitar favorito' : 'Favorito'}
+                          </button>
+                          <button
+                            className="ghost-button"
+                            type="button"
+                            onClick={() => handleRecent(exercise.id)}
+                          >
+                            Marcar reciente
+                          </button>
+                        </div>
+                        {exercise.isCustom ? (
+                          <div className="actions">
+                            <button
+                              className="ghost-button"
+                              type="button"
+                              onClick={() => handleEdit(exercise)}
+                            >
+                              Editar
+                            </button>
+                            <button
+                              className="ghost-button danger"
+                              type="button"
+                              onClick={() => handleDelete(exercise)}
+                            >
+                              Eliminar
+                            </button>
+                          </div>
+                        ) : null}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         ) : (
           <ul className="list">
-            {visibleExercises.map((exercise) => (
+            {filteredExercises.map((exercise) => (
               <li key={exercise.id} className="list-row">
                 <div>
-                  <p className="list-title">{exercise.label}</p>
-                  <p className="muted">
-                    {exercise.muscles.join(', ') || 'Sin músculos'} ·{' '}
-                    {exercise.equipment.join(', ') || 'Sin equipo'}
-                  </p>
+                  <Link className="list-link" to={`/exercises/${exercise.id}`}>
+                    <p className="list-title">{exercise.label}</p>
+                    <p className="muted">{getMetaLabel(exercise)}</p>
+                  </Link>
                 </div>
                 <div className="actions-stack">
                   <div className="actions">
@@ -425,7 +561,11 @@ export function ExerciseCatalog() {
                   </div>
                   {exercise.isCustom ? (
                     <div className="actions">
-                      <button className="ghost-button" type="button" onClick={() => handleEdit(exercise)}>
+                      <button
+                        className="ghost-button"
+                        type="button"
+                        onClick={() => handleEdit(exercise)}
+                      >
                         Editar
                       </button>
                       <button
