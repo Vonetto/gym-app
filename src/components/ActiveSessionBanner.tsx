@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useActiveSession } from '../hooks/useActiveSession';
+import { saveWorkout, WorkoutSessionPayload } from '../data/workouts';
 
 const formatDuration = (seconds: number) => {
   if (seconds < 60) return `${seconds}s`;
@@ -16,6 +17,7 @@ export function ActiveSessionBanner() {
   const [now, setNow] = useState(() => Date.now());
   const [restAlert, setRestAlert] = useState<Array<{ exerciseName: string }> | null>(null);
   const dismissTimeoutRef = useRef<number | null>(null);
+  const [isFinishing, setIsFinishing] = useState(false);
 
   useEffect(() => {
     if (!session) return;
@@ -70,6 +72,33 @@ export function ActiveSessionBanner() {
 
   if (!session || isWorkoutRoute) return null;
 
+  const handleFinish = async () => {
+    if (isFinishing) return;
+    setIsFinishing(true);
+    try {
+      const stored = localStorage.getItem('active-session');
+      if (!stored) return;
+      const parsed = JSON.parse(stored) as WorkoutSessionPayload | null;
+      if (!parsed) return;
+      const completedSets =
+        parsed.exercises?.reduce(
+          (total, exercise) =>
+            total + exercise.sets.filter((set) => set.completed).length,
+          0
+        ) ?? 0;
+      if (completedSets > 0) {
+        await saveWorkout(parsed);
+      }
+    } catch {
+      // ignore and fall through to clearing session
+    } finally {
+      localStorage.removeItem('active-session');
+      window.dispatchEvent(new Event('active-session'));
+      setRestAlert(null);
+      setIsFinishing(false);
+    }
+  };
+
   return (
     <>
       <div className="active-session-banner">
@@ -79,9 +108,19 @@ export function ActiveSessionBanner() {
             {session.routineName ?? 'Entreno'} · {formatDuration(elapsed)}
           </p>
         </div>
-        <button className="ghost-button" type="button" onClick={() => navigate('/workout')}>
-          Volver
-        </button>
+        <div className="active-session-actions">
+          <button className="ghost-button" type="button" onClick={() => navigate('/workout')}>
+            Volver
+          </button>
+          <button
+            className="primary-button"
+            type="button"
+            onClick={handleFinish}
+            disabled={isFinishing}
+          >
+            Terminar
+          </button>
+        </div>
       </div>
       {restAlert ? (
         <div className="modal-overlay center" onClick={() => setRestAlert(null)}>

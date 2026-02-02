@@ -108,6 +108,12 @@ a {
   font-weight: 600;
 }
 
+.active-session-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
 
 .app-main {
   flex: 1;
