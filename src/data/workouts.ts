@@ -10,6 +10,7 @@ export interface WorkoutSessionPayload {
     exerciseId: string;
     name: string;
     metricType: string;
+    notes?: string;
     restSeconds?: number;
     sets: Array<{
       weight?: number;
@@ -46,7 +47,8 @@ export async function saveWorkout(session: WorkoutSessionPayload) {
       workoutId: session.id,
       exerciseId: exercise.exerciseId,
       name: exercise.name,
-      order: exerciseIndex
+      order: exerciseIndex,
+      notes: exercise.notes
     });
     exercise.sets.forEach((set, setIndex) => {
       if (!set.completed) return;
@@ -98,7 +100,13 @@ export async function getWorkoutById(workoutId: string) {
 }
 
 export async function getLastWorkoutForRoutine(routineId: string) {
-  return db.workouts.where('routineId').equals(routineId).last();
+  const workouts = await db.workouts.where('routineId').equals(routineId).toArray();
+  if (!workouts.length) return undefined;
+  return workouts.reduce((latest, current) =>
+    new Date(current.endedAt).getTime() > new Date(latest.endedAt).getTime()
+      ? current
+      : latest
+  );
 }
 
 export async function getWorkoutExercises(workoutId: string) {

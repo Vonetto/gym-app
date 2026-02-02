@@ -95,6 +95,7 @@ export interface WorkoutExerciseRecord {
   exerciseId: string;
   name: string;
   order: number;
+  notes?: string;
 }
 
 export interface WorkoutSetRecord {

@@ -475,6 +475,29 @@ input::placeholder {
   color: #5bb8ff;
 }
 
+.exercise-notes {
+  width: 100%;
+  margin-top: 0.2rem;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid transparent;
+  border-radius: 0;
+  color: var(--text);
+  padding: 0;
+  font-size: 0.78rem;
+  line-height: 1.2;
+  resize: none;
+}
+
+.exercise-notes::placeholder {
+  color: var(--text-muted);
+}
+
+.exercise-notes:focus {
+  outline: none;
+  border-bottom-color: var(--border);
+}
+
 .rest {
   color: #58d9ff;
   font-weight: 600;

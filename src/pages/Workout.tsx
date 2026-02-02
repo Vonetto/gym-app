@@ -18,6 +18,7 @@ interface WorkoutExercise {
   exerciseId: string;
   name: string;
   metricType: string;
+  notes?: string;
   previousSets?: Array<{ weight?: number; reps?: number }>;
   restSeconds?: number;
   sets: WorkoutSet[];
@@ -172,6 +173,17 @@ export function Workout() {
     });
   };
 
+  const handleNotesChange = (exerciseIndex: number, value: string) => {
+    setSession((prev) => {
+      if (!prev) return prev;
+      const exercises = prev.exercises.map((exercise, index) => {
+        if (index !== exerciseIndex) return exercise;
+        return { ...exercise, notes: value };
+      });
+      return { ...prev, exercises };
+    });
+  };
+
   const handleRestCycle = (exerciseIndex: number) => {
     const options = Array.from({ length: 11 }, (_, index) => index * 30);
     setSession((prev) => {
@@ -299,6 +311,7 @@ export function Workout() {
       exerciseId: option.id,
       name: option.label,
       metricType: option.metricType,
+      notes: '',
       previousSets: previousSets.map((set) => ({ weight: set.weight, reps: set.reps })),
       restSeconds: 0,
       sets: Array.from({ length: 3 }, () => ({
@@ -556,7 +569,13 @@ export function Workout() {
                   <div className="avatar">{exercise.name.charAt(0)}</div>
                   <div>
                     <h2 className="exercise-title">{exercise.name}</h2>
-                    <p className="muted">Agregar notas aquí...</p>
+                    <textarea
+                      className="exercise-notes"
+                      placeholder="Agregar notas aquí..."
+                      rows={2}
+                      value={exercise.notes ?? ''}
+                      onChange={(event) => handleNotesChange(exerciseIndex, event.target.value)}
+                    />
                     <button className="rest" type="button" onClick={() => handleRestCycle(exerciseIndex)}>
                       Descanso: {exercise.restSeconds ? formatDuration(exercise.restSeconds) : 'APAGADO'}
                       {restSecondsLeft
@@ -698,9 +717,6 @@ export function Workout() {
         + Agregar ejercicio
       </button>
       <div className="actions">
-        <button className="ghost-button" type="button">
-          Configuración
-        </button>
         <button className="danger-button" type="button" onClick={handleDiscard}>
           Descartar entreno
         </button>

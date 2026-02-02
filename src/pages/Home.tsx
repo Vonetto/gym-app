@@ -39,6 +39,7 @@ interface WorkoutSession {
     exerciseId: string;
     name: string;
     metricType: string;
+    notes?: string;
     previousSets?: Array<{ weight?: number; reps?: number }>;
     restSeconds?: number;
     sets: Array<{
@@ -68,6 +69,7 @@ interface WorkoutDetail {
   exercises: Array<{
     id: string;
     name: string;
+    notes?: string;
     sets: Array<{
       weight?: number;
       reps?: number;
@@ -226,6 +228,7 @@ export function Home() {
         return {
           id: exercise.id,
           name: exerciseMap.get(exercise.exerciseId) ?? exercise.name,
+          notes: exercise.notes,
           sets: sets.map((set) => ({
             weight: set.weight,
             reps: set.reps,
@@ -289,6 +292,7 @@ export function Home() {
     const exercises = await listExercises();
     const exerciseMap = new Map(exercises.map((exercise) => [exercise.id, exercise]));
     const lastWorkout = await getLastWorkoutForRoutine(routineId);
+    const previousNotesByExercise = new Map<string, string>();
     const session: WorkoutSession = {
       id: `session-${crypto.randomUUID()}`,
       createdAt: new Date().toISOString(),
@@ -311,6 +315,7 @@ export function Home() {
           exerciseId: entry.exerciseId,
           name: exercise ? getExerciseDisplayName(exercise, settings.language) : 'Ejercicio',
           metricType: exercise?.metricType ?? 'weight_reps',
+          notes: '',
           restSeconds: defaults?.defaultRestSeconds ?? 0,
           previousSets: [],
           sets
@@ -327,6 +332,9 @@ export function Home() {
           workoutExercise.exerciseId,
           sets.map((set) => ({ weight: set.weight, reps: set.reps }))
         );
+        if (workoutExercise.notes) {
+          previousNotesByExercise.set(workoutExercise.exerciseId, workoutExercise.notes);
+        }
       }
     }
     for (const entry of detail.exercises) {
@@ -340,6 +348,10 @@ export function Home() {
     session.exercises = session.exercises.map((exercise) => ({
       ...exercise,
       previousSets: previousSetsByExercise.get(exercise.exerciseId) ?? []
+    }));
+    session.exercises = session.exercises.map((exercise) => ({
+      ...exercise,
+      notes: previousNotesByExercise.get(exercise.exerciseId) ?? exercise.notes
     }));
     localStorage.setItem('active-session', JSON.stringify(session));
     window.dispatchEvent(new Event('active-session'));
@@ -573,6 +585,7 @@ export function Home() {
               {activeWorkout.exercises.map((exercise) => (
                 <div key={exercise.id} className="modal-exercise">
                   <h3>{exercise.name}</h3>
+                  {exercise.notes ? <p className="muted">{exercise.notes}</p> : null}
                   <div className="modal-sets">
                     {exercise.sets.map((set, index) => (
                       <div key={`${exercise.id}-${index}`} className="modal-set-row">
