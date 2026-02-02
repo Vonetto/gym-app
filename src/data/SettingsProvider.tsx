@@ -9,6 +9,7 @@ interface SettingsContextValue {
   ready: boolean;
   updateTheme: (theme: Theme) => Promise<void>;
   updateStatsRange: (days: 7 | 30 | 180 | 365) => Promise<void>;
+  updateWrkoutApiKey: (apiKey: string) => Promise<void>;
   resetAllData: () => Promise<void>;
 }
 
@@ -44,6 +45,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     await saveSettings(next);
   };
 
+  const updateWrkoutApiKey = async (apiKey: string) => {
+    const next = { ...settings, wrkoutApiKey: apiKey };
+    setSettings(next);
+    await saveSettings(next);
+  };
+
   const resetAllData = async () => {
     await resetAll();
     await seedExerciseCatalog();
@@ -58,6 +65,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       ready,
       updateTheme,
       updateStatsRange,
+      updateWrkoutApiKey,
       resetAllData
     }),
     [settings, ready]

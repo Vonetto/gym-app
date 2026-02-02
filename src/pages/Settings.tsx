@@ -5,13 +5,14 @@ import { exportRoutineBackup, importRoutineBackup } from '../data/routineBackup'
 import { listRoutines } from '../data/routines';
 
 export function Settings() {
-  const { settings, updateTheme, updateStatsRange, resetAllData } = useSettings();
+  const { settings, updateTheme, updateStatsRange, updateWrkoutApiKey, resetAllData } = useSettings();
   const [confirmingReset, setConfirmingReset] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [importing, setImporting] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [routines, setRoutines] = useState<Array<{ id: string; name: string }>>([]);
   const [routineId, setRoutineId] = useState('');
+  const [wrkoutKey, setWrkoutKey] = useState(settings.wrkoutApiKey ?? '');
   const navigate = useNavigate();
   const statsRangeDays = settings.statsRangeDays ?? 30;
 
@@ -31,6 +32,14 @@ export function Settings() {
   useEffect(() => {
     loadRoutines();
   }, []);
+
+  useEffect(() => {
+    setWrkoutKey(settings.wrkoutApiKey ?? '');
+  }, [settings.wrkoutApiKey]);
+
+  const handleWrkoutSave = async () => {
+    await updateWrkoutApiKey(wrkoutKey.trim());
+  };
 
   const handleExportRoutine = async () => {
     if (!routineId) return;
@@ -152,6 +161,28 @@ export function Settings() {
             style={{ display: 'none' }}
             disabled={importing}
           />
+        </div>
+      </div>
+
+      <div className="card">
+        <h2>Integraciones</h2>
+        <p className="muted">
+          Conecta proveedores externos para obtener tips de ejercicios (se guarda localmente).
+        </p>
+        <div className="field">
+          <label className="label" htmlFor="wrkout-key">
+            Wrkout API Key
+          </label>
+          <input
+            id="wrkout-key"
+            type="password"
+            placeholder="Ingresa tu API key"
+            value={wrkoutKey}
+            onChange={(event) => setWrkoutKey(event.target.value)}
+          />
+          <button className="ghost-button" type="button" onClick={handleWrkoutSave}>
+            Guardar
+          </button>
         </div>
       </div>
 

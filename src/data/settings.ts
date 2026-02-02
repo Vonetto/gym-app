@@ -6,7 +6,8 @@ export const defaultSettings: SettingsRecord = {
   theme: 'dark',
   language: 'es',
   units: 'kg',
-  statsRangeDays: 30
+  statsRangeDays: 30,
+  wrkoutApiKey: ''
 };
 
 export async function loadSettings(): Promise<SettingsRecord> {

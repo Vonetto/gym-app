@@ -6,6 +6,7 @@ export interface SettingsRecord {
   language: 'es';
   units: 'kg';
   statsRangeDays?: 7 | 30 | 180 | 365;
+  wrkoutApiKey?: string;
 }
 
 export interface RoutineRecord {
@@ -110,6 +111,14 @@ export interface WorkoutSetRecord {
   completed: boolean;
 }
 
+export interface WrkoutTipRecord {
+  exerciseId: string;
+  wrkoutId?: string;
+  summary?: string;
+  bullets?: string[];
+  lastFetchedAt: string;
+}
+
 class AppDB extends Dexie {
   settings!: Table<SettingsRecord, 'app'>;
   routines!: Table<RoutineRecord, string>;
@@ -124,6 +133,7 @@ class AppDB extends Dexie {
   workouts!: Table<WorkoutRecord, string>;
   workoutExercises!: Table<WorkoutExerciseRecord, string>;
   workoutSets!: Table<WorkoutSetRecord, string>;
+  wrkoutTips!: Table<WrkoutTipRecord, string>;
 
   constructor() {
     super('gym-tracker');
@@ -160,6 +170,22 @@ class AppDB extends Dexie {
           )
         );
       });
+    this.version(3).stores({
+      settings: 'id',
+      routines: 'id, order, updatedAt, createdAt',
+      exercises: 'id, baseName, normalizedName, *muscles, *equipment, isCustom',
+      exerciseTranslations: 'id, exerciseId, language, name',
+      routineExercises: 'id, routineId, exerciseId, [routineId+order]',
+      routineTags: 'id, routineId, tag, [routineId+tag]',
+      exerciseDefaults: 'id, routineId, exerciseId, [routineId+exerciseId]',
+      exerciseFavorites: 'exerciseId, createdAt',
+      exerciseRecents: 'exerciseId, lastUsedAt',
+      routineVersions: 'id, routineId, createdAt',
+      workouts: 'id, routineId, startedAt, endedAt',
+      workoutExercises: 'id, workoutId, exerciseId, [workoutId+order]',
+      workoutSets: 'id, workoutExerciseId, [workoutExerciseId+order]',
+      wrkoutTips: 'exerciseId, wrkoutId, lastFetchedAt'
+    });
   }
 }
 
