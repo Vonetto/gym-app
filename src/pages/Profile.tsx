@@ -297,12 +297,12 @@ export function Profile() {
           <button className="profile-card" type="button">
             <span>Ejercicios</span>
           </button>
-          <button className="profile-card" type="button">
+          <Link className="profile-card" to="/measures">
             <span>Medidas</span>
-          </button>
-          <button className="profile-card" type="button">
+          </Link>
+          <Link className="profile-card" to="/calendar">
             <span>Calendario</span>
-          </button>
+          </Link>
         </div>
       </div>
 

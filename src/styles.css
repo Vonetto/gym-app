@@ -854,6 +854,77 @@ input::placeholder {
   border-color: var(--accent);
 }
 
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.calendar-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.35rem;
+}
+
+.calendar-weekday {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.calendar-day {
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  border-radius: 10px;
+  min-height: 54px;
+  padding: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  color: var(--text);
+  cursor: pointer;
+  position: relative;
+}
+
+.calendar-day span:first-child {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.calendar-day.has-workout {
+  border-color: rgba(43, 140, 255, 0.5);
+}
+
+.calendar-day.today {
+  border-color: #2b8cff;
+  box-shadow: 0 0 0 1px rgba(43, 140, 255, 0.4);
+}
+
+.calendar-day.empty {
+  border: none;
+  background: transparent;
+  cursor: default;
+}
+
+.calendar-day.empty::after {
+  content: '';
+}
+
+.calendar-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: #2b8cff;
+}
+
 .muscle-map {
   display: grid;
   grid-template-columns: 1fr;
