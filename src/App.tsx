@@ -12,6 +12,7 @@ import { Profile } from './pages/Profile';
 import { Stats } from './pages/Stats';
 import { Measures } from './pages/Measures';
 import { Calendar } from './pages/Calendar';
+import { ExerciseDetail } from './pages/ExerciseDetail';
 
 export function App() {
   const { ready } = useSettings();
@@ -42,6 +43,7 @@ export function App() {
         <Route path="/stats" element={<Stats />} />
         <Route path="/measures" element={<Measures />} />
         <Route path="/calendar" element={<Calendar />} />
+        <Route path="/exercises/:exerciseId" element={<ExerciseDetail />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
     </Layout>

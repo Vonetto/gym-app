@@ -147,6 +147,19 @@ export function getExerciseDisplayName(exercise: ExerciseWithTranslations, langu
   return translation?.name ?? exercise.baseName;
 }
 
+export async function getExerciseById(exerciseId: string) {
+  const exercise = await db.exercises.get(exerciseId);
+  if (!exercise) return null;
+  const translations = await db.exerciseTranslations
+    .where('exerciseId')
+    .equals(exerciseId)
+    .toArray();
+  return {
+    ...exercise,
+    translations
+  };
+}
+
 export async function createCustomExercise({
   name,
   muscles,

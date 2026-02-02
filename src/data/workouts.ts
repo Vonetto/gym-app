@@ -126,3 +126,29 @@ export async function getLatestExerciseSets(exerciseId: string) {
   if (!workoutExercise) return [];
   return getWorkoutSets(workoutExercise.id);
 }
+
+export async function listExerciseHistory(exerciseId: string) {
+  const workoutExercises = await db.workoutExercises
+    .where('exerciseId')
+    .equals(exerciseId)
+    .toArray();
+  if (!workoutExercises.length) return [];
+  const workoutIds = Array.from(new Set(workoutExercises.map((exercise) => exercise.workoutId)));
+  const workouts = await db.workouts.where('id').anyOf(workoutIds).toArray();
+  const workoutMap = new Map(workouts.map((workout) => [workout.id, workout]));
+  const entries = await Promise.all(
+    workoutExercises.map(async (exercise) => {
+      const workout = workoutMap.get(exercise.workoutId);
+      const sets = await getWorkoutSets(exercise.id);
+      return {
+        workoutId: exercise.workoutId,
+        routineName: workout?.routineName ?? 'Entreno',
+        startedAt: workout?.startedAt ?? '',
+        endedAt: workout?.endedAt ?? '',
+        notes: exercise.notes,
+        sets
+      };
+    })
+  );
+  return entries.sort((a, b) => b.endedAt.localeCompare(a.endedAt));
+}
