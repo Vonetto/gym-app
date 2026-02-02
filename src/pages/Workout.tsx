@@ -38,6 +38,7 @@ interface WorkoutSession {
   routineId?: string;
   routineName?: string;
   originalExerciseIds?: string[];
+  restTimers?: Record<string, { endAt: string; totalSeconds: number; exerciseName: string }>;
   exercises: WorkoutExercise[];
 }
 
@@ -52,7 +53,7 @@ export function Workout() {
   const navigate = useNavigate();
   const { settings } = useSettings();
   const [session, setSession] = useState<WorkoutSession | null>(null);
-  const [elapsed, setElapsed] = useState(0);
+  const [now, setNow] = useState(() => Date.now());
   const [exerciseQuery, setExerciseQuery] = useState('');
   const [exerciseOptions, setExerciseOptions] = useState<ExerciseOption[]>([]);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
@@ -62,9 +63,6 @@ export function Workout() {
   const [replaceQuery, setReplaceQuery] = useState('');
   const [showAddExercise, setShowAddExercise] = useState(false);
   const [showFinishPrompt, setShowFinishPrompt] = useState(false);
-  const [restTimers, setRestTimers] = useState<
-    Record<string, { secondsLeft: number; totalSeconds: number; exerciseName: string }>
-  >({});
   const audioContextRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
@@ -77,6 +75,7 @@ export function Workout() {
   useEffect(() => {
     if (!session) return;
     localStorage.setItem('active-session', JSON.stringify(session));
+    window.dispatchEvent(new Event('active-session'));
   }, [session]);
 
   useEffect(() => {
@@ -101,39 +100,32 @@ export function Workout() {
 
   useEffect(() => {
     if (!session) return;
-    const createdAt = new Date(session.createdAt).getTime();
-    const tick = () => {
-      const diff = Math.max(0, Math.floor((Date.now() - createdAt) / 1000));
-      setElapsed(diff);
-    };
-    tick();
-    const interval = window.setInterval(tick, 1000);
+    const interval = window.setInterval(() => setNow(Date.now()), 1000);
     return () => window.clearInterval(interval);
   }, [session]);
 
   useEffect(() => {
-    if (!Object.keys(restTimers).length) return;
-    const interval = window.setInterval(() => {
-      setRestTimers((prev) => {
-        const next = { ...prev };
-        const finished: Array<{ exerciseName: string }> = [];
-        Object.entries(next).forEach(([key, timer]) => {
-          const nextSeconds = timer.secondsLeft - 1;
-          if (nextSeconds <= 0) {
-            finished.push({ exerciseName: timer.exerciseName });
-            delete next[key];
-          } else {
-            next[key] = { ...timer, secondsLeft: nextSeconds };
-          }
-        });
-        if (finished.length) {
-          finished.forEach((item) => notifyRestComplete(item.exerciseName));
-        }
-        return next;
+    if (!session?.restTimers) return;
+    const entries = Object.entries(session.restTimers);
+    if (!entries.length) return;
+    const expired: Array<{ key: string; exerciseName: string }> = [];
+    entries.forEach(([key, timer]) => {
+      const endAt = new Date(timer.endAt).getTime();
+      if (endAt <= now) {
+        expired.push({ key, exerciseName: timer.exerciseName });
+      }
+    });
+    if (!expired.length) return;
+    expired.forEach((item) => notifyRestComplete(item.exerciseName));
+    setSession((prev) => {
+      if (!prev?.restTimers) return prev;
+      const nextTimers = { ...prev.restTimers };
+      expired.forEach((item) => {
+        delete nextTimers[item.key];
       });
-    }, 1000);
-    return () => window.clearInterval(interval);
-  }, [restTimers]);
+      return { ...prev, restTimers: nextTimers };
+    });
+  }, [now, session]);
 
   const handleAddSet = (exerciseIndex: number) => {
     setSession((prev) => {
@@ -272,6 +264,7 @@ export function Workout() {
     }
 
     localStorage.removeItem('active-session');
+    window.dispatchEvent(new Event('active-session'));
     setSession(null);
     setShowFinishPrompt(false);
     navigate('/');
@@ -295,6 +288,7 @@ export function Workout() {
 
   const handleDiscard = () => {
     localStorage.removeItem('active-session');
+    window.dispatchEvent(new Event('active-session'));
     setSession(null);
     navigate('/');
   };
@@ -336,12 +330,9 @@ export function Workout() {
     setSession((prev) => {
       if (!prev) return prev;
       const nextExercises = prev.exercises.filter((_, index) => index !== exerciseIndex);
-      return { ...prev, exercises: nextExercises };
-    });
-    setRestTimers((prev) => {
-      const next = { ...prev };
-      delete next[exercise.exerciseId];
-      return next;
+      const nextTimers = { ...(prev.restTimers ?? {}) };
+      delete nextTimers[exercise.exerciseId];
+      return { ...prev, exercises: nextExercises, restTimers: nextTimers };
     });
     setOpenMenuId(null);
   };
@@ -371,12 +362,9 @@ export function Workout() {
       if (!prev) return prev;
       const nextExercises = [...prev.exercises];
       nextExercises[exerciseIndex] = nextExercise;
-      return { ...prev, exercises: nextExercises };
-    });
-    setRestTimers((prev) => {
-      const next = { ...prev };
-      delete next[oldExercise.exerciseId];
-      return next;
+      const nextTimers = { ...(prev.restTimers ?? {}) };
+      delete nextTimers[oldExercise.exerciseId];
+      return { ...prev, exercises: nextExercises, restTimers: nextTimers };
     });
     setReplaceTarget(null);
     setReplaceQuery('');
@@ -501,13 +489,29 @@ export function Workout() {
       await Notification.requestPermission();
     }
     await ensureAudioContext();
-    setRestTimers((prev) => ({
-      ...prev,
-      [exerciseId]: { secondsLeft: restSeconds, totalSeconds: restSeconds, exerciseName }
-    }));
+    const endAt = new Date(Date.now() + restSeconds * 1000).toISOString();
+    setSession((prev) => {
+      if (!prev) return prev;
+      const restTimers = {
+        ...(prev.restTimers ?? {}),
+        [exerciseId]: { endAt, totalSeconds: restSeconds, exerciseName }
+      };
+      return { ...prev, restTimers };
+    });
   };
 
   const workoutTitle = useMemo(() => session?.routineName ?? 'Entreno', [session?.routineName]);
+  const elapsed = useMemo(() => {
+    if (!session) return 0;
+    const createdAt = new Date(session.createdAt).getTime();
+    return Math.max(0, Math.floor((now - createdAt) / 1000));
+  }, [now, session]);
+  const getRestSecondsLeft = (exerciseId: string) => {
+    const timer = session?.restTimers?.[exerciseId];
+    if (!timer) return null;
+    const endAt = new Date(timer.endAt).getTime();
+    return Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
+  };
 
   if (!session) {
     return (
@@ -544,6 +548,7 @@ export function Workout() {
         session.exercises.map((exercise, exerciseIndex) => {
           const matches = buildPreviousMatches(exercise.previousSets ?? [], exercise.sets);
           const isMenuOpen = openMenuId === exercise.exerciseId;
+          const restSecondsLeft = getRestSecondsLeft(exercise.exerciseId);
           return (
             <div key={exercise.exerciseId} className="exercise-card">
               <div className="exercise-header">
@@ -554,8 +559,8 @@ export function Workout() {
                     <p className="muted">Agregar notas aquí...</p>
                     <button className="rest" type="button" onClick={() => handleRestCycle(exerciseIndex)}>
                       Descanso: {exercise.restSeconds ? formatDuration(exercise.restSeconds) : 'APAGADO'}
-                      {restTimers[exercise.exerciseId]
-                        ? ` · ${formatDuration(restTimers[exercise.exerciseId].secondsLeft)}`
+                      {restSecondsLeft
+                        ? ` · ${formatDuration(restSecondsLeft)}`
                         : ''}
                     </button>
                   </div>

@@ -88,6 +88,27 @@ a {
   text-align: center;
 }
 
+.active-session-banner {
+  margin: 1rem auto 0;
+  width: calc(100% - 3rem);
+  max-width: 900px;
+  background: var(--surface-elevated);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 0.85rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
+}
+
+.active-session-title {
+  margin: 0.2rem 0 0;
+  font-weight: 600;
+}
+
+
 .app-main {
   flex: 1;
   display: flex;
@@ -815,12 +836,28 @@ input::placeholder {
   position: relative;
 }
 
+.muscle-map.compact {
+  justify-items: center;
+}
+
+.muscle-map.compact .muscle-map-figure {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
 .muscle-map svg {
   width: 100%;
   max-width: 260px;
   margin: 0 auto;
   display: block;
   height: auto;
+}
+
+.muscle-map.compact svg {
+  height: 260px;
+  width: auto;
+  max-width: 320px;
 }
 
 .muscle-tooltip {

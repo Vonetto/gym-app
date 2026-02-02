@@ -80,7 +80,11 @@
       "id": "wger-31",
       "sourceId": 31,
       "baseName": "Sostenimiento Lateral Isométrico",
-      "muscles": [],
+      "muscles": [
+        "Latissimus dorsi",
+        "Trapezius",
+        "Biceps brachii"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -116,7 +120,10 @@
       "id": "wger-981",
       "sourceId": 981,
       "baseName": "Subida a peldaño",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [
         "Bench"
       ],
@@ -196,7 +203,9 @@
       "id": "wger-820",
       "sourceId": 820,
       "baseName": "Suspensión en regleta de 20 mm",
-      "muscles": [],
+      "muscles": [
+        "Brachialis"
+      ],
       "equipment": [],
       "category": "Arms",
       "metricType": "weight_reps",
@@ -273,7 +282,10 @@
       "id": "wger-908",
       "sourceId": 908,
       "baseName": "Carrera en Zona 2",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gastrocnemius"
+      ],
       "equipment": [],
       "category": "Cardio",
       "metricType": "time",
@@ -371,7 +383,10 @@
       "id": "wger-961",
       "sourceId": 961,
       "baseName": "Piques de 50m en Natación",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gastrocnemius"
+      ],
       "equipment": [],
       "category": "Cardio",
       "metricType": "time",
@@ -470,7 +485,9 @@
       "id": "wger-804",
       "sourceId": 804,
       "baseName": "Suspensión en Romos",
-      "muscles": [],
+      "muscles": [
+        "Brachialis"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -488,7 +505,9 @@
       "id": "wger-20",
       "sourceId": 20,
       "baseName": "Press Arnold",
-      "muscles": [],
+      "muscles": [
+        "Anterior deltoid"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -506,7 +525,10 @@
       "id": "wger-43",
       "sourceId": 43,
       "baseName": "Sentadilla Hack con Barra",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [
         "Barbell"
       ],
@@ -523,7 +545,9 @@
       "id": "wger-801",
       "sourceId": 801,
       "baseName": "Flexiones con mancuernas",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -580,7 +604,10 @@
       "id": "wger-802",
       "sourceId": 802,
       "baseName": "Zancadas Caminando con Barra",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [
         "Barbell"
       ],
@@ -639,7 +666,9 @@
       "id": "wger-48",
       "sourceId": 48,
       "baseName": "Curl de Muñeca Inverso con Barra",
-      "muscles": [],
+      "muscles": [
+        "Brachialis"
+      ],
       "equipment": [
         "Barbell",
         "Bench"
@@ -682,7 +711,10 @@
       "id": "wger-983",
       "sourceId": 983,
       "baseName": "Rodillas elevadas",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Pectoralis major"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -712,7 +744,10 @@
       "id": "wger-984",
       "sourceId": 984,
       "baseName": "Zancadas con peso",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -742,7 +777,11 @@
       "id": "wger-821",
       "sourceId": 821,
       "baseName": "Dominadas en Tabla de Multipresas",
-      "muscles": [],
+      "muscles": [
+        "Latissimus dorsi",
+        "Trapezius",
+        "Biceps brachii"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -760,7 +799,9 @@
       "id": "wger-985",
       "sourceId": 985,
       "baseName": "Flexiones a rotación",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -790,7 +831,10 @@
       "id": "wger-986",
       "sourceId": 986,
       "baseName": "Sentadilla de lado izquierdo",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -819,7 +863,10 @@
       "id": "wger-987",
       "sourceId": 987,
       "baseName": "Sentadilla de lado derecho",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -848,7 +895,10 @@
       "id": "wger-988",
       "sourceId": 988,
       "baseName": "Sentadilla búlgara izquierda",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -877,7 +927,10 @@
       "id": "wger-989",
       "sourceId": 989,
       "baseName": "Sentadilla búlgara derecha",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -906,7 +959,9 @@
       "id": "wger-990",
       "sourceId": 990,
       "baseName": "Patada de rodilla",
-      "muscles": [],
+      "muscles": [
+        "Gluteus maximus"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -934,7 +989,10 @@
       "id": "wger-991",
       "sourceId": 991,
       "baseName": "Media sentadillas izquierda",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1016,7 +1074,10 @@
       "id": "wger-992",
       "sourceId": 992,
       "baseName": "Media sentadillas derecha",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1045,7 +1106,10 @@
       "id": "wger-993",
       "sourceId": 993,
       "baseName": "Saltar la cuerda: saltos básicos",
-      "muscles": [],
+      "muscles": [
+        "Gastrocnemius",
+        "Quadriceps femoris"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1120,7 +1184,9 @@
       "id": "wger-994",
       "sourceId": 994,
       "baseName": "Círculos de brazo",
-      "muscles": [],
+      "muscles": [
+        "Anterior deltoid"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1150,7 +1216,9 @@
       "id": "wger-995",
       "sourceId": 995,
       "baseName": "Círculos con los Brazos Hacia Atrás",
-      "muscles": [],
+      "muscles": [
+        "Anterior deltoid"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1179,7 +1247,10 @@
       "id": "wger-996",
       "sourceId": 996,
       "baseName": "Montañeros",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Pectoralis major"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1210,7 +1281,10 @@
       "id": "wger-997",
       "sourceId": 997,
       "baseName": "Burpees de 4 Tiempos",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Pectoralis major"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1237,7 +1311,9 @@
       "id": "wger-998",
       "sourceId": 998,
       "baseName": "Burpees sin Flexión",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1264,7 +1340,10 @@
       "id": "wger-999",
       "sourceId": 999,
       "baseName": "Arremetidas inversas",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1293,7 +1372,9 @@
       "id": "wger-1000",
       "sourceId": 1000,
       "baseName": "Fondos",
-      "muscles": [],
+      "muscles": [
+        "Triceps brachii"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1320,7 +1401,9 @@
       "id": "wger-1001",
       "sourceId": 1001,
       "baseName": "Plancha Alta",
-      "muscles": [],
+      "muscles": [
+        "Rectus abdominis"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1348,7 +1431,9 @@
       "id": "wger-1002",
       "sourceId": 1002,
       "baseName": "Postura del Niño",
-      "muscles": [],
+      "muscles": [
+        "Latissimus dorsi"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1377,7 +1462,11 @@
       "id": "wger-1003",
       "sourceId": 1003,
       "baseName": "Peso Muerto con Kettlebell",
-      "muscles": [],
+      "muscles": [
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Latissimus dorsi"
+      ],
       "equipment": [
         "Kettlebell"
       ],
@@ -1449,7 +1538,9 @@
       "id": "wger-112",
       "sourceId": 112,
       "baseName": "Plancha a Flexión",
-      "muscles": [],
+      "muscles": [
+        "Rectus abdominis"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1509,7 +1600,11 @@
       "id": "wger-82",
       "sourceId": 82,
       "baseName": "Elevaciones Posteriores",
-      "muscles": [],
+      "muscles": [
+        "Latissimus dorsi",
+        "Trapezius",
+        "Biceps brachii"
+      ],
       "equipment": [
         "Bench",
         "Dumbbell"
@@ -1644,7 +1739,9 @@
       "id": "wger-803",
       "sourceId": 803,
       "baseName": "Extensión de Tríceps a una Mano en Polea",
-      "muscles": [],
+      "muscles": [
+        "Triceps brachii"
+      ],
       "equipment": [],
       "category": "Arms",
       "metricType": "weight_reps",
@@ -1697,7 +1794,9 @@
       "id": "wger-1004",
       "sourceId": 1004,
       "baseName": "Rotación de Hombros Hacia Adelante",
-      "muscles": [],
+      "muscles": [
+        "Anterior deltoid"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1725,7 +1824,9 @@
       "id": "wger-1005",
       "sourceId": 1005,
       "baseName": "Rotación de Hombros Hacia Atrás",
-      "muscles": [],
+      "muscles": [
+        "Anterior deltoid"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1753,7 +1854,9 @@
       "id": "wger-1006",
       "sourceId": 1006,
       "baseName": "Retracción Cervical",
-      "muscles": [],
+      "muscles": [
+        "Trapezius"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1779,7 +1882,9 @@
       "id": "wger-1007",
       "sourceId": 1007,
       "baseName": "Rotación de Cabeza",
-      "muscles": [],
+      "muscles": [
+        "Trapezius"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1807,7 +1912,9 @@
       "id": "wger-1008",
       "sourceId": 1008,
       "baseName": "Estiramiento Lateral Izquierdo de Cuello",
-      "muscles": [],
+      "muscles": [
+        "Trapezius"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1835,7 +1942,9 @@
       "id": "wger-1009",
       "sourceId": 1009,
       "baseName": "Estiramiento Lateral Derecho de Cuello",
-      "muscles": [],
+      "muscles": [
+        "Trapezius"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1863,7 +1972,9 @@
       "id": "wger-1010",
       "sourceId": 1010,
       "baseName": "Estiramiento Posterior de Cuello (Nuca)",
-      "muscles": [],
+      "muscles": [
+        "Trapezius"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1953,7 +2064,9 @@
       "id": "wger-1012",
       "sourceId": 1012,
       "baseName": "Curl de biceps alterno",
-      "muscles": [],
+      "muscles": [
+        "Biceps brachii"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -1971,7 +2084,9 @@
       "id": "wger-1013",
       "sourceId": 1013,
       "baseName": "Estiramiento del Elevador de la Escápula",
-      "muscles": [],
+      "muscles": [
+        "Trapezius"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -1989,7 +2104,9 @@
       "id": "wger-1014",
       "sourceId": 1014,
       "baseName": "Estiramiento del Elevador de la Escápula",
-      "muscles": [],
+      "muscles": [
+        "Trapezius"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -2007,7 +2124,9 @@
       "id": "wger-1015",
       "sourceId": 1015,
       "baseName": "Círculos de Cuello (Sentido Horario)",
-      "muscles": [],
+      "muscles": [
+        "Trapezius"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -2025,7 +2144,9 @@
       "id": "wger-1016",
       "sourceId": 1016,
       "baseName": "Círculos de Cuello (Sentido Antihorario)",
-      "muscles": [],
+      "muscles": [
+        "Trapezius"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -2043,7 +2164,9 @@
       "id": "wger-1017",
       "sourceId": 1017,
       "baseName": "Medios Círculos de Cuello (Media Luna)",
-      "muscles": [],
+      "muscles": [
+        "Trapezius"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -2061,7 +2184,9 @@
       "id": "wger-1018",
       "sourceId": 1018,
       "baseName": "Inclinaciones Laterales de Cabeza",
-      "muscles": [],
+      "muscles": [
+        "Trapezius"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -2079,7 +2204,9 @@
       "id": "wger-1019",
       "sourceId": 1019,
       "baseName": "Plancha de lado derecho",
-      "muscles": [],
+      "muscles": [
+        "Rectus abdominis"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -2109,7 +2236,10 @@
       "id": "wger-1020",
       "sourceId": 1020,
       "baseName": "Sentadillas en pistol derecha",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -2138,7 +2268,10 @@
       "id": "wger-1021",
       "sourceId": 1021,
       "baseName": "Elevación de pantorrilla derecha",
-      "muscles": [],
+      "muscles": [
+        "Gastrocnemius",
+        "Soleus"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -2361,7 +2494,9 @@
       "id": "wger-165",
       "sourceId": 165,
       "baseName": "Abdominales en Bola de Estabilidad",
-      "muscles": [],
+      "muscles": [
+        "Rectus abdominis"
+      ],
       "equipment": [],
       "category": "Abs",
       "metricType": "weight_reps",
@@ -2415,7 +2550,10 @@
       "id": "wger-132",
       "sourceId": 132,
       "baseName": "Burpees",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Pectoralis major"
+      ],
       "equipment": [],
       "category": "Chest",
       "metricType": "weight_reps",
@@ -2575,7 +2713,9 @@
       "id": "wger-182",
       "sourceId": 182,
       "baseName": "Suspensiones en Regleta",
-      "muscles": [],
+      "muscles": [
+        "Brachialis"
+      ],
       "equipment": [],
       "category": "Arms",
       "metricType": "weight_reps",
@@ -2635,7 +2775,9 @@
       "id": "wger-178",
       "sourceId": 178,
       "baseName": "Bicho Muerto",
-      "muscles": [],
+      "muscles": [
+        "Rectus abdominis"
+      ],
       "equipment": [],
       "category": "Abs",
       "metricType": "weight_reps",
@@ -2650,7 +2792,9 @@
       "id": "wger-152",
       "sourceId": 152,
       "baseName": "Dominadas con Agarre Supino",
-      "muscles": [],
+      "muscles": [
+        "Brachialis"
+      ],
       "equipment": [
         "Pull-up bar"
       ],
@@ -2751,7 +2895,9 @@
       "id": "wger-193",
       "sourceId": 193,
       "baseName": "Press Diagonal para Hombros",
-      "muscles": [],
+      "muscles": [
+        "Anterior deltoid"
+      ],
       "equipment": [
         "Bench"
       ],
@@ -3311,7 +3457,9 @@
       "id": "wger-279",
       "sourceId": 279,
       "baseName": "Fortalecedor de Agarre",
-      "muscles": [],
+      "muscles": [
+        "Brachialis"
+      ],
       "equipment": [],
       "category": "Arms",
       "metricType": "weight_reps",
@@ -3368,7 +3516,9 @@
       "id": "wger-292",
       "sourceId": 292,
       "baseName": "Hip Raise, Lying",
-      "muscles": [],
+      "muscles": [
+        "Gluteus maximus"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -4005,7 +4155,10 @@
       "id": "wger-319",
       "sourceId": 319,
       "baseName": "Jogging",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gastrocnemius"
+      ],
       "equipment": [],
       "category": "Cardio",
       "metricType": "time",
@@ -4073,7 +4226,9 @@
       "id": "wger-418",
       "sourceId": 418,
       "baseName": "Press militar",
-      "muscles": [],
+      "muscles": [
+        "Anterior deltoid"
+      ],
       "equipment": [
         "SZ-Bar"
       ],
@@ -4280,7 +4435,9 @@
       "id": "wger-406",
       "sourceId": 406,
       "baseName": "Lying Rotator Cuff Exercise",
-      "muscles": [],
+      "muscles": [
+        "Anterior deltoid"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -4408,7 +4565,9 @@
       "id": "wger-382",
       "sourceId": 382,
       "baseName": "L Hold",
-      "muscles": [],
+      "muscles": [
+        "Rectus abdominis"
+      ],
       "equipment": [],
       "category": "Abs",
       "metricType": "weight_reps",
@@ -4570,7 +4729,9 @@
       "id": "wger-487",
       "sourceId": 487,
       "baseName": "Rear Delt Raises",
-      "muscles": [],
+      "muscles": [
+        "Anterior deltoid"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -4921,7 +5082,9 @@
       "id": "wger-516",
       "sourceId": 516,
       "baseName": "Front Wood Chop",
-      "muscles": [],
+      "muscles": [
+        "Obliquus externus abdominis"
+      ],
       "equipment": [],
       "category": "Back",
       "metricType": "weight_reps",
@@ -4989,7 +5152,11 @@
       "id": "wger-507",
       "sourceId": 507,
       "baseName": "Peso muerto rumano con barra",
-      "muscles": [],
+      "muscles": [
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Latissimus dorsi"
+      ],
       "equipment": [
         "Barbell"
       ],
@@ -5008,7 +5175,9 @@
       "id": "wger-505",
       "sourceId": 505,
       "baseName": "Roman Chair",
-      "muscles": [],
+      "muscles": [
+        "Rectus abdominis"
+      ],
       "equipment": [],
       "category": "Abs",
       "metricType": "weight_reps",
@@ -5063,7 +5232,10 @@
       "id": "wger-529",
       "sourceId": 529,
       "baseName": "Run - Interval Training",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gastrocnemius"
+      ],
       "equipment": [],
       "category": "Cardio",
       "metricType": "time",
@@ -5159,7 +5331,10 @@
       "id": "wger-527",
       "sourceId": 527,
       "baseName": "Run",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gastrocnemius"
+      ],
       "equipment": [],
       "category": "Cardio",
       "metricType": "time",
@@ -5195,7 +5370,9 @@
       "id": "wger-500",
       "sourceId": 500,
       "baseName": "Reverse Plank",
-      "muscles": [],
+      "muscles": [
+        "Rectus abdominis"
+      ],
       "equipment": [],
       "category": "Abs",
       "metricType": "weight_reps",
@@ -5243,7 +5420,11 @@
       "id": "wger-604",
       "sourceId": 604,
       "baseName": "Speed Deadlift",
-      "muscles": [],
+      "muscles": [
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Latissimus dorsi"
+      ],
       "equipment": [],
       "category": "Legs",
       "metricType": "weight_reps",
@@ -5293,7 +5474,9 @@
       "id": "wger-906",
       "sourceId": 906,
       "baseName": "Barbell Hip Thrust",
-      "muscles": [],
+      "muscles": [
+        "Gluteus maximus"
+      ],
       "equipment": [],
       "category": "Legs",
       "metricType": "weight_reps",
@@ -5496,7 +5679,9 @@
       "id": "wger-578",
       "sourceId": 578,
       "baseName": "Side-lying External Rotation",
-      "muscles": [],
+      "muscles": [
+        "Anterior deltoid"
+      ],
       "equipment": [],
       "category": "Shoulders",
       "metricType": "weight_reps",
@@ -5710,7 +5895,9 @@
       "id": "wger-624",
       "sourceId": 624,
       "baseName": "Stationary Bike",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris"
+      ],
       "equipment": [],
       "category": "Cardio",
       "metricType": "time",
@@ -5959,7 +6146,9 @@
       "id": "wger-623",
       "sourceId": 623,
       "baseName": "Standing Rope Forearm",
-      "muscles": [],
+      "muscles": [
+        "Brachialis"
+      ],
       "equipment": [],
       "category": "Arms",
       "metricType": "weight_reps",
@@ -5995,7 +6184,9 @@
       "id": "wger-711",
       "sourceId": 711,
       "baseName": "Flexión a pino contra la pared",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -6083,7 +6274,11 @@
       "id": "wger-695",
       "sourceId": 695,
       "baseName": "V-Bar Pulldown",
-      "muscles": [],
+      "muscles": [
+        "Latissimus dorsi",
+        "Trapezius",
+        "Biceps brachii"
+      ],
       "equipment": [],
       "category": "Back",
       "metricType": "weight_reps",
@@ -6229,7 +6424,10 @@
       "id": "wger-722",
       "sourceId": 722,
       "baseName": "Weighted Step-ups",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [],
       "category": "Legs",
       "metricType": "weight_reps",
@@ -6337,7 +6535,9 @@
       "id": "wger-1028",
       "sourceId": 1028,
       "baseName": "Quadruped thoracic rotation left",
-      "muscles": [],
+      "muscles": [
+        "Obliquus externus abdominis"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -6353,7 +6553,9 @@
       "id": "wger-1029",
       "sourceId": 1029,
       "baseName": "Quadruped thoracic rotation right",
-      "muscles": [],
+      "muscles": [
+        "Obliquus externus abdominis"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -6407,7 +6609,9 @@
       "id": "wger-1081",
       "sourceId": 1081,
       "baseName": "Shoulder dislocates",
-      "muscles": [],
+      "muscles": [
+        "Anterior deltoid"
+      ],
       "equipment": [],
       "category": "Shoulders",
       "metricType": "weight_reps",
@@ -6421,7 +6625,9 @@
       "id": "wger-1082",
       "sourceId": 1082,
       "baseName": "Bent over row to external rotation",
-      "muscles": [],
+      "muscles": [
+        "Anterior deltoid"
+      ],
       "equipment": [],
       "category": "Back",
       "metricType": "weight_reps",
@@ -6435,7 +6641,9 @@
       "id": "wger-1083",
       "sourceId": 1083,
       "baseName": "YWTs",
-      "muscles": [],
+      "muscles": [
+        "Trapezius"
+      ],
       "equipment": [],
       "category": "Back",
       "metricType": "weight_reps",
@@ -6517,7 +6725,9 @@
       "id": "wger-1087",
       "sourceId": 1087,
       "baseName": "Dumbbell Hang Power Cleans",
-      "muscles": [],
+      "muscles": [
+        "Brachialis"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -6533,7 +6743,11 @@
       "id": "wger-1088",
       "sourceId": 1088,
       "baseName": "Dumbbell sumo deadlift",
-      "muscles": [],
+      "muscles": [
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Latissimus dorsi"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -6735,7 +6949,9 @@
       "id": "wger-1645",
       "sourceId": 1645,
       "baseName": "Dumbbell Shrug",
-      "muscles": [],
+      "muscles": [
+        "Trapezius"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -6907,7 +7123,10 @@
       "id": "wger-9",
       "sourceId": 9,
       "baseName": "2 Handed Kettlebell Swing",
-      "muscles": [],
+      "muscles": [
+        "Gluteus maximus",
+        "Biceps femoris"
+      ],
       "equipment": [
         "Kettlebell"
       ],
@@ -6960,7 +7179,9 @@
       "id": "wger-1011",
       "sourceId": 1011,
       "baseName": "Front neck stretch",
-      "muscles": [],
+      "muscles": [
+        "Trapezius"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -7059,7 +7280,9 @@
       "id": "wger-1096",
       "sourceId": 1096,
       "baseName": "Abduction while standing",
-      "muscles": [],
+      "muscles": [
+        "Gluteus maximus"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -7342,7 +7565,9 @@
       "id": "wger-1114",
       "sourceId": 1114,
       "baseName": "Rest (for timed workouts)",
-      "muscles": [],
+      "muscles": [
+        "Rectus abdominis"
+      ],
       "equipment": [],
       "category": "Arms",
       "metricType": "weight_reps",
@@ -7356,7 +7581,10 @@
       "id": "wger-1115",
       "sourceId": 1115,
       "baseName": "3D lunge warmup",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -7372,7 +7600,9 @@
       "id": "wger-1116",
       "sourceId": 1116,
       "baseName": "Dumbbell farmer's carrie",
-      "muscles": [],
+      "muscles": [
+        "Obliquus externus abdominis"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -7388,7 +7618,9 @@
       "id": "wger-1119",
       "sourceId": 1119,
       "baseName": "Remo maquina agarre estrecho",
-      "muscles": [],
+      "muscles": [
+        "Brachialis"
+      ],
       "equipment": [],
       "category": "Back",
       "metricType": "weight_reps",
@@ -7402,7 +7634,9 @@
       "id": "wger-1120",
       "sourceId": 1120,
       "baseName": "Remo maquina agarre estrecho supino",
-      "muscles": [],
+      "muscles": [
+        "Brachialis"
+      ],
       "equipment": [],
       "category": "Back",
       "metricType": "weight_reps",
@@ -7616,7 +7850,11 @@
       "id": "wger-1186",
       "sourceId": 1186,
       "baseName": "One Arm Bent Row",
-      "muscles": [],
+      "muscles": [
+        "Latissimus dorsi",
+        "Trapezius",
+        "Biceps brachii"
+      ],
       "equipment": [],
       "category": "Back",
       "metricType": "weight_reps",
@@ -7646,7 +7884,11 @@
       "id": "wger-1188",
       "sourceId": 1188,
       "baseName": "Flexión lateral",
-      "muscles": [],
+      "muscles": [
+        "Latissimus dorsi",
+        "Trapezius",
+        "Biceps brachii"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -7807,7 +8049,10 @@
       "id": "wger-1200",
       "sourceId": 1200,
       "baseName": "Elevación tibial anterior",
-      "muscles": [],
+      "muscles": [
+        "Gastrocnemius",
+        "Soleus"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -7846,7 +8091,9 @@
       "id": "wger-1202",
       "sourceId": 1202,
       "baseName": "Side Lying Hip Abduction",
-      "muscles": [],
+      "muscles": [
+        "Gluteus maximus"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -7880,7 +8127,9 @@
       "id": "wger-1204",
       "sourceId": 1204,
       "baseName": "Cycling cardio session",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris"
+      ],
       "equipment": [],
       "category": "Cardio",
       "metricType": "time",
@@ -7894,7 +8143,9 @@
       "id": "wger-1205",
       "sourceId": 1205,
       "baseName": "Wrist curl, dumbbells",
-      "muscles": [],
+      "muscles": [
+        "Brachialis"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -7910,7 +8161,10 @@
       "id": "wger-1206",
       "sourceId": 1206,
       "baseName": "scorpion kick",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Pectoralis major"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -7927,7 +8181,10 @@
       "id": "wger-1207",
       "sourceId": 1207,
       "baseName": "Scorpion Kick",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Pectoralis major"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -7944,7 +8201,10 @@
       "id": "wger-1208",
       "sourceId": 1208,
       "baseName": "Prisoner Squat",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -7961,7 +8221,11 @@
       "id": "wger-1210",
       "sourceId": 1210,
       "baseName": "Skydiver with arms in T-position",
-      "muscles": [],
+      "muscles": [
+        "Latissimus dorsi",
+        "Trapezius",
+        "Biceps brachii"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -8061,7 +8325,11 @@
       "id": "wger-1216",
       "sourceId": 1216,
       "baseName": "Recruitment Pulls",
-      "muscles": [],
+      "muscles": [
+        "Latissimus dorsi",
+        "Trapezius",
+        "Biceps brachii"
+      ],
       "equipment": [],
       "category": "Arms",
       "metricType": "weight_reps",
@@ -8075,7 +8343,9 @@
       "id": "wger-1217",
       "sourceId": 1217,
       "baseName": "Finger Pushup",
-      "muscles": [],
+      "muscles": [
+        "Brachialis"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -8283,7 +8553,9 @@
       "id": "wger-441",
       "sourceId": 441,
       "baseName": "Overhead Squat",
-      "muscles": [],
+      "muscles": [
+        "Trapezius"
+      ],
       "equipment": [],
       "category": "Legs",
       "metricType": "weight_reps",
@@ -8334,7 +8606,10 @@
       "id": "wger-530",
       "sourceId": 530,
       "baseName": "Correr en cinta",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gastrocnemius"
+      ],
       "equipment": [],
       "category": "Cardio",
       "metricType": "time",
@@ -8599,7 +8874,11 @@
       "id": "wger-674",
       "sourceId": 674,
       "baseName": "Rowing with TRX band",
-      "muscles": [],
+      "muscles": [
+        "Latissimus dorsi",
+        "Trapezius",
+        "Biceps brachii"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -8776,7 +9055,9 @@
       "id": "wger-1117",
       "sourceId": 1117,
       "baseName": "Remo gironda agarre cerrado",
-      "muscles": [],
+      "muscles": [
+        "Brachialis"
+      ],
       "equipment": [],
       "category": "Back",
       "metricType": "weight_reps",
@@ -8874,7 +9155,9 @@
       "id": "wger-1209",
       "sourceId": 1209,
       "baseName": "Shoulder width three-point push-up",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -9253,7 +9536,9 @@
       "id": "wger-1275",
       "sourceId": 1275,
       "baseName": "Plantarflexion Stretch with Band",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [],
       "category": "Legs",
       "metricType": "weight_reps",
@@ -10235,7 +10520,9 @@
       "id": "wger-1333",
       "sourceId": 1333,
       "baseName": "Forearm Curls (underhand grip)",
-      "muscles": [],
+      "muscles": [
+        "Brachialis"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -10402,7 +10689,11 @@
       "id": "wger-1348",
       "sourceId": 1348,
       "baseName": "Lower Back Extensions",
-      "muscles": [],
+      "muscles": [
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Latissimus dorsi"
+      ],
       "equipment": [],
       "category": "Back",
       "metricType": "weight_reps",
@@ -10416,7 +10707,9 @@
       "id": "wger-1350",
       "sourceId": 1350,
       "baseName": "Lat Pull Down (close grip)",
-      "muscles": [],
+      "muscles": [
+        "Brachialis"
+      ],
       "equipment": [],
       "category": "Back",
       "metricType": "weight_reps",
@@ -10470,7 +10763,9 @@
       "id": "wger-1353",
       "sourceId": 1353,
       "baseName": "Dumbbell Hex Press",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -10601,7 +10896,9 @@
       "id": "wger-1363",
       "sourceId": 1363,
       "baseName": "Blackroll",
-      "muscles": [],
+      "muscles": [
+        "Latissimus dorsi"
+      ],
       "equipment": [],
       "category": "Back",
       "metricType": "weight_reps",
@@ -10615,7 +10912,10 @@
       "id": "wger-1365",
       "sourceId": 1365,
       "baseName": "Calf Raise with machine (seated)",
-      "muscles": [],
+      "muscles": [
+        "Gastrocnemius",
+        "Soleus"
+      ],
       "equipment": [],
       "category": "Legs",
       "metricType": "weight_reps",
@@ -10629,7 +10929,10 @@
       "id": "wger-1366",
       "sourceId": 1366,
       "baseName": "Dumbbell Split Squat",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -10646,7 +10949,11 @@
       "id": "wger-1370",
       "sourceId": 1370,
       "baseName": "Dumbbell Deadlift",
-      "muscles": [],
+      "muscles": [
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Latissimus dorsi"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -10790,7 +11097,9 @@
       "id": "wger-1380",
       "sourceId": 1380,
       "baseName": "Band pull-aparts",
-      "muscles": [],
+      "muscles": [
+        "Trapezius"
+      ],
       "equipment": [],
       "category": "Back",
       "metricType": "weight_reps",
@@ -12929,7 +13238,10 @@
       "id": "wger-1521",
       "sourceId": 1521,
       "baseName": "Pendular hack",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [],
       "category": "Legs",
       "metricType": "weight_reps",
@@ -13091,7 +13403,9 @@
       "id": "wger-1529",
       "sourceId": 1529,
       "baseName": "Toes to bar",
-      "muscles": [],
+      "muscles": [
+        "Rectus abdominis"
+      ],
       "equipment": [
         "Pull-up bar"
       ],
@@ -13613,7 +13927,10 @@
       "id": "wger-1574",
       "sourceId": 1574,
       "baseName": "Schwimmen",
-      "muscles": [],
+      "muscles": [
+        "Latissimus dorsi",
+        "Triceps brachii"
+      ],
       "equipment": [],
       "category": "Cardio",
       "metricType": "time",
@@ -13627,7 +13944,9 @@
       "id": "wger-1575",
       "sourceId": 1575,
       "baseName": "Standing Dowel Shoulder press",
-      "muscles": [],
+      "muscles": [
+        "Anterior deltoid"
+      ],
       "equipment": [
         "Barbell"
       ],
@@ -13704,7 +14023,10 @@
       "id": "wger-1579",
       "sourceId": 1579,
       "baseName": "Bronco",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gastrocnemius"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -13887,7 +14209,9 @@
       "id": "wger-1592",
       "sourceId": 1592,
       "baseName": "Meditación guiada o libre",
-      "muscles": [],
+      "muscles": [
+        "Rectus abdominis"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -14178,7 +14502,9 @@
       "id": "wger-1724",
       "sourceId": 1724,
       "baseName": "Standing Adduction (Cable)",
-      "muscles": [],
+      "muscles": [
+        "Gluteus maximus"
+      ],
       "equipment": [],
       "category": "Legs",
       "metricType": "weight_reps",
@@ -14269,7 +14595,10 @@
       "id": "wger-1615",
       "sourceId": 1615,
       "baseName": "Cardio en cinta",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gastrocnemius"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -14324,7 +14653,9 @@
       "id": "wger-1618",
       "sourceId": 1618,
       "baseName": "Cardio en bicicleta estática",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -14575,7 +14906,11 @@
       "id": "wger-1737",
       "sourceId": 1737,
       "baseName": "Assisted chin-ups",
-      "muscles": [],
+      "muscles": [
+        "Latissimus dorsi",
+        "Trapezius",
+        "Biceps brachii"
+      ],
       "equipment": [],
       "category": "Back",
       "metricType": "weight_reps",
@@ -14608,7 +14943,10 @@
       "id": "wger-1739",
       "sourceId": 1739,
       "baseName": "Shrimp Squad",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -14642,7 +14980,11 @@
       "id": "wger-1741",
       "sourceId": 1741,
       "baseName": "L-Sit Pull-ups",
-      "muscles": [],
+      "muscles": [
+        "Latissimus dorsi",
+        "Trapezius",
+        "Biceps brachii"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -14658,7 +15000,11 @@
       "id": "wger-1742",
       "sourceId": 1742,
       "baseName": "Back Lever",
-      "muscles": [],
+      "muscles": [
+        "Latissimus dorsi",
+        "Trapezius",
+        "Biceps brachii"
+      ],
       "equipment": [
         "Pull-up bar",
         "none (bodyweight exercise)"
@@ -14871,7 +15217,11 @@
       "id": "wger-1754",
       "sourceId": 1754,
       "baseName": "45° lateral raises",
-      "muscles": [],
+      "muscles": [
+        "Latissimus dorsi",
+        "Trapezius",
+        "Biceps brachii"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -14887,7 +15237,9 @@
       "id": "wger-1755",
       "sourceId": 1755,
       "baseName": "Shoulder Y-pull cable",
-      "muscles": [],
+      "muscles": [
+        "Trapezius"
+      ],
       "equipment": [],
       "category": "Shoulders",
       "metricType": "weight_reps",
@@ -14901,7 +15253,9 @@
       "id": "wger-1757",
       "sourceId": 1757,
       "baseName": "supino",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [],
       "category": "Chest",
       "metricType": "weight_reps",
@@ -14915,7 +15269,9 @@
       "id": "wger-1762",
       "sourceId": 1762,
       "baseName": "supino",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [],
       "category": "Chest",
       "metricType": "weight_reps",
@@ -14929,7 +15285,9 @@
       "id": "wger-1763",
       "sourceId": 1763,
       "baseName": "supino",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [],
       "category": "Chest",
       "metricType": "weight_reps",
@@ -14943,7 +15301,9 @@
       "id": "wger-1764",
       "sourceId": 1764,
       "baseName": "supino",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [],
       "category": "Arms",
       "metricType": "weight_reps",
@@ -14976,7 +15336,9 @@
       "id": "wger-1766",
       "sourceId": 1766,
       "baseName": "Plank Reach",
-      "muscles": [],
+      "muscles": [
+        "Rectus abdominis"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -14993,7 +15355,9 @@
       "id": "wger-1767",
       "sourceId": 1767,
       "baseName": "bicep curl",
-      "muscles": [],
+      "muscles": [
+        "Biceps brachii"
+      ],
       "equipment": [],
       "category": "Arms",
       "metricType": "weight_reps",
@@ -15007,7 +15371,9 @@
       "id": "wger-1768",
       "sourceId": 1768,
       "baseName": "bicep",
-      "muscles": [],
+      "muscles": [
+        "Biceps brachii"
+      ],
       "equipment": [],
       "category": "Arms",
       "metricType": "weight_reps",
@@ -15021,7 +15387,10 @@
       "id": "wger-1769",
       "sourceId": 1769,
       "baseName": "cabel",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [],
       "category": "Legs",
       "metricType": "weight_reps",
@@ -15103,7 +15472,9 @@
       "id": "wger-1774",
       "sourceId": 1774,
       "baseName": "Chair dips",
-      "muscles": [],
+      "muscles": [
+        "Triceps brachii"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],
@@ -15119,7 +15490,9 @@
       "id": "wger-1775",
       "sourceId": 1775,
       "baseName": "Pec deck rear delt fly",
-      "muscles": [],
+      "muscles": [
+        "Anterior deltoid"
+      ],
       "equipment": [],
       "category": "Shoulders",
       "metricType": "weight_reps",
@@ -15156,7 +15529,9 @@
       "id": "wger-1776",
       "sourceId": 1776,
       "baseName": "Suitcase Carry",
-      "muscles": [],
+      "muscles": [
+        "Obliquus externus abdominis"
+      ],
       "equipment": [
         "Dumbbell"
       ],
@@ -15191,7 +15566,9 @@
       "id": "wger-1778",
       "sourceId": 1778,
       "baseName": "Supino inclinado",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [],
       "category": "Chest",
       "metricType": "weight_reps",
@@ -15205,7 +15582,9 @@
       "id": "wger-1779",
       "sourceId": 1779,
       "baseName": "Landmine Rotation",
-      "muscles": [],
+      "muscles": [
+        "Obliquus externus abdominis"
+      ],
       "equipment": [
         "Barbell"
       ],
@@ -15221,7 +15600,9 @@
       "id": "wger-1780",
       "sourceId": 1780,
       "baseName": "Supino",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [],
       "category": "Arms",
       "metricType": "weight_reps",
@@ -15235,7 +15616,9 @@
       "id": "wger-1792",
       "sourceId": 1792,
       "baseName": "Supino",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [],
       "category": "Chest",
       "metricType": "weight_reps",
@@ -15249,7 +15632,9 @@
       "id": "wger-1793",
       "sourceId": 1793,
       "baseName": "Supino Inclinado",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [],
       "category": "Chest",
       "metricType": "weight_reps",
@@ -15263,7 +15648,9 @@
       "id": "wger-1794",
       "sourceId": 1794,
       "baseName": "SUPINO",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [],
       "category": "Abs",
       "metricType": "weight_reps",
@@ -15293,7 +15680,9 @@
       "id": "wger-1796",
       "sourceId": 1796,
       "baseName": "Supino",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [],
       "category": "Chest",
       "metricType": "weight_reps",
@@ -15307,7 +15696,9 @@
       "id": "wger-1797",
       "sourceId": 1797,
       "baseName": "Supino",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [],
       "category": "Chest",
       "metricType": "weight_reps",
@@ -15321,7 +15712,9 @@
       "id": "wger-1798",
       "sourceId": 1798,
       "baseName": "Supino",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [],
       "category": "Arms",
       "metricType": "weight_reps",
@@ -15335,7 +15728,9 @@
       "id": "wger-1799",
       "sourceId": 1799,
       "baseName": "Supino",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [],
       "category": "Chest",
       "metricType": "weight_reps",
@@ -15349,7 +15744,9 @@
       "id": "wger-1800",
       "sourceId": 1800,
       "baseName": "Supino Inclinado",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [],
       "category": "Arms",
       "metricType": "weight_reps",
@@ -15385,7 +15782,9 @@
       "id": "wger-1802",
       "sourceId": 1802,
       "baseName": "Supinos",
-      "muscles": [],
+      "muscles": [
+        "Pectoralis major"
+      ],
       "equipment": [],
       "category": "Abs",
       "metricType": "weight_reps",
@@ -15436,7 +15835,10 @@
       "id": "wger-1805",
       "sourceId": 1805,
       "baseName": "Barbell Squat",
-      "muscles": [],
+      "muscles": [
+        "Quadriceps femoris",
+        "Gluteus maximus"
+      ],
       "equipment": [
         "Barbell"
       ],
@@ -15548,7 +15950,9 @@
       "id": "wger-1822",
       "sourceId": 1822,
       "baseName": "Open Book",
-      "muscles": [],
+      "muscles": [
+        "Obliquus externus abdominis"
+      ],
       "equipment": [
         "none (bodyweight exercise)"
       ],

@@ -4,7 +4,14 @@ import { getWorkoutExercises, getWorkoutSets, listWorkoutsSince } from '../data/
 import { listExercises } from '../data/exercises';
 import { useSettings } from '../data/SettingsProvider';
 import { BodyMap } from '../components/BodyMap';
-import { buildSlugVolumes, getIntensityRatio, getMuscleWeights, getIntensityColor, SLUG_LABELS } from '../components/bodyMapData';
+import {
+  buildSlugVolumes,
+  getIntensityRatio,
+  getMuscleWeights,
+  getIntensityColor,
+  SLUG_LABELS,
+  MUSCLE_DECAY_HALF_LIFE_DAYS
+} from '../components/bodyMapData';
 
 type MetricKey = 'duration' | 'volume' | 'reps';
 
@@ -27,7 +34,6 @@ interface PrEntry {
 }
 
 const ONE_RM_DIVISOR = 30;
-const MUSCLE_DECAY_HALF_LIFE_DAYS = 7;
 
 const formatShortDate = (value: string) => {
   const date = new Date(value);

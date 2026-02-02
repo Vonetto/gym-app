@@ -9,9 +9,17 @@ import {
   getWorkoutExercises,
   getWorkoutSets,
   listAllWorkouts,
-  listRecentWorkouts
+  listRecentWorkouts,
+  listWorkoutsSince
 } from '../data/workouts';
 import { useSettings } from '../data/SettingsProvider';
+import { BodyMap } from '../components/BodyMap';
+import {
+  buildSlugVolumes,
+  getMuscleWeights,
+  SLUG_LABELS,
+  MUSCLE_DECAY_HALF_LIFE_DAYS
+} from '../components/bodyMapData';
 
 interface RoutineSummary {
   id: string;
@@ -81,6 +89,9 @@ export function Home() {
   const [newName, setNewName] = useState('');
   const [newTags, setNewTags] = useState('');
   const [activeWorkout, setActiveWorkout] = useState<WorkoutDetail | null>(null);
+  const [muscleVolumes, setMuscleVolumes] = useState<Record<string, number>>({});
+  const [mapView, setMapView] = useState<'front' | 'back'>('front');
+  const [activeSlug, setActiveSlug] = useState<string | null>(null);
 
   const loadRoutines = async () => {
     const baseRoutines = await listRoutines();
@@ -135,9 +146,38 @@ export function Home() {
       const routineSummaries = await loadRoutines();
       const workouts = await listRecentWorkouts(8);
       const summaries = await buildWorkoutSummaries(workouts);
+      const since = new Date();
+      since.setDate(since.getDate() - 90);
+      const muscleWorkouts = await listWorkoutsSince(since.toISOString());
+      const exercises = await listExercises();
+      const exerciseMuscles = new Map(exercises.map((exercise) => [exercise.id, exercise.muscles]));
+      const muscleTotals: Record<string, number> = {};
+      const now = Date.now();
+      for (const workout of muscleWorkouts) {
+        const workoutExercises = await getWorkoutExercises(workout.id);
+        const workoutTime = new Date(workout.endedAt).getTime();
+        const daysSince = Math.max(0, (now - workoutTime) / (1000 * 60 * 60 * 24));
+        const decay = Math.exp((-Math.log(2) * daysSince) / MUSCLE_DECAY_HALF_LIFE_DAYS);
+        for (const exercise of workoutExercises) {
+          const sets = await getWorkoutSets(exercise.id);
+          const muscles = exerciseMuscles.get(exercise.exerciseId) ?? [];
+          const weightedMuscles = getMuscleWeights(muscles);
+          for (const set of sets) {
+            const weight = set.weight ?? 0;
+            const reps = set.reps ?? 0;
+            const volume = weight * reps;
+            if (volume <= 0 || !weightedMuscles.length) continue;
+            weightedMuscles.forEach(([muscle, share]) => {
+              muscleTotals[muscle] =
+                (muscleTotals[muscle] ?? 0) + volume * share * decay;
+            });
+          }
+        }
+      }
       if (!active) return;
       setRoutines(routineSummaries);
       setRecentWorkouts(summaries);
+      setMuscleVolumes(muscleTotals);
     };
     void loadData();
     return () => {
@@ -239,6 +279,7 @@ export function Home() {
       exercises: []
     };
     localStorage.setItem('active-session', JSON.stringify(payload));
+    window.dispatchEvent(new Event('active-session'));
     navigate('/workout');
   };
 
@@ -301,6 +342,7 @@ export function Home() {
       previousSets: previousSetsByExercise.get(exercise.exerciseId) ?? []
     }));
     localStorage.setItem('active-session', JSON.stringify(session));
+    window.dispatchEvent(new Event('active-session'));
     navigate('/workout');
   };
 
@@ -308,6 +350,9 @@ export function Home() {
     () => (routines.length === 1 ? 'Mis rutinas (1)' : `Mis rutinas (${routines.length})`),
     [routines.length]
   );
+  const slugVolumes = useMemo(() => buildSlugVolumes(muscleVolumes), [muscleVolumes]);
+  const activeSlugLabel = activeSlug ? SLUG_LABELS[activeSlug] ?? activeSlug : null;
+  const activeSlugValue = activeSlug ? slugVolumes[activeSlug] ?? 0 : 0;
 
   return (
     <section className="stack wide">
@@ -396,6 +441,45 @@ export function Home() {
         ) : (
           <p className="muted">Aún no tienes rutinas creadas.</p>
         )}
+      </div>
+
+      <div className="card">
+        <div className="card-header">
+          <h2>Estado muscular</h2>
+          <div className="pill-row">
+            <button
+              className={`pill ${mapView === 'front' ? 'active' : ''}`}
+              type="button"
+              onClick={() => setMapView('front')}
+            >
+              Frente
+            </button>
+            <button
+              className={`pill ${mapView === 'back' ? 'active' : ''}`}
+              type="button"
+              onClick={() => setMapView('back')}
+            >
+              Espalda
+            </button>
+          </div>
+        </div>
+        <div className="muscle-map compact">
+          <div className="muscle-map-figure">
+            <BodyMap
+              view={mapView}
+              muscleVolumes={muscleVolumes}
+              activeSlug={activeSlug}
+              onSelect={(slug) => setActiveSlug((prev) => (prev === slug ? null : slug))}
+            />
+            {activeSlugLabel ? (
+              <div className="muscle-tooltip">
+                <span>{activeSlugLabel}</span>
+                <span className="muted">{Math.round(activeSlugValue)} kg</span>
+              </div>
+            ) : null}
+          </div>
+        </div>
+        <p className="muted">Decaimiento 7 días · volumen</p>
       </div>
 
       <div className="card">

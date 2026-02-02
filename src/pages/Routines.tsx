@@ -54,6 +54,7 @@ export function Routines() {
       exercises: []
     };
     localStorage.setItem('active-session', JSON.stringify(payload));
+    window.dispatchEvent(new Event('active-session'));
     navigate('/workout');
   };
 

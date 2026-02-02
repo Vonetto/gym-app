@@ -63,3 +63,5 @@ export const getMuscleWeights = (muscles: string[]): Array<[string, number]> => 
   const secondaryWeight = (1 - primaryWeight) / (muscles.length - 1);
   return muscles.map((muscle, index) => [muscle, index === 0 ? primaryWeight : secondaryWeight]);
 };
+
+export const MUSCLE_DECAY_HALF_LIFE_DAYS = 7;
