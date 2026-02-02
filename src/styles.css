@@ -811,11 +811,32 @@ input::placeholder {
   margin-top: 1rem;
 }
 
+.muscle-map-figure {
+  position: relative;
+}
+
 .muscle-map svg {
   width: 100%;
-  max-width: 240px;
+  max-width: 260px;
   margin: 0 auto;
   display: block;
+  height: auto;
+}
+
+.muscle-tooltip {
+  position: absolute;
+  left: 50%;
+  bottom: -0.5rem;
+  transform: translate(-50%, 100%);
+  background: rgba(10, 10, 10, 0.9);
+  border: 1px solid var(--border);
+  padding: 0.4rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  white-space: nowrap;
 }
 
 .muscle-legend {

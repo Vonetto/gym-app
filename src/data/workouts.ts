@@ -24,10 +24,12 @@ export interface WorkoutSessionPayload {
 
 export async function saveWorkout(session: WorkoutSessionPayload) {
   const endedAt = new Date().toISOString();
+  const routineName =
+    session.routineName ?? (session.routineId ? undefined : 'Ejercicio Individual');
   const workout: WorkoutRecord = {
     id: session.id,
     routineId: session.routineId,
-    routineName: session.routineName,
+    routineName,
     tags: session.tags ?? [],
     startedAt: session.createdAt,
     endedAt
@@ -85,6 +87,10 @@ export async function listRecentWorkouts(limit = 8) {
 
 export async function listAllWorkouts() {
   return db.workouts.orderBy('endedAt').reverse().toArray();
+}
+
+export async function listWorkoutsSince(sinceIso: string) {
+  return db.workouts.where('endedAt').aboveOrEqual(sinceIso).toArray();
 }
 
 export async function getWorkoutById(workoutId: string) {

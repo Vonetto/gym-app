@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { getWorkoutExercises, getWorkoutSets, listWorkoutsSince } from '../data/workouts';
 import { listExercises } from '../data/exercises';
 import { useSettings } from '../data/SettingsProvider';
+import { BodyMap } from '../components/BodyMap';
+import { buildSlugVolumes, getIntensityRatio, getMuscleWeights, getIntensityColor, SLUG_LABELS } from '../components/bodyMapData';
 
 type MetricKey = 'duration' | 'volume' | 'reps';
 
@@ -25,6 +27,7 @@ interface PrEntry {
 }
 
 const ONE_RM_DIVISOR = 30;
+const MUSCLE_DECAY_HALF_LIFE_DAYS = 7;
 
 const formatShortDate = (value: string) => {
   const date = new Date(value);
@@ -34,24 +37,6 @@ const formatShortDate = (value: string) => {
     .replace('.', '')
     .slice(0, 3);
   return `${month}-${day}`;
-};
-
-const MUSCLE_LABELS: Record<string, string> = {
-  'Anterior deltoid': 'Hombros',
-  'Pectoralis major': 'Pecho',
-  'Serratus anterior': 'Pecho',
-  'Biceps brachii': 'Bíceps',
-  Brachialis: 'Bíceps',
-  'Triceps brachii': 'Tríceps',
-  'Rectus abdominis': 'Core',
-  'Obliquus externus abdominis': 'Core',
-  'Quadriceps femoris': 'Cuádriceps',
-  'Biceps femoris': 'Isquiotibiales',
-  'Gluteus maximus': 'Glúteos',
-  'Latissimus dorsi': 'Espalda',
-  Trapezius: 'Espalda',
-  Gastrocnemius: 'Pantorrillas',
-  Soleus: 'Pantorrillas'
 };
 
 const REGION_DEFS = {
@@ -90,6 +75,7 @@ export function Stats() {
   const [activeBar, setActiveBar] = useState<number | null>(null);
   const [muscleVolumes, setMuscleVolumes] = useState<Record<string, number>>({});
   const [mapView, setMapView] = useState<'front' | 'back'>('front');
+  const [activeSlug, setActiveSlug] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -112,26 +98,31 @@ export function Stats() {
       let totalSets = 0;
       const muscleTotals: Record<string, number> = {};
 
+      const now = Date.now();
       for (const workout of sorted) {
         const workoutExercises = await getWorkoutExercises(workout.id);
         let workoutSets = 0;
         let workoutVolume = 0;
         let workoutReps = 0;
+        const workoutTime = new Date(workout.endedAt).getTime();
+        const daysSince = Math.max(0, (now - workoutTime) / (1000 * 60 * 60 * 24));
+        const decay = Math.exp((-Math.log(2) * daysSince) / MUSCLE_DECAY_HALF_LIFE_DAYS);
 
         for (const exercise of workoutExercises) {
           const sets = await getWorkoutSets(exercise.id);
           workoutSets += sets.length;
           const muscles = exerciseMuscles.get(exercise.exerciseId) ?? [];
-          const muscleShare = muscles.length ? 1 / muscles.length : 0;
+          const weightedMuscles = getMuscleWeights(muscles);
           for (const set of sets) {
             const weight = set.weight ?? 0;
             const reps = set.reps ?? 0;
             workoutVolume += weight * reps;
             workoutReps += reps;
             const volume = weight * reps;
-            if (volume > 0 && muscles.length) {
-              muscles.forEach((muscle) => {
-                muscleTotals[muscle] = (muscleTotals[muscle] ?? 0) + volume * muscleShare;
+            if (volume > 0 && weightedMuscles.length) {
+              weightedMuscles.forEach(([muscle, share]) => {
+                muscleTotals[muscle] =
+                  (muscleTotals[muscle] ?? 0) + volume * share * decay;
               });
             }
             if (weight > 0 && reps > 0) {
@@ -240,15 +231,13 @@ export function Stats() {
     return regions.map((region, index) => ({
       ...region,
       value: values[index],
-      intensity: max > 0 ? values[index] / max : 0
+      intensity: max > 0 ? getIntensityRatio(values[index], max) : 0
     }));
   }, [mapView, muscleVolumes]);
 
-  const regionColor = (intensity: number) => {
-    if (intensity <= 0) return '#1d1d1d';
-    const alpha = 0.2 + intensity * 0.8;
-    return `rgba(45, 140, 255, ${alpha})`;
-  };
+  const slugVolumes = useMemo(() => buildSlugVolumes(muscleVolumes), [muscleVolumes]);
+  const activeSlugLabel = activeSlug ? SLUG_LABELS[activeSlug] ?? activeSlug : null;
+  const activeSlugValue = activeSlug ? slugVolumes[activeSlug] ?? 0 : 0;
 
   return (
     <section className="stack wide">
@@ -376,42 +365,26 @@ export function Stats() {
           </div>
         </div>
         <div className="muscle-map">
-          <svg viewBox="0 0 200 360" aria-label="Mapa muscular">
-            {mapView === 'front' ? (
-              <>
-                <rect x="70" y="50" width="60" height="40" rx="16" fill={regionColor(mapRegions[0].intensity)} />
-                <rect x="40" y="55" width="25" height="40" rx="12" fill={regionColor(mapRegions[1].intensity)} />
-                <rect x="135" y="55" width="25" height="40" rx="12" fill={regionColor(mapRegions[1].intensity)} />
-                <rect x="30" y="95" width="25" height="70" rx="12" fill={regionColor(mapRegions[2].intensity)} />
-                <rect x="145" y="95" width="25" height="70" rx="12" fill={regionColor(mapRegions[2].intensity)} />
-                <rect x="75" y="95" width="50" height="55" rx="12" fill={regionColor(mapRegions[3].intensity)} />
-                <rect x="70" y="165" width="30" height="85" rx="12" fill={regionColor(mapRegions[4].intensity)} />
-                <rect x="100" y="165" width="30" height="85" rx="12" fill={regionColor(mapRegions[4].intensity)} />
-                <rect x="70" y="260" width="25" height="70" rx="12" fill={regionColor(mapRegions[5].intensity)} />
-                <rect x="105" y="260" width="25" height="70" rx="12" fill={regionColor(mapRegions[5].intensity)} />
-              </>
-            ) : (
-              <>
-                <rect x="70" y="50" width="60" height="50" rx="16" fill={regionColor(mapRegions[0].intensity)} />
-                <rect x="40" y="55" width="25" height="40" rx="12" fill={regionColor(mapRegions[1].intensity)} />
-                <rect x="135" y="55" width="25" height="40" rx="12" fill={regionColor(mapRegions[1].intensity)} />
-                <rect x="30" y="95" width="25" height="70" rx="12" fill={regionColor(mapRegions[2].intensity)} />
-                <rect x="145" y="95" width="25" height="70" rx="12" fill={regionColor(mapRegions[2].intensity)} />
-                <rect x="75" y="150" width="50" height="40" rx="12" fill={regionColor(mapRegions[3].intensity)} />
-                <rect x="70" y="195" width="30" height="80" rx="12" fill={regionColor(mapRegions[4].intensity)} />
-                <rect x="100" y="195" width="30" height="80" rx="12" fill={regionColor(mapRegions[4].intensity)} />
-                <rect x="70" y="285" width="25" height="60" rx="12" fill={regionColor(mapRegions[5].intensity)} />
-                <rect x="105" y="285" width="25" height="60" rx="12" fill={regionColor(mapRegions[5].intensity)} />
-              </>
-            )}
-            <rect x="25" y="30" width="150" height="320" rx="24" fill="none" stroke="#2a2a2a" strokeWidth="2" />
-          </svg>
+          <div className="muscle-map-figure">
+            <BodyMap
+              view={mapView}
+              muscleVolumes={muscleVolumes}
+              activeSlug={activeSlug}
+              onSelect={(slug) => setActiveSlug((prev) => (prev === slug ? null : slug))}
+            />
+            {activeSlugLabel ? (
+              <div className="muscle-tooltip">
+                <span>{activeSlugLabel}</span>
+                <span className="muted">{Math.round(activeSlugValue)} kg</span>
+              </div>
+            ) : null}
+          </div>
           <div className="muscle-legend">
             {mapRegions.map((region) => (
               <div key={region.id} className="muscle-legend-row">
                 <span
                   className="muscle-swatch"
-                  style={{ background: regionColor(region.intensity) }}
+                  style={{ background: getIntensityColor(region.intensity) }}
                 />
                 <span>{region.label}</span>
                 <span className="muted">{Math.round(region.value)} kg</span>
@@ -420,7 +393,8 @@ export function Stats() {
           </div>
         </div>
         <p className="muted">
-          Distribución basada en volumen (kg × reps) y repartida entre músculos del ejercicio.
+          Distribución basada en volumen (kg × reps), con decaimiento de 7 días para mostrar
+          recencia del estímulo.
         </p>
       </div>
 
