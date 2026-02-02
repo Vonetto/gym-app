@@ -171,6 +171,19 @@ a {
   align-items: center;
 }
 
+.inline.compact {
+  gap: 0.35rem;
+}
+
+.inline input[type='checkbox'] {
+  margin: 0;
+}
+
+.inline label,
+.inline span {
+  margin: 0;
+}
+
 .actions-stack {
   display: grid;
   gap: 0.35rem;
@@ -590,6 +603,15 @@ input::placeholder {
   border-radius: 12px;
   min-width: 0;
   font-size: 0.78rem;
+}
+
+.set-table.metric-reps .set-row {
+  grid-template-columns: 28px 62px 62px 38px 24px;
+}
+
+.set-table.metric-distance .set-row,
+.set-table.metric-time .set-row {
+  grid-template-columns: 28px 62px 72px 38px 24px;
 }
 
 .set-row input {

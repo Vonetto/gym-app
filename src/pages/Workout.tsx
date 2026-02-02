@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { listExercises, getExerciseDisplayName, normalizeName } from '../data/exercises';
+import {
+  listExercises,
+  getExerciseDisplayName,
+  normalizeName,
+  listFavorites
+} from '../data/exercises';
 import { useSettings } from '../data/SettingsProvider';
 import { getLatestExerciseSets, saveWorkout } from '../data/workouts';
 import { getRoutineDetail, overwriteRoutineExercises } from '../data/routines';
@@ -19,7 +24,7 @@ interface WorkoutExercise {
   name: string;
   metricType: string;
   notes?: string;
-  previousSets?: Array<{ weight?: number; reps?: number }>;
+  previousSets?: Array<{ weight?: number; reps?: number; duration?: number; distance?: number }>;
   restSeconds?: number;
   sets: WorkoutSet[];
 }
@@ -63,6 +68,8 @@ export function Workout() {
   );
   const [replaceQuery, setReplaceQuery] = useState('');
   const [showAddExercise, setShowAddExercise] = useState(false);
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
+  const [onlyFavorites, setOnlyFavorites] = useState(false);
   const [showFinishPrompt, setShowFinishPrompt] = useState(false);
   const audioContextRef = useRef<AudioContext | null>(null);
 
@@ -98,6 +105,14 @@ export function Workout() {
     };
     loadExercises();
   }, [settings.language]);
+
+  useEffect(() => {
+    const loadFavorites = async () => {
+      const data = await listFavorites();
+      setFavoriteIds(data.map((item) => item.exerciseId));
+    };
+    loadFavorites();
+  }, [showAddExercise]);
 
   useEffect(() => {
     if (!session) return;
@@ -312,7 +327,12 @@ export function Workout() {
       name: option.label,
       metricType: option.metricType,
       notes: '',
-      previousSets: previousSets.map((set) => ({ weight: set.weight, reps: set.reps })),
+      previousSets: previousSets.map((set) => ({
+        weight: set.weight,
+        reps: set.reps,
+        duration: set.duration,
+        distance: set.distance
+      })),
       restSeconds: 0,
       sets: Array.from({ length: 3 }, () => ({
         completed: false
@@ -384,10 +404,14 @@ export function Workout() {
   };
 
   const buildPreviousMatches = (
-    previous: Array<{ weight?: number; reps?: number }>,
+    metricType: string,
+    previous: Array<{ weight?: number; reps?: number; duration?: number; distance?: number }>,
     current: WorkoutSet[]
   ) => {
     if (!previous.length) return current.map(() => null);
+    if (metricType === 'time' || metricType === 'distance') {
+      return current.map((_, index) => previous[index] ?? null);
+    }
     const remaining = previous.map((set, index) => ({ ...set, index }));
     return current.map((set, index) => {
       if (!remaining.length) return null;
@@ -396,10 +420,12 @@ export function Workout() {
       for (let i = 0; i < remaining.length; i += 1) {
         const candidate = remaining[i];
         const weightScore =
-          set.weight !== undefined && candidate.weight !== undefined
-            ? Math.abs(set.weight - candidate.weight) * 2
-            : set.weight !== undefined || candidate.weight !== undefined
-            ? 5
+          metricType === 'weight_reps'
+            ? set.weight !== undefined && candidate.weight !== undefined
+              ? Math.abs(set.weight - candidate.weight) * 2
+              : set.weight !== undefined || candidate.weight !== undefined
+              ? 5
+              : 0
             : 0;
         const repsScore =
           set.reps !== undefined && candidate.reps !== undefined
@@ -426,11 +452,12 @@ export function Workout() {
 
   const filteredExercises = useMemo(() => {
     const query = normalizeName(exerciseQuery);
-    const list = exerciseOptions.filter(
-      (option) => !query || option.normalizedLabel.includes(query)
-    );
+    const list = exerciseOptions.filter((option) => {
+      if (onlyFavorites && !favoriteIds.includes(option.id)) return false;
+      return !query || option.normalizedLabel.includes(query);
+    });
     return list.slice(0, 8);
-  }, [exerciseOptions, exerciseQuery]);
+  }, [exerciseOptions, exerciseQuery, favoriteIds, onlyFavorites]);
 
   const replaceOptions = useMemo(() => {
     if (!replaceTarget) return [];
@@ -559,7 +586,16 @@ export function Workout() {
         </div>
       ) : (
         session.exercises.map((exercise, exerciseIndex) => {
-          const matches = buildPreviousMatches(exercise.previousSets ?? [], exercise.sets);
+          const matches = buildPreviousMatches(
+            exercise.metricType,
+            exercise.previousSets ?? [],
+            exercise.sets
+          );
+          const metricType = exercise.metricType;
+          const showWeight = metricType === 'weight_reps';
+          const showReps = metricType === 'weight_reps' || metricType === 'reps';
+          const showDistance = metricType === 'distance';
+          const showTime = metricType === 'time';
           const isMenuOpen = openMenuId === exercise.exerciseId;
           const restSecondsLeft = getRestSecondsLeft(exercise.exerciseId);
           return (
@@ -632,17 +668,37 @@ export function Workout() {
                 </div>
               </div>
 
-              <div className="set-table">
+              <div className={`set-table metric-${metricType}`}>
                 <div className="set-row set-header">
                   <span>Serie</span>
                   <span>Anterior</span>
-                  <span>KG</span>
-                  <span>Reps</span>
+                  {showWeight ? <span>KG</span> : null}
+                  {showReps ? <span>Reps</span> : null}
+                  {showDistance ? <span>Distancia</span> : null}
+                  {showTime ? <span>Tiempo</span> : null}
                   <span>RPE</span>
                   <span />
                 </div>
                 {exercise.sets.map((set, setIndex) => {
                   const match = matches[setIndex];
+                  const previousLabel = (() => {
+                    if (!match) return '-';
+                    if (showWeight || showReps) {
+                      if (showWeight && showReps) {
+                        return match.weight !== undefined && match.reps !== undefined
+                          ? `${match.weight} x ${match.reps}`
+                          : '-';
+                      }
+                      return match.reps !== undefined ? `${match.reps}` : '-';
+                    }
+                    if (showDistance) {
+                      return match.distance !== undefined ? `${match.distance} m` : '-';
+                    }
+                    if (showTime) {
+                      return match.duration !== undefined ? formatDuration(match.duration) : '-';
+                    }
+                    return '-';
+                  })();
                   return (
                     <div key={`${exercise.exerciseId}-${setIndex}`} className="set-row">
                       <span>{setIndex + 1}</span>
@@ -651,38 +707,78 @@ export function Workout() {
                         type="button"
                         onClick={() => {
                           if (!match) return;
-                          handleSetChange(
-                            exerciseIndex,
-                            setIndex,
-                            'weight',
-                            String(match.weight ?? 0)
-                          );
-                          handleSetChange(
-                            exerciseIndex,
-                            setIndex,
-                            'reps',
-                            String(match.reps ?? 0)
-                          );
+                          if (showWeight) {
+                            handleSetChange(
+                              exerciseIndex,
+                              setIndex,
+                              'weight',
+                              String(match.weight ?? 0)
+                            );
+                          }
+                          if (showReps) {
+                            handleSetChange(
+                              exerciseIndex,
+                              setIndex,
+                              'reps',
+                              String(match.reps ?? 0)
+                            );
+                          }
+                          if (showDistance) {
+                            handleSetChange(
+                              exerciseIndex,
+                              setIndex,
+                              'distance',
+                              String(match.distance ?? 0)
+                            );
+                          }
+                          if (showTime) {
+                            handleSetChange(
+                              exerciseIndex,
+                              setIndex,
+                              'duration',
+                              String(match.duration ?? 0)
+                            );
+                          }
                         }}
                       >
-                        {match?.weight !== undefined && match?.reps !== undefined
-                          ? `${match.weight} x ${match.reps}`
-                          : '-'}
+                        {previousLabel}
                       </button>
-                      <input
-                        type="number"
-                        value={set.weight ?? ''}
-                        onChange={(event) =>
-                          handleSetChange(exerciseIndex, setIndex, 'weight', event.target.value)
-                        }
-                      />
-                      <input
-                        type="number"
-                        value={set.reps ?? ''}
-                        onChange={(event) =>
-                          handleSetChange(exerciseIndex, setIndex, 'reps', event.target.value)
-                        }
-                      />
+                      {showWeight ? (
+                        <input
+                          type="number"
+                          value={set.weight ?? ''}
+                          onChange={(event) =>
+                            handleSetChange(exerciseIndex, setIndex, 'weight', event.target.value)
+                          }
+                        />
+                      ) : null}
+                      {showReps ? (
+                        <input
+                          type="number"
+                          value={set.reps ?? ''}
+                          onChange={(event) =>
+                            handleSetChange(exerciseIndex, setIndex, 'reps', event.target.value)
+                          }
+                        />
+                      ) : null}
+                      {showDistance ? (
+                        <input
+                          type="number"
+                          value={set.distance ?? ''}
+                          onChange={(event) =>
+                            handleSetChange(exerciseIndex, setIndex, 'distance', event.target.value)
+                          }
+                        />
+                      ) : null}
+                      {showTime ? (
+                        <input
+                          type="number"
+                          value={set.duration ?? ''}
+                          onChange={(event) =>
+                            handleSetChange(exerciseIndex, setIndex, 'duration', event.target.value)
+                          }
+                        />
+                      ) : null}
                       <input
                         className="rpe-input"
                         type="number"
@@ -742,6 +838,14 @@ export function Workout() {
                 value={exerciseQuery}
                 onChange={(event) => setExerciseQuery(event.target.value)}
               />
+              <label className="inline compact">
+                <input
+                  type="checkbox"
+                  checked={onlyFavorites}
+                  onChange={(event) => setOnlyFavorites(event.target.checked)}
+                />
+                Solo favoritos
+              </label>
               {filteredExercises.length ? (
                 <div className="exercise-search-list">
                   {filteredExercises.map((exercise) => (

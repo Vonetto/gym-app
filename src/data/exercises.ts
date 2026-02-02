@@ -239,12 +239,14 @@ export async function deleteCustomExercise(exerciseId: string) {
   if (!exercise || !exercise.isCustom) return;
   await db.transaction(
     'rw',
-    db.exercises,
-    db.exerciseTranslations,
-    db.exerciseFavorites,
-    db.exerciseRecents,
-    db.routineExercises,
-    db.exerciseDefaults,
+    [
+      db.exercises,
+      db.exerciseTranslations,
+      db.exerciseFavorites,
+      db.exerciseRecents,
+      db.routineExercises,
+      db.exerciseDefaults
+    ],
     async () => {
       await db.exercises.delete(exerciseId);
       const translations = await db.exerciseTranslations

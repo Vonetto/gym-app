@@ -40,7 +40,7 @@ interface WorkoutSession {
     name: string;
     metricType: string;
     notes?: string;
-    previousSets?: Array<{ weight?: number; reps?: number }>;
+    previousSets?: Array<{ weight?: number; reps?: number; duration?: number; distance?: number }>;
     restSeconds?: number;
     sets: Array<{
       weight?: number;
@@ -69,6 +69,7 @@ interface WorkoutDetail {
   exercises: Array<{
     id: string;
     name: string;
+    metricType: string;
     notes?: string;
     sets: Array<{
       weight?: number;
@@ -220,14 +221,22 @@ export function Home() {
     const workoutExercises = await getWorkoutExercises(workout.id);
     const exerciseList = await listExercises();
     const exerciseMap = new Map(
-      exerciseList.map((exercise) => [exercise.id, getExerciseDisplayName(exercise, settings.language)])
+      exerciseList.map((exercise) => [
+        exercise.id,
+        {
+          name: getExerciseDisplayName(exercise, settings.language),
+          metricType: exercise.metricType
+        }
+      ])
     );
     const exercises = await Promise.all(
       workoutExercises.map(async (exercise) => {
         const sets = await getWorkoutSets(exercise.id);
+        const exerciseInfo = exerciseMap.get(exercise.exerciseId);
         return {
           id: exercise.id,
-          name: exerciseMap.get(exercise.exerciseId) ?? exercise.name,
+          name: exerciseInfo?.name ?? exercise.name,
+          metricType: exerciseInfo?.metricType ?? 'weight_reps',
           notes: exercise.notes,
           sets: sets.map((set) => ({
             weight: set.weight,
@@ -262,6 +271,34 @@ export function Home() {
   };
 
   const formatTimestamp = (value: string) => new Date(value).toLocaleString();
+
+  const formatDuration = (seconds: number) => {
+    if (!Number.isFinite(seconds)) return '-';
+    if (seconds < 60) return `${Math.round(seconds)}s`;
+    const minutes = Math.floor(seconds / 60);
+    const remainder = Math.round(seconds % 60);
+    return `${minutes}m ${remainder}s`;
+  };
+
+  const formatSetValue = (
+    metricType: string,
+    set: { weight?: number; reps?: number; duration?: number; distance?: number }
+  ) => {
+    if (metricType === 'weight_reps') {
+      if (set.weight === undefined || set.reps === undefined) return '-';
+      return `${set.weight} x ${set.reps}`;
+    }
+    if (metricType === 'reps') {
+      return set.reps !== undefined ? `${set.reps} reps` : '-';
+    }
+    if (metricType === 'distance') {
+      return set.distance !== undefined ? `${set.distance} m` : '-';
+    }
+    if (metricType === 'time') {
+      return set.duration !== undefined ? formatDuration(set.duration) : '-';
+    }
+    return '-';
+  };
 
   const calculateVolume = (workout: WorkoutDetail | null) => {
     if (!workout) return 0;
@@ -322,15 +359,26 @@ export function Home() {
         };
       })
     };
-    const previousSetsByExercise = new Map<string, Array<{ weight?: number; reps?: number }>>();
-    const workoutExerciseMap = new Map<string, Array<{ weight?: number; reps?: number }>>();
+    const previousSetsByExercise = new Map<
+      string,
+      Array<{ weight?: number; reps?: number; duration?: number; distance?: number }>
+    >();
+    const workoutExerciseMap = new Map<
+      string,
+      Array<{ weight?: number; reps?: number; duration?: number; distance?: number }>
+    >();
     if (lastWorkout) {
       const workoutExercises = await getWorkoutExercises(lastWorkout.id);
       for (const workoutExercise of workoutExercises) {
         const sets = await getWorkoutSets(workoutExercise.id);
         workoutExerciseMap.set(
           workoutExercise.exerciseId,
-          sets.map((set) => ({ weight: set.weight, reps: set.reps }))
+          sets.map((set) => ({
+            weight: set.weight,
+            reps: set.reps,
+            duration: set.duration,
+            distance: set.distance
+          }))
         );
         if (workoutExercise.notes) {
           previousNotesByExercise.set(workoutExercise.exerciseId, workoutExercise.notes);
@@ -341,7 +389,12 @@ export function Home() {
       let sets = workoutExerciseMap.get(entry.exerciseId) ?? [];
       if (!sets.length) {
         const latestSets = await getLatestExerciseSets(entry.exerciseId);
-        sets = latestSets.map((set) => ({ weight: set.weight, reps: set.reps }));
+        sets = latestSets.map((set) => ({
+          weight: set.weight,
+          reps: set.reps,
+          duration: set.duration,
+          distance: set.distance
+        }));
       }
       previousSetsByExercise.set(entry.exerciseId, sets);
     }
@@ -591,7 +644,7 @@ export function Home() {
                       <div key={`${exercise.id}-${index}`} className="modal-set-row">
                         <span>Set {index + 1}</span>
                         <span>
-                          {(set.weight ?? 0)} x {(set.reps ?? 0)}
+                          {formatSetValue(exercise.metricType, set)}
                         </span>
                         <span>{set.rpe ? `RPE ${set.rpe}` : 'RPE -'}</span>
                       </div>

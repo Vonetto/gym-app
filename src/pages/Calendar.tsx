@@ -27,6 +27,7 @@ interface WorkoutDetail {
   exercises: Array<{
     id: string;
     name: string;
+    metricType: string;
     notes?: string;
     sets: Array<{
       weight?: number;
@@ -54,6 +55,34 @@ const formatMonthLabel = (date: Date) => {
 
 const formatTime = (value: string) =>
   new Date(value).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+
+const formatDuration = (seconds: number) => {
+  if (!Number.isFinite(seconds)) return '-';
+  if (seconds < 60) return `${Math.round(seconds)}s`;
+  const minutes = Math.floor(seconds / 60);
+  const remainder = Math.round(seconds % 60);
+  return `${minutes}m ${remainder}s`;
+};
+
+const formatSetValue = (
+  metricType: string,
+  set: { weight?: number; reps?: number; duration?: number; distance?: number }
+) => {
+  if (metricType === 'weight_reps') {
+    if (set.weight === undefined || set.reps === undefined) return '-';
+    return `${set.weight} x ${set.reps}`;
+  }
+  if (metricType === 'reps') {
+    return set.reps !== undefined ? `${set.reps} reps` : '-';
+  }
+  if (metricType === 'distance') {
+    return set.distance !== undefined ? `${set.distance} m` : '-';
+  }
+  if (metricType === 'time') {
+    return set.duration !== undefined ? formatDuration(set.duration) : '-';
+  }
+  return '-';
+};
 
 export function Calendar() {
   const { settings } = useSettings();
@@ -127,14 +156,22 @@ export function Calendar() {
     const workoutExercises = await getWorkoutExercises(workout.id);
     const exerciseList = await listExercises();
     const exerciseMap = new Map(
-      exerciseList.map((exercise) => [exercise.id, getExerciseDisplayName(exercise, settings.language)])
+      exerciseList.map((exercise) => [
+        exercise.id,
+        {
+          name: getExerciseDisplayName(exercise, settings.language),
+          metricType: exercise.metricType
+        }
+      ])
     );
     const exercises = await Promise.all(
       workoutExercises.map(async (exercise) => {
         const sets = await getWorkoutSets(exercise.id);
+        const exerciseInfo = exerciseMap.get(exercise.exerciseId);
         return {
           id: exercise.id,
-          name: exerciseMap.get(exercise.exerciseId) ?? exercise.name,
+          name: exerciseInfo?.name ?? exercise.name,
+          metricType: exerciseInfo?.metricType ?? 'weight_reps',
           notes: exercise.notes,
           sets: sets.map((set) => ({
             weight: set.weight,
@@ -342,7 +379,7 @@ export function Calendar() {
                       <div key={`${exercise.id}-${index}`} className="modal-set-row">
                         <span>Set {index + 1}</span>
                         <span>
-                          {(set.weight ?? 0)} x {(set.reps ?? 0)}
+                          {formatSetValue(exercise.metricType, set)}
                         </span>
                         <span>{set.rpe ? `RPE ${set.rpe}` : 'RPE -'}</span>
                       </div>
