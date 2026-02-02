@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   createCustomExercise,
+  deleteCustomExercise,
   getExerciseDisplayName,
   listExercises,
   listFavorites,
@@ -30,11 +31,15 @@ export function ExerciseCatalog() {
   const [favorites, setFavorites] = useState<string[]>([]);
   const [recents, setRecents] = useState<string[]>([]);
   const [customName, setCustomName] = useState('');
-  const [customMuscles, setCustomMuscles] = useState('');
-  const [customEquipment, setCustomEquipment] = useState('');
+  const [customMuscles, setCustomMuscles] = useState<string[]>([]);
+  const [customEquipment, setCustomEquipment] = useState<string[]>([]);
   const [customMetric, setCustomMetric] = useState<ExerciseMetric>('weight_reps');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [error, setError] = useState('');
+  const [catalogMuscles, setCatalogMuscles] = useState<string[]>([]);
+  const [catalogEquipment, setCatalogEquipment] = useState<string[]>([]);
+  const [showMuscleOptions, setShowMuscleOptions] = useState(false);
+  const [showEquipmentOptions, setShowEquipmentOptions] = useState(false);
 
   const loadExercises = async () => {
     const items = await listExercises({ query, muscle, equipment });
@@ -69,17 +74,38 @@ export function ExerciseCatalog() {
     loadRecents();
   }, []);
 
-  const allMuscles = useMemo(() => {
-    const set = new Set<string>();
-    exercises.forEach((exercise) => exercise.muscles.forEach((item) => set.add(item)));
-    return Array.from(set).sort();
-  }, [exercises]);
+  useEffect(() => {
+    let active = true;
+    const loadCatalogOptions = async () => {
+      const items = await listExercises();
+      const muscleSet = new Set<string>();
+      const equipmentSet = new Set<string>();
+      items.forEach((exercise) => {
+        exercise.muscles.forEach((item) => muscleSet.add(item));
+        exercise.equipment.forEach((item) => equipmentSet.add(item));
+      });
+      if (!active) return;
+      setCatalogMuscles(Array.from(muscleSet).sort());
+      setCatalogEquipment(Array.from(equipmentSet).sort());
+    };
+    void loadCatalogOptions();
+    return () => {
+      active = false;
+    };
+  }, []);
 
-  const allEquipment = useMemo(() => {
-    const set = new Set<string>();
-    exercises.forEach((exercise) => exercise.equipment.forEach((item) => set.add(item)));
+  const allMuscles = useMemo(() => catalogMuscles, [catalogMuscles]);
+  const allEquipment = useMemo(() => catalogEquipment, [catalogEquipment]);
+
+  const muscleOptions = useMemo(() => {
+    const set = new Set([...catalogMuscles, ...customMuscles]);
     return Array.from(set).sort();
-  }, [exercises]);
+  }, [catalogMuscles, customMuscles]);
+
+  const equipmentOptions = useMemo(() => {
+    const set = new Set([...catalogEquipment, ...customEquipment]);
+    return Array.from(set).sort();
+  }, [catalogEquipment, customEquipment]);
 
   const visibleExercises = useMemo(() => {
     const sorted = [...exercises].sort((a, b) => a.label.localeCompare(b.label));
@@ -101,10 +127,12 @@ export function ExerciseCatalog() {
 
   const resetCustomForm = () => {
     setCustomName('');
-    setCustomMuscles('');
-    setCustomEquipment('');
+    setCustomMuscles([]);
+    setCustomEquipment([]);
     setCustomMetric('weight_reps');
     setEditingId(null);
+    setShowMuscleOptions(false);
+    setShowEquipmentOptions(false);
   };
 
   const handleCustomSave = async () => {
@@ -114,19 +142,11 @@ export function ExerciseCatalog() {
       setError('El nombre es obligatorio.');
       return;
     }
-    const musclesList = customMuscles
-      .split(',')
-      .map((item) => item.trim())
-      .filter(Boolean);
-    const equipmentList = customEquipment
-      .split(',')
-      .map((item) => item.trim())
-      .filter(Boolean);
-    if (!musclesList.length) {
+    if (!customMuscles.length) {
       setError('Debes indicar al menos un músculo.');
       return;
     }
-    if (!equipmentList.length) {
+    if (!customEquipment.length) {
       setError('Debes indicar al menos un equipo.');
       return;
     }
@@ -135,15 +155,15 @@ export function ExerciseCatalog() {
         await updateCustomExercise({
           id: editingId,
           name: nameValue,
-          muscles: musclesList,
-          equipment: equipmentList,
+          muscles: customMuscles,
+          equipment: customEquipment,
           metricType: customMetric
         });
       } else {
         await createCustomExercise({
           name: nameValue,
-          muscles: musclesList,
-          equipment: equipmentList,
+          muscles: customMuscles,
+          equipment: customEquipment,
           metricType: customMetric
         });
       }
@@ -157,9 +177,38 @@ export function ExerciseCatalog() {
   const handleEdit = (exercise: ExerciseSummary) => {
     setEditingId(exercise.id);
     setCustomName(exercise.label);
-    setCustomMuscles(exercise.muscles.join(', '));
-    setCustomEquipment(exercise.equipment.join(', '));
+    setCustomMuscles(exercise.muscles);
+    setCustomEquipment(exercise.equipment);
     setCustomMetric(exercise.metricType);
+    setShowMuscleOptions(false);
+    setShowEquipmentOptions(false);
+  };
+
+  const handleDelete = async (exercise: ExerciseSummary) => {
+    if (!exercise.isCustom) return;
+    const confirmed = window.confirm(
+      '¿Eliminar este ejercicio personalizado? Se quitará de rutinas futuras.'
+    );
+    if (!confirmed) return;
+    await deleteCustomExercise(exercise.id);
+    if (editingId === exercise.id) {
+      resetCustomForm();
+    }
+    await loadExercises();
+    await loadFavorites();
+    await loadRecents();
+  };
+
+  const toggleSelection = (
+    value: string,
+    current: string[],
+    setter: (next: string[]) => void
+  ) => {
+    if (current.includes(value)) {
+      setter(current.filter((item) => item !== value));
+    } else {
+      setter([...current, value]);
+    }
   };
 
   return (
@@ -204,18 +253,60 @@ export function ExerciseCatalog() {
             value={customName}
             onChange={(event) => setCustomName(event.target.value)}
           />
-          <input
-            type="text"
-            placeholder="Músculos (separados por coma)"
-            value={customMuscles}
-            onChange={(event) => setCustomMuscles(event.target.value)}
-          />
-          <input
-            type="text"
-            placeholder="Equipo (separado por coma)"
-            value={customEquipment}
-            onChange={(event) => setCustomEquipment(event.target.value)}
-          />
+          <div className="field">
+            <label className="label">Músculos</label>
+            <button
+              className="select-field"
+              type="button"
+              onClick={() => setShowMuscleOptions((prev) => !prev)}
+            >
+              <span>
+                {customMuscles.length ? customMuscles.join(', ') : 'Selecciona músculos'}
+              </span>
+              <span className="select-caret">{showMuscleOptions ? '▲' : '▼'}</span>
+            </button>
+            {showMuscleOptions ? (
+              <div className="chip-grid">
+                {muscleOptions.map((item) => (
+                  <button
+                    key={item}
+                    className={`select-chip ${customMuscles.includes(item) ? 'active' : ''}`}
+                    type="button"
+                    onClick={() => toggleSelection(item, customMuscles, setCustomMuscles)}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
+          <div className="field">
+            <label className="label">Equipo</label>
+            <button
+              className="select-field"
+              type="button"
+              onClick={() => setShowEquipmentOptions((prev) => !prev)}
+            >
+              <span>
+                {customEquipment.length ? customEquipment.join(', ') : 'Selecciona equipo'}
+              </span>
+              <span className="select-caret">{showEquipmentOptions ? '▲' : '▼'}</span>
+            </button>
+            {showEquipmentOptions ? (
+              <div className="chip-grid">
+                {equipmentOptions.map((item) => (
+                  <button
+                    key={item}
+                    className={`select-chip ${customEquipment.includes(item) ? 'active' : ''}`}
+                    type="button"
+                    onClick={() => toggleSelection(item, customEquipment, setCustomEquipment)}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+          </div>
           <select
             value={customMetric}
             onChange={(event) => setCustomMetric(event.target.value as ExerciseMetric)}
@@ -315,18 +406,37 @@ export function ExerciseCatalog() {
                     {exercise.equipment.join(', ') || 'Sin equipo'}
                   </p>
                 </div>
-                <div className="actions">
-                  {exercise.isCustom ? (
-                    <button className="ghost-button" type="button" onClick={() => handleEdit(exercise)}>
-                      Editar
+                <div className="actions-stack">
+                  <div className="actions">
+                    <button
+                      className="ghost-button"
+                      type="button"
+                      onClick={() => handleFavorite(exercise.id)}
+                    >
+                      {favorites.includes(exercise.id) ? 'Quitar favorito' : 'Favorito'}
                     </button>
+                    <button
+                      className="ghost-button"
+                      type="button"
+                      onClick={() => handleRecent(exercise.id)}
+                    >
+                      Marcar reciente
+                    </button>
+                  </div>
+                  {exercise.isCustom ? (
+                    <div className="actions">
+                      <button className="ghost-button" type="button" onClick={() => handleEdit(exercise)}>
+                        Editar
+                      </button>
+                      <button
+                        className="ghost-button danger"
+                        type="button"
+                        onClick={() => handleDelete(exercise)}
+                      >
+                        Eliminar
+                      </button>
+                    </div>
                   ) : null}
-                  <button className="ghost-button" type="button" onClick={() => handleRecent(exercise.id)}>
-                    Marcar reciente
-                  </button>
-                  <button className="ghost-button" type="button" onClick={() => handleFavorite(exercise.id)}>
-                    {favorites.includes(exercise.id) ? 'Quitar favorito' : 'Favorito'}
-                  </button>
                 </div>
               </li>
             ))}

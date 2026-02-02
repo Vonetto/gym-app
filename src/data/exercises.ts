@@ -234,6 +234,46 @@ export async function updateCustomExercise({
   });
 }
 
+export async function deleteCustomExercise(exerciseId: string) {
+  const exercise = await db.exercises.get(exerciseId);
+  if (!exercise || !exercise.isCustom) return;
+  await db.transaction(
+    'rw',
+    db.exercises,
+    db.exerciseTranslations,
+    db.exerciseFavorites,
+    db.exerciseRecents,
+    db.routineExercises,
+    db.exerciseDefaults,
+    async () => {
+      await db.exercises.delete(exerciseId);
+      const translations = await db.exerciseTranslations
+        .where('exerciseId')
+        .equals(exerciseId)
+        .toArray();
+      if (translations.length) {
+        await db.exerciseTranslations.bulkDelete(translations.map((item) => item.id));
+      }
+      await db.exerciseFavorites.delete(exerciseId);
+      await db.exerciseRecents.delete(exerciseId);
+      const routineExercises = await db.routineExercises
+        .where('exerciseId')
+        .equals(exerciseId)
+        .toArray();
+      if (routineExercises.length) {
+        await db.routineExercises.bulkDelete(routineExercises.map((item) => item.id));
+      }
+      const defaults = await db.exerciseDefaults
+        .where('exerciseId')
+        .equals(exerciseId)
+        .toArray();
+      if (defaults.length) {
+        await db.exerciseDefaults.bulkDelete(defaults.map((item) => item.id));
+      }
+    }
+  );
+}
+
 export async function toggleFavorite(exerciseId: string) {
   const existing = await db.exerciseFavorites.get(exerciseId);
   if (existing) {

@@ -171,6 +171,38 @@ a {
   align-items: center;
 }
 
+.actions-stack {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.select-field {
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  border-radius: 12px;
+  padding: 0.5rem 0.65rem;
+  color: var(--text);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.select-field span:first-child {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.select-caret {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+}
+
 input,
 select {
   padding: 0.5rem 0.75rem;
@@ -221,6 +253,11 @@ input::placeholder {
   background: transparent;
   border-color: var(--border);
   color: var(--text);
+}
+
+.ghost-button.danger {
+  border-color: rgba(255, 107, 107, 0.6);
+  color: #ff6b6b;
 }
 
 .danger-button {
@@ -357,6 +394,31 @@ input::placeholder {
   padding: 0.15rem 0.45rem;
   border-radius: 999px;
   font-size: 0.7rem;
+}
+
+.chip-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.select-chip {
+  border: 1px solid var(--border);
+  background: var(--surface-muted);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.select-chip.active {
+  border-color: var(--accent);
+  background: rgba(43, 140, 255, 0.2);
+  color: #ffffff;
 }
 
 .routine-header {
