@@ -24,3 +24,8 @@ npm run dev:all
 ```
 
 Frontend (`vite`) usa proxy de `/api` a `http://localhost:8787`.
+
+## Produccion recomendada
+
+Para prod, usa la Edge Function de Supabase en `supabase/functions/wrkout-proxy`.
+Ver pasos en `supabase/README.md`.

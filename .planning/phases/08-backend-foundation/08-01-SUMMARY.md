@@ -36,6 +36,10 @@ completed: 2026-02-18
   - `npm run dev:all`
 - Vite proxy de `/api` a backend local para desarrollo.
 - UI de detalle de ejercicio muestra estado claro cuando backend no tiene `WRKOUT_API_KEY`.
+- Se agrego scaffold cloud con Supabase Edge Function:
+  - `supabase/functions/wrkout-proxy/index.ts`
+  - `supabase/config.toml`
+  - `supabase/README.md`
 
 ## Verification
 

@@ -1,0 +1,4 @@
+project_id = "gym-app"
+
+[functions.wrkout-proxy]
+verify_jwt = false
