@@ -167,11 +167,11 @@ export function Settings() {
       <div className="card">
         <h2>Integraciones</h2>
         <p className="muted">
-          Conecta proveedores externos para obtener tips de ejercicios (se guarda localmente).
+          Tips de wrkout usan backend por defecto. Este campo queda como fallback legacy.
         </p>
         <div className="field">
           <label className="label" htmlFor="wrkout-key">
-            Wrkout API Key
+            Wrkout API Key (legacy)
           </label>
           <input
             id="wrkout-key"

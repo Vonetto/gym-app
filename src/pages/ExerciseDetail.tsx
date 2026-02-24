@@ -57,7 +57,9 @@ export function ExerciseDetail() {
   );
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [tips, setTips] = useState<{ summary?: string; bullets?: string[] } | null>(null);
-  const [tipsStatus, setTipsStatus] = useState<'idle' | 'loading' | 'ready' | 'missing'>('idle');
+  const [tipsStatus, setTipsStatus] = useState<
+    'idle' | 'loading' | 'ready' | 'missing' | 'auth' | 'error' | 'config'
+  >('idle');
 
   useEffect(() => {
     if (!exerciseId) return;
@@ -80,20 +82,34 @@ export function ExerciseDetail() {
     if (!exerciseId || !exercise) return;
     let active = true;
     const loadTips = async () => {
-      if (!settings.wrkoutApiKey) {
-        setTips(null);
-        setTipsStatus('missing');
-        return;
-      }
       setTipsStatus('loading');
-      const record = await getWrkoutTips(exerciseId, exercise.baseName, settings.wrkoutApiKey);
+      const names = [
+        exercise.baseName,
+        getExerciseDisplayName(exercise, settings.language)
+      ];
+      const result = await getWrkoutTips(exerciseId, names, settings.wrkoutApiKey);
       if (!active) return;
-      if (!record || (!record.summary && (!record.bullets || record.bullets.length === 0))) {
+      if (result.status === 'auth') {
+        setTips(null);
+        setTipsStatus('auth');
+        return;
+      }
+      if (result.status === 'error') {
+        setTips(null);
+        setTipsStatus('error');
+        return;
+      }
+      if (result.status === 'config') {
+        setTips(null);
+        setTipsStatus('config');
+        return;
+      }
+      if (!result.record || result.status === 'missing') {
         setTips(null);
         setTipsStatus('missing');
         return;
       }
-      setTips({ summary: record.summary, bullets: record.bullets });
+      setTips({ summary: result.record.summary, bullets: result.record.bullets });
       setTipsStatus('ready');
     };
     void loadTips();
@@ -213,12 +229,14 @@ export function ExerciseDetail() {
         <h2>Tips</h2>
         {tipsStatus === 'loading' ? (
           <p className="muted">Cargando tips...</p>
+        ) : tipsStatus === 'auth' ? (
+          <p className="muted">La API key de wrkout no es válida.</p>
+        ) : tipsStatus === 'config' ? (
+          <p className="muted">Backend sin configurar: falta WRKOUT_API_KEY.</p>
+        ) : tipsStatus === 'error' ? (
+          <p className="muted">No se pudo conectar con wrkout.</p>
         ) : tipsStatus === 'missing' ? (
-          <p className="muted">
-            {settings.wrkoutApiKey
-              ? 'Sin tips disponibles.'
-              : 'Configura tu API key en Ajustes para ver tips.'}
-          </p>
+          <p className="muted">Sin tips disponibles.</p>
         ) : tips ? (
           <div className="tips-block">
             {tips.summary ? <p>{tips.summary}</p> : null}

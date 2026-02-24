@@ -2,6 +2,8 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
+const devApiTarget = process.env.VITE_DEV_API_TARGET || 'http://localhost:8787';
+
 export default defineConfig({
   plugins: [
     react(),
@@ -25,5 +27,13 @@ export default defineConfig({
         ]
       }
     })
-  ]
+  ],
+  server: {
+    proxy: {
+      '/api': {
+        target: devApiTarget,
+        changeOrigin: true
+      }
+    }
+  }
 });

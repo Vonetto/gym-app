@@ -106,6 +106,23 @@
 
 ---
 
+## Phase 8: Backend Foundation (Cloud-ready)
+**Goal:** Introducir una capa backend para integraciones externas y preparar auth/sync/push sin romper el modo local.
+**Status:** In Progress (2026-02-18)
+
+**Scope**
+- BFF/API para integraciones externas (arranque: wrkout proxy para evitar CORS).
+- Contrato frontend/backend configurable por entorno.
+- Base de arquitectura para migrar a cloud (Supabase Auth/DB/Functions) en fases siguientes.
+
+**Success Criteria (observable)**
+1. El frontend deja de depender de llamadas directas a wrkout desde el navegador.
+2. Existe endpoint backend `/api/wrkout/*` que encapsula API key y respuestas.
+3. La app funciona en local con `npm run dev:all` y build web sin regresiones.
+4. Quedan definidos próximos pasos para auth/sync/push sobre la base backend.
+
+---
+
 ## Coverage Check
 - Total v1 requirements: 36
 - Mapped to phases: 36
