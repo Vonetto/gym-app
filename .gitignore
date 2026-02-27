@@ -8,3 +8,4 @@ tsconfig.tsbuildinfo
 !.env.example
 !.env.production.example
 supabase/.temp/
+.vercel
