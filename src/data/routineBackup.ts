@@ -44,7 +44,7 @@ export interface RoutineBackupPayload {
 
 export async function exportRoutineBackup(routineId: string): Promise<RoutineBackupPayload> {
   const routine = await db.routines.get(routineId);
-  if (!routine) throw new Error('routine-not-found');
+  if (!routine || routine.deletedAt) throw new Error('routine-not-found');
   const tags = await db.routineTags.where('routineId').equals(routineId).toArray();
   const routineExercises = await db.routineExercises
     .where('routineId')
@@ -138,7 +138,12 @@ export async function importRoutineBackup(payload: RoutineBackupPayload) {
 
   const now = new Date().toISOString();
   const routineId = `routine-${crypto.randomUUID()}`;
-  const lastOrder = await db.routines.orderBy('order').last();
+  const activeRoutines = (await db.routines.orderBy('order').toArray()).filter(
+    (routine) => !routine.deletedAt
+  );
+  const lastOrder = activeRoutines.length
+    ? activeRoutines[activeRoutines.length - 1]
+    : undefined;
   const order = lastOrder ? lastOrder.order + 1 : 0;
 
   const customExerciseMap = new Map<string, string>();
@@ -155,7 +160,8 @@ export async function importRoutineBackup(payload: RoutineBackupPayload) {
         metricType: exercise.metricType as any,
         isCustom: true,
         source: 'custom',
-        createdAt: now
+        createdAt: now,
+        updatedAt: now
       });
       if (exercise.translations?.length) {
         await db.exerciseTranslations.bulkAdd(

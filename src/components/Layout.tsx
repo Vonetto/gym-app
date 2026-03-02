@@ -2,11 +2,13 @@ import { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 import { OfflineBanner } from './OfflineBanner';
 import { ActiveSessionBanner } from './ActiveSessionBanner';
+import { SyncStatusBanner } from './SyncStatusBanner';
 
 export function Layout({ children }: { children: ReactNode }) {
   return (
     <div className="app">
       <OfflineBanner />
+      <SyncStatusBanner />
       <ActiveSessionBanner />
       <main className="app-main">{children}</main>
       <nav className="tab-bar">

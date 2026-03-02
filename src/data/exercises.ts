@@ -36,7 +36,8 @@ export async function seedExerciseCatalog() {
           metricType: exercise.metricType as ExerciseMetric,
           isCustom: false,
           source: 'wger',
-          createdAt: now
+          createdAt: now,
+          updatedAt: now
         };
         await db.exercises.add(record);
         const translations: ExerciseTranslationRecord[] = Object.entries(exercise.translations).map(
@@ -58,7 +59,7 @@ export async function seedExerciseCatalog() {
 
 async function repairWgerCatalog() {
   const wgerExercises = await db.exercises
-    .filter((exercise) => exercise.source === 'wger')
+    .filter((exercise) => exercise.source === 'wger' && !exercise.deletedAt)
     .toArray();
   if (!wgerExercises.length) return;
 
@@ -82,7 +83,8 @@ async function repairWgerCatalog() {
         normalizedName: normalizeName(seed.baseName),
         muscles: updatedMuscles,
         equipment: updatedEquipment,
-        metricType: seed.metricType as ExerciseMetric
+        metricType: seed.metricType as ExerciseMetric,
+        updatedAt: exercise.updatedAt ?? exercise.createdAt
       });
 
       const existingTranslations = await db.exerciseTranslations
@@ -115,6 +117,7 @@ export async function listExercises(filters: ExerciseFilters = {}) {
   if (equipment) {
     collection = collection.filter((exercise) => exercise.equipment.includes(equipment));
   }
+  collection = collection.filter((exercise) => !exercise.deletedAt);
   if (normalizedQuery) {
     collection = collection.filter((exercise) =>
       exercise.normalizedName.includes(normalizedQuery)
@@ -149,7 +152,7 @@ export function getExerciseDisplayName(exercise: ExerciseWithTranslations, langu
 
 export async function getExerciseById(exerciseId: string) {
   const exercise = await db.exercises.get(exerciseId);
-  if (!exercise) return null;
+  if (!exercise || exercise.deletedAt) return null;
   const translations = await db.exerciseTranslations
     .where('exerciseId')
     .equals(exerciseId)
@@ -172,7 +175,11 @@ export async function createCustomExercise({
   metricType: ExerciseMetric;
 }) {
   const normalizedName = normalizeName(name);
-  const existing = await db.exercises.where('normalizedName').equals(normalizedName).first();
+  const existing = await db.exercises
+    .where('normalizedName')
+    .equals(normalizedName)
+    .filter((exercise) => !exercise.deletedAt)
+    .first();
   if (existing) {
     throw new Error('duplicate-name');
   }
@@ -187,7 +194,8 @@ export async function createCustomExercise({
     metricType,
     isCustom: true,
     source: 'custom',
-    createdAt: now
+    createdAt: now,
+    updatedAt: now
   };
   await db.transaction('rw', db.exercises, db.exerciseTranslations, async () => {
     await db.exercises.add(record);
@@ -218,7 +226,7 @@ export async function updateCustomExercise({
   const duplicate = await db.exercises
     .where('normalizedName')
     .equals(normalizedName)
-    .filter((exercise) => exercise.id !== id)
+    .filter((exercise) => exercise.id !== id && !exercise.deletedAt)
     .first();
   if (duplicate) {
     throw new Error('duplicate-name');
@@ -229,7 +237,8 @@ export async function updateCustomExercise({
       normalizedName,
       muscles,
       equipment,
-      metricType
+      metricType,
+      updatedAt: new Date().toISOString()
     });
     const translation = await db.exerciseTranslations
       .where({ exerciseId: id, language: 'es' })
@@ -249,7 +258,8 @@ export async function updateCustomExercise({
 
 export async function deleteCustomExercise(exerciseId: string) {
   const exercise = await db.exercises.get(exerciseId);
-  if (!exercise || !exercise.isCustom) return;
+  if (!exercise || !exercise.isCustom || exercise.deletedAt) return;
+  const now = new Date().toISOString();
   await db.transaction(
     'rw',
     [
@@ -258,25 +268,37 @@ export async function deleteCustomExercise(exerciseId: string) {
       db.exerciseFavorites,
       db.exerciseRecents,
       db.routineExercises,
-      db.exerciseDefaults
+      db.exerciseDefaults,
+      db.routines
     ],
     async () => {
-      await db.exercises.delete(exerciseId);
-      const translations = await db.exerciseTranslations
-        .where('exerciseId')
-        .equals(exerciseId)
-        .toArray();
-      if (translations.length) {
-        await db.exerciseTranslations.bulkDelete(translations.map((item) => item.id));
+      await db.exercises.update(exerciseId, {
+        deletedAt: now,
+        updatedAt: now
+      });
+      const favorite = await db.exerciseFavorites.get(exerciseId);
+      if (favorite) {
+        await db.exerciseFavorites.put({
+          ...favorite,
+          updatedAt: now,
+          deletedAt: now
+        });
       }
-      await db.exerciseFavorites.delete(exerciseId);
       await db.exerciseRecents.delete(exerciseId);
       const routineExercises = await db.routineExercises
         .where('exerciseId')
         .equals(exerciseId)
         .toArray();
       if (routineExercises.length) {
+        const routineIds = Array.from(new Set(routineExercises.map((item) => item.routineId)));
         await db.routineExercises.bulkDelete(routineExercises.map((item) => item.id));
+        await Promise.all(
+          routineIds.map((routineId) =>
+            db.routines.update(routineId, {
+              updatedAt: now
+            })
+          )
+        );
       }
       const defaults = await db.exerciseDefaults
         .where('exerciseId')
@@ -290,14 +312,21 @@ export async function deleteCustomExercise(exerciseId: string) {
 }
 
 export async function toggleFavorite(exerciseId: string) {
+  const now = new Date().toISOString();
   const existing = await db.exerciseFavorites.get(exerciseId);
-  if (existing) {
-    await db.exerciseFavorites.delete(exerciseId);
+  if (existing && !existing.deletedAt) {
+    await db.exerciseFavorites.put({
+      ...existing,
+      updatedAt: now,
+      deletedAt: now
+    });
     return false;
   }
   await db.exerciseFavorites.put({
     exerciseId,
-    createdAt: new Date().toISOString()
+    createdAt: existing?.createdAt ?? now,
+    updatedAt: now,
+    deletedAt: undefined
   });
   return true;
 }
@@ -310,7 +339,8 @@ export async function recordRecent(exerciseId: string) {
 }
 
 export async function listFavorites() {
-  return db.exerciseFavorites.orderBy('createdAt').reverse().toArray();
+  const favorites = await db.exerciseFavorites.orderBy('updatedAt').reverse().toArray();
+  return favorites.filter((favorite) => !favorite.deletedAt);
 }
 
 export async function listRecents() {

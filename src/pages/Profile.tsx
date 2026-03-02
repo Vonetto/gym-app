@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getWorkoutExercises, getWorkoutSets, listWorkoutsSince } from '../data/workouts';
 import { useSettings } from '../data/SettingsProvider';
+import { useAuth } from '../data/AuthProvider';
+import { useSync } from '../data/SyncProvider';
 
 type MetricKey = 'duration' | 'volume' | 'reps';
 
@@ -25,6 +27,14 @@ interface PrEntry {
 
 const ONE_RM_DIVISOR = 30;
 
+function getSyncButtonLabel(status: ReturnType<typeof useSync>['status']) {
+  if (status === 'syncing') return 'Sincronizando...';
+  if (status === 'success') return 'Sincronizado';
+  if (status === 'error') return 'Reintentar sync';
+  if (status === 'offline-pending') return 'Pendiente de sync';
+  return 'Sincronizar ahora';
+}
+
 const formatShortDate = (value: string) => {
   const date = new Date(value);
   const day = `${date.getDate()}`.padStart(2, '0');
@@ -37,6 +47,8 @@ const formatShortDate = (value: string) => {
 
 export function Profile() {
   const { settings } = useSettings();
+  const auth = useAuth();
+  const sync = useSync();
   const [metric, setMetric] = useState<MetricKey>('duration');
   const [activeBar, setActiveBar] = useState<number | null>(null);
   const [summary, setSummary] = useState({
@@ -50,6 +62,7 @@ export function Profile() {
   const [recentWorkouts, setRecentWorkouts] = useState<WorkoutSummary[]>([]);
   const [chartWorkouts, setChartWorkouts] = useState<WorkoutSummary[]>([]);
   const [loading, setLoading] = useState(true);
+  const syncButtonLabel = getSyncButtonLabel(sync.status);
 
   useEffect(() => {
     let active = true;
@@ -195,6 +208,45 @@ export function Profile() {
         <Link className="ghost-button" to="/settings">
           Ajustes
         </Link>
+      </div>
+
+      <div className="card">
+        <h2>Cuenta</h2>
+        <div className="metric-grid account-grid">
+          <div>
+            <p className="metric-label">Estado</p>
+            <p className="metric-value">
+              {auth.status === 'authenticated'
+                ? 'Conectada'
+                : auth.status === 'pending_confirmation'
+                  ? 'Pendiente'
+                  : 'Invitado'}
+            </p>
+          </div>
+          <div>
+            <p className="metric-label">Email</p>
+            <p className="metric-value account-email">{auth.user?.email ?? 'Sin cuenta'}</p>
+          </div>
+        </div>
+        <div className="actions" style={{ marginTop: '1rem' }}>
+          <button className="primary-button" type="button" onClick={sync.openAccountDialog}>
+            {auth.status === 'authenticated' ? 'Gestionar cuenta' : 'Entrar o crear cuenta'}
+          </button>
+          {auth.status === 'authenticated' ? (
+            <button
+              className="ghost-button"
+              type="button"
+              disabled={sync.status === 'syncing'}
+              onClick={() => void sync.syncNow()}
+            >
+              {syncButtonLabel}
+            </button>
+          ) : null}
+        </div>
+        <p className="muted" style={{ marginTop: '0.85rem' }}>
+          Sync cloud incluye rutinas, ejercicios personalizados, favoritos y entrenamientos. No
+          sincroniza tema ni ajustes locales.
+        </p>
       </div>
 
       <div className="card">

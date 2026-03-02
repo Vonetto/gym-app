@@ -33,7 +33,8 @@ export async function saveWorkout(session: WorkoutSessionPayload) {
     routineName,
     tags: session.tags ?? [],
     startedAt: session.createdAt,
-    endedAt
+    endedAt,
+    updatedAt: endedAt
   };
 
   const exerciseRecords: WorkoutExerciseRecord[] = [];
@@ -83,26 +84,31 @@ export async function saveWorkout(session: WorkoutSessionPayload) {
 }
 
 export async function listRecentWorkouts(limit = 8) {
-  const workouts = await db.workouts.orderBy('endedAt').reverse().limit(limit).toArray();
-  return workouts;
+  const workouts = await db.workouts.orderBy('endedAt').reverse().toArray();
+  return workouts.filter((workout) => !workout.deletedAt).slice(0, limit);
 }
 
 export async function listAllWorkouts() {
-  return db.workouts.orderBy('endedAt').reverse().toArray();
+  const workouts = await db.workouts.orderBy('endedAt').reverse().toArray();
+  return workouts.filter((workout) => !workout.deletedAt);
 }
 
 export async function listWorkoutsSince(sinceIso: string) {
-  return db.workouts.where('endedAt').aboveOrEqual(sinceIso).toArray();
+  const workouts = await db.workouts.where('endedAt').aboveOrEqual(sinceIso).toArray();
+  return workouts.filter((workout) => !workout.deletedAt);
 }
 
 export async function getWorkoutById(workoutId: string) {
-  return db.workouts.get(workoutId);
+  const workout = await db.workouts.get(workoutId);
+  if (!workout || workout.deletedAt) return undefined;
+  return workout;
 }
 
 export async function getLastWorkoutForRoutine(routineId: string) {
   const workouts = await db.workouts.where('routineId').equals(routineId).toArray();
-  if (!workouts.length) return undefined;
-  return workouts.reduce((latest, current) =>
+  const activeWorkouts = workouts.filter((workout) => !workout.deletedAt);
+  if (!activeWorkouts.length) return undefined;
+  return activeWorkouts.reduce((latest, current) =>
     new Date(current.endedAt).getTime() > new Date(latest.endedAt).getTime()
       ? current
       : latest
@@ -135,10 +141,13 @@ export async function listExerciseHistory(exerciseId: string) {
   if (!workoutExercises.length) return [];
   const workoutIds = Array.from(new Set(workoutExercises.map((exercise) => exercise.workoutId)));
   const workouts = await db.workouts.where('id').anyOf(workoutIds).toArray();
-  const workoutMap = new Map(workouts.map((workout) => [workout.id, workout]));
+  const workoutMap = new Map(
+    workouts.filter((workout) => !workout.deletedAt).map((workout) => [workout.id, workout])
+  );
   const entries = await Promise.all(
     workoutExercises.map(async (exercise) => {
       const workout = workoutMap.get(exercise.workoutId);
+      if (!workout) return null;
       const sets = await getWorkoutSets(exercise.id);
       return {
         workoutId: exercise.workoutId,
@@ -150,5 +159,7 @@ export async function listExerciseHistory(exerciseId: string) {
       };
     })
   );
-  return entries.sort((a, b) => b.endedAt.localeCompare(a.endedAt));
+  return entries
+    .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
+    .sort((a, b) => b.endedAt.localeCompare(a.endedAt));
 }

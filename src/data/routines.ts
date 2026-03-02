@@ -22,12 +22,14 @@ function buildRoutineSnapshot(routine: RoutineRecord, tags: string[], exercises:
 }
 
 export async function listRoutines() {
-  return db.routines.orderBy('order').toArray();
+  const routines = await db.routines.orderBy('order').toArray();
+  return routines.filter((routine) => !routine.deletedAt);
 }
 
 export async function createRoutine(name: string, tags: string[]) {
   const now = new Date().toISOString();
-  const lastOrder = await db.routines.orderBy('order').last();
+  const routines = await listRoutines();
+  const lastOrder = routines.length ? routines[routines.length - 1] : undefined;
   const order = lastOrder ? lastOrder.order + 1 : 0;
   const routine: RoutineRecord = {
     id: `routine-${crypto.randomUUID()}`,
@@ -59,7 +61,7 @@ export async function updateRoutine(
   updates: { name: string; tags: string[] }
 ) {
   const routine = await db.routines.get(routineId);
-  if (!routine) return;
+  if (!routine || routine.deletedAt) return;
   const now = new Date().toISOString();
   const exercises = await db.routineExercises.where('routineId').equals(routineId).toArray();
   const defaults = await db.exerciseDefaults.where('routineId').equals(routineId).toArray();
@@ -108,7 +110,7 @@ export async function overwriteRoutineExercises(
   }>
 ) {
   const routine = await db.routines.get(routineId);
-  if (!routine) return;
+  if (!routine || routine.deletedAt) return;
   const tags = await db.routineTags.where('routineId').equals(routineId).toArray();
   const now = new Date().toISOString();
   const nextRoutine: RoutineRecord = {
@@ -156,11 +158,17 @@ export async function overwriteRoutineExercises(
 }
 
 export async function deleteRoutine(routineId: string) {
+  const routine = await db.routines.get(routineId);
+  if (!routine || routine.deletedAt) return;
+  const now = new Date().toISOString();
   await db.transaction(
     'rw',
     [db.routines, db.routineTags, db.routineExercises, db.exerciseDefaults, db.routineVersions],
     async () => {
-      await db.routines.delete(routineId);
+      await db.routines.update(routineId, {
+        updatedAt: now,
+        deletedAt: now
+      });
       await db.routineTags.where('routineId').equals(routineId).delete();
       await db.routineExercises.where('routineId').equals(routineId).delete();
       await db.exerciseDefaults.where('routineId').equals(routineId).delete();
@@ -171,12 +179,13 @@ export async function deleteRoutine(routineId: string) {
 
 export async function duplicateRoutine(routineId: string) {
   const routine = await db.routines.get(routineId);
-  if (!routine) return;
+  if (!routine || routine.deletedAt) return;
   const tags = await db.routineTags.where('routineId').equals(routineId).toArray();
   const exercises = await db.routineExercises.where('routineId').equals(routineId).toArray();
   const defaults = await db.exerciseDefaults.where('routineId').equals(routineId).toArray();
   const now = new Date().toISOString();
-  const lastOrder = await db.routines.orderBy('order').last();
+  const routines = await listRoutines();
+  const lastOrder = routines.length ? routines[routines.length - 1] : undefined;
   const order = lastOrder ? lastOrder.order + 1 : 0;
   const newRoutine: RoutineRecord = {
     id: `routine-${crypto.randomUUID()}`,
@@ -240,7 +249,7 @@ export async function duplicateRoutine(routineId: string) {
 }
 
 export async function reorderRoutine(routineId: string, direction: 'up' | 'down') {
-  const routines = await db.routines.orderBy('order').toArray();
+  const routines = await listRoutines();
   const index = routines.findIndex((routine) => routine.id === routineId);
   if (index === -1) return;
   const swapIndex = direction === 'up' ? index - 1 : index + 1;
@@ -254,25 +263,40 @@ export async function reorderRoutine(routineId: string, direction: 'up' | 'down'
 }
 
 export async function addRoutineExercise(routineId: string, exerciseId: string) {
+  const routine = await db.routines.get(routineId);
+  if (!routine || routine.deletedAt) return;
   const existing = await db.routineExercises
     .where({ routineId, exerciseId })
     .first();
   if (existing) return;
   const last = await db.routineExercises.where('routineId').equals(routineId).last();
   const order = last ? last.order + 1 : 0;
-  await db.routineExercises.add({
-    id: `routine-exercise-${crypto.randomUUID()}`,
-    routineId,
-    exerciseId,
-    order
+  await db.transaction('rw', db.routineExercises, db.routines, async () => {
+    await db.routineExercises.add({
+      id: `routine-exercise-${crypto.randomUUID()}`,
+      routineId,
+      exerciseId,
+      order
+    });
+    await db.routines.update(routineId, {
+      updatedAt: new Date().toISOString()
+    });
   });
 }
 
 export async function removeRoutineExercise(routineId: string, exerciseId: string) {
+  const routine = await db.routines.get(routineId);
+  if (!routine || routine.deletedAt) return;
   const entry = await db.routineExercises.where({ routineId, exerciseId }).first();
   if (!entry) return;
-  await db.routineExercises.delete(entry.id);
-  await db.exerciseDefaults.where({ routineId, exerciseId }).delete();
+  const now = new Date().toISOString();
+  await db.transaction('rw', db.routineExercises, db.exerciseDefaults, db.routines, async () => {
+    await db.routineExercises.delete(entry.id);
+    await db.exerciseDefaults.where({ routineId, exerciseId }).delete();
+    await db.routines.update(routineId, {
+      updatedAt: now
+    });
+  });
 }
 
 export async function reorderRoutineExercise(
@@ -280,6 +304,8 @@ export async function reorderRoutineExercise(
   exerciseId: string,
   direction: 'up' | 'down'
 ) {
+  const routine = await db.routines.get(routineId);
+  if (!routine || routine.deletedAt) return;
   const exercises = await db.routineExercises.where('routineId').equals(routineId).sortBy('order');
   const index = exercises.findIndex((item) => item.exerciseId === exerciseId);
   if (index === -1) return;
@@ -287,9 +313,12 @@ export async function reorderRoutineExercise(
   if (swapIndex < 0 || swapIndex >= exercises.length) return;
   const current = exercises[index];
   const swap = exercises[swapIndex];
-  await db.transaction('rw', db.routineExercises, async () => {
+  await db.transaction('rw', db.routineExercises, db.routines, async () => {
     await db.routineExercises.update(current.id, { order: swap.order });
     await db.routineExercises.update(swap.id, { order: current.order });
+    await db.routines.update(routineId, {
+      updatedAt: new Date().toISOString()
+    });
   });
 }
 
@@ -312,7 +341,10 @@ export async function updateExerciseDefaults({
   defaultDistance?: number;
   defaultRestSeconds?: number;
 }) {
+  const routine = await db.routines.get(routineId);
+  if (!routine || routine.deletedAt) return;
   const existing = await db.exerciseDefaults.where({ routineId, exerciseId }).first();
+  const now = new Date().toISOString();
   const payload = {
     id: existing?.id ?? `default-${crypto.randomUUID()}`,
     routineId,
@@ -324,12 +356,17 @@ export async function updateExerciseDefaults({
     defaultDistance,
     defaultRestSeconds
   };
-  await db.exerciseDefaults.put(payload);
+  await db.transaction('rw', db.exerciseDefaults, db.routines, async () => {
+    await db.exerciseDefaults.put(payload);
+    await db.routines.update(routineId, {
+      updatedAt: now
+    });
+  });
 }
 
 export async function getRoutineDetail(routineId: string) {
   const routine = await db.routines.get(routineId);
-  if (!routine) return null;
+  if (!routine || routine.deletedAt) return null;
   const tags = await db.routineTags.where('routineId').equals(routineId).toArray();
   const exercises = await db.routineExercises.where('routineId').equals(routineId).sortBy('order');
   const defaults = await db.exerciseDefaults.where('routineId').equals(routineId).toArray();

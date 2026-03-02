@@ -13,6 +13,7 @@ import { Stats } from './pages/Stats';
 import { Measures } from './pages/Measures';
 import { Calendar } from './pages/Calendar';
 import { ExerciseDetail } from './pages/ExerciseDetail';
+import { AccountModal } from './components/AccountModal';
 
 export function App() {
   const { ready } = useSettings();
@@ -33,6 +34,7 @@ export function App() {
 
   return (
     <Layout>
+      <AccountModal />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/routines" element={<Navigate to="/" replace />} />

@@ -108,7 +108,7 @@
 
 ## Phase 8: Backend Foundation (Cloud-ready)
 **Goal:** Introducir una capa backend para integraciones externas y preparar auth/sync/push sin romper el modo local.
-**Status:** In Progress (2026-02-18)
+**Status:** Complete (2026-02-27)
 
 **Scope**
 - BFF/API para integraciones externas (arranque: wrkout proxy para evitar CORS).
@@ -120,6 +120,21 @@
 2. Existe endpoint backend `/api/wrkout/*` que encapsula API key y respuestas.
 3. La app funciona en local con `npm run dev:all` y build web sin regresiones.
 4. Quedan definidos próximos pasos para auth/sync/push sobre la base backend.
+
+---
+
+## Phase 9: Auth + Sync Base
+**Goal:** Agregar autenticación con Supabase y sincronización inicial de datos sin romper el modo local.
+**Status:** Complete (2026-03-02)
+
+**Requirements**
+- ACC-01, ACC-02, ACC-03
+
+**Success Criteria (observable)**
+1. El usuario puede crear cuenta o iniciar sesión con email.
+2. El usuario puede subir y bajar sus rutinas, ejercicios personalizados y workouts entre nube y local.
+3. La app mantiene uso local-first cuando no hay conexión y sincroniza al volver.
+4. La app resuelve conflictos básicos sin pérdida silenciosa de datos.
 
 ---
 

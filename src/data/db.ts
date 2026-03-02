@@ -15,6 +15,7 @@ export interface RoutineRecord {
   createdAt: string;
   updatedAt: string;
   order: number;
+  deletedAt?: string;
 }
 
 export type ExerciseMetric = 'weight_reps' | 'reps' | 'time' | 'distance';
@@ -29,6 +30,8 @@ export interface ExerciseRecord {
   isCustom: boolean;
   source: 'wger' | 'custom';
   createdAt: string;
+  updatedAt: string;
+  deletedAt?: string;
 }
 
 export interface ExerciseTranslationRecord {
@@ -66,6 +69,8 @@ export interface ExerciseDefaultRecord {
 export interface ExerciseFavoriteRecord {
   exerciseId: string;
   createdAt: string;
+  updatedAt: string;
+  deletedAt?: string;
 }
 
 export interface ExerciseRecentRecord {
@@ -88,6 +93,8 @@ export interface WorkoutRecord {
   tags?: string[];
   startedAt: string;
   endedAt: string;
+  updatedAt: string;
+  deletedAt?: string;
 }
 
 export interface WorkoutExerciseRecord {
@@ -119,6 +126,17 @@ export interface WrkoutTipRecord {
   lastFetchedAt: string;
 }
 
+export interface SyncStateRecord {
+  id: string;
+  status?: 'idle' | 'syncing' | 'success' | 'error' | 'offline-pending';
+  lastAttemptAt?: string;
+  lastSyncedAt?: string;
+  lastError?: string;
+  cursor?: string;
+  value?: string;
+  updatedAt: string;
+}
+
 class AppDB extends Dexie {
   settings!: Table<SettingsRecord, 'app'>;
   routines!: Table<RoutineRecord, string>;
@@ -134,6 +152,7 @@ class AppDB extends Dexie {
   workoutExercises!: Table<WorkoutExerciseRecord, string>;
   workoutSets!: Table<WorkoutSetRecord, string>;
   wrkoutTips!: Table<WrkoutTipRecord, string>;
+  syncState!: Table<SyncStateRecord, string>;
 
   constructor() {
     super('gym-tracker');
@@ -186,15 +205,53 @@ class AppDB extends Dexie {
       workoutSets: 'id, workoutExerciseId, [workoutExerciseId+order]',
       wrkoutTips: 'exerciseId, wrkoutId, lastFetchedAt'
     });
+    this.version(4)
+      .stores({
+        settings: 'id',
+        routines: 'id, order, updatedAt, deletedAt, createdAt',
+        exercises: 'id, baseName, normalizedName, updatedAt, deletedAt, *muscles, *equipment, isCustom, source',
+        exerciseTranslations: 'id, exerciseId, language, name',
+        routineExercises: 'id, routineId, exerciseId, [routineId+order]',
+        routineTags: 'id, routineId, tag, [routineId+tag]',
+        exerciseDefaults: 'id, routineId, exerciseId, [routineId+exerciseId]',
+        exerciseFavorites: 'exerciseId, createdAt, updatedAt, deletedAt',
+        exerciseRecents: 'exerciseId, lastUsedAt',
+        routineVersions: 'id, routineId, createdAt',
+        workouts: 'id, routineId, startedAt, endedAt, updatedAt, deletedAt',
+        workoutExercises: 'id, workoutId, exerciseId, [workoutId+order]',
+        workoutSets: 'id, workoutExerciseId, [workoutExerciseId+order]',
+        wrkoutTips: 'exerciseId, wrkoutId, lastFetchedAt',
+        syncState: 'id, updatedAt, lastSyncedAt, status'
+      })
+      .upgrade(async (tx) => {
+        const now = new Date().toISOString();
+        await tx.table<RoutineRecord, string>('routines').toCollection().modify((routine) => {
+          routine.updatedAt = routine.updatedAt ?? routine.createdAt ?? now;
+        });
+        await tx.table<ExerciseRecord, string>('exercises').toCollection().modify((exercise) => {
+          exercise.updatedAt = exercise.updatedAt ?? exercise.createdAt ?? now;
+        });
+        await tx
+          .table<ExerciseFavoriteRecord, string>('exerciseFavorites')
+          .toCollection()
+          .modify((favorite) => {
+            favorite.updatedAt = favorite.updatedAt ?? favorite.createdAt ?? now;
+          });
+        await tx.table<WorkoutRecord, string>('workouts').toCollection().modify((workout) => {
+          workout.updatedAt = workout.updatedAt ?? workout.endedAt ?? workout.startedAt ?? now;
+        });
+      });
   }
 }
 
 export const db = new AppDB();
 
+const LOCAL_STORAGE_KEYS = ['active-session', 'gym-theme'];
+
 export async function resetAll() {
   await db.delete();
   await db.open();
-  localStorage.clear();
+  LOCAL_STORAGE_KEYS.forEach((key) => localStorage.removeItem(key));
   if ('caches' in window) {
     const cacheNames = await caches.keys();
     await Promise.all(cacheNames.map((name) => caches.delete(name)));

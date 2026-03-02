@@ -152,6 +152,9 @@
 | SET-02 | Phase 1: PWA + Ajustes Base | Complete |
 | ADV-01 | Phase 6: Import/Export + Sets Avanzados | Pending |
 | ADV-02 | Phase 6: Import/Export + Sets Avanzados | Pending |
+| ACC-01 | Phase 9: Auth + Sync Base | Complete |
+| ACC-02 | Phase 9: Auth + Sync Base | Complete |
+| ACC-03 | Phase 9: Auth + Sync Base | Complete |
 
 **Coverage:**
 - v1 requirements: 36 total
@@ -160,4 +163,4 @@
 
 ---
 *Requirements defined: 2026-01-26*
-*Last updated: 2026-02-02 after Phase 3 delivery*
+*Last updated: 2026-03-02 after Phase 9 delivery*
