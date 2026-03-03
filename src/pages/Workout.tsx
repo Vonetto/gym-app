@@ -6,46 +6,36 @@ import {
   normalizeName,
   listFavorites
 } from '../data/exercises';
+import {
+  ActiveWorkoutExercise,
+  ActiveWorkoutSession,
+  ActiveWorkoutSet,
+  clearActiveSession,
+  readActiveSession,
+  writeActiveSession
+} from '../data/activeSession';
+import {
+  applyProgressionSuggestions,
+  applySuggestedPrescription,
+  applySuggestionToSet,
+  syncSuggestionStatus
+} from '../data/progression';
 import { useSettings } from '../data/SettingsProvider';
-import { getLatestExerciseSets, saveWorkout } from '../data/workouts';
+import {
+  getLatestExerciseSets,
+  listCompletedExerciseSessions,
+  saveWorkout
+} from '../data/workouts';
 import { getRoutineDetail, overwriteRoutineExercises } from '../data/routines';
-
-interface WorkoutSet {
-  weight?: number;
-  reps?: number;
-  duration?: number;
-  distance?: number;
-  rpe?: number;
-  completed?: boolean;
-}
-
-interface WorkoutExercise {
-  exerciseId: string;
-  name: string;
-  metricType: string;
-  notes?: string;
-  previousSets?: Array<{ weight?: number; reps?: number; duration?: number; distance?: number }>;
-  restSeconds?: number;
-  sets: WorkoutSet[];
-}
+import { ExerciseMetric } from '../data/db';
 
 interface ExerciseOption {
   id: string;
   label: string;
-  metricType: string;
+  metricType: ExerciseMetric;
   muscles: string[];
   equipment: string[];
   normalizedLabel: string;
-}
-
-interface WorkoutSession {
-  id: string;
-  createdAt: string;
-  routineId?: string;
-  routineName?: string;
-  originalExerciseIds?: string[];
-  restTimers?: Record<string, { endAt: string; totalSeconds: number; exerciseName: string }>;
-  exercises: WorkoutExercise[];
 }
 
 function formatDuration(seconds: number) {
@@ -55,14 +45,32 @@ function formatDuration(seconds: number) {
   return `${minutes}m ${remainder}s`;
 }
 
+function getMetricTypeLabel(metricType: ExerciseMetric) {
+  if (metricType === 'weight_reps') return 'Peso + reps';
+  if (metricType === 'reps') return 'Solo reps';
+  if (metricType === 'time') return 'Tiempo';
+  return 'Distancia';
+}
+
+function getDefaultValueForMetricType(
+  metricType: ExerciseMetric,
+  field: 'reps' | 'duration' | 'distance'
+) {
+  if (metricType === 'reps' && field === 'reps') return 10;
+  if (metricType === 'time' && field === 'duration') return 60;
+  if (metricType === 'distance' && field === 'distance') return 100;
+  return undefined;
+}
+
 export function Workout() {
   const navigate = useNavigate();
   const { settings } = useSettings();
-  const [session, setSession] = useState<WorkoutSession | null>(null);
+  const [session, setSession] = useState<ActiveWorkoutSession | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const [exerciseQuery, setExerciseQuery] = useState('');
   const [exerciseOptions, setExerciseOptions] = useState<ExerciseOption[]>([]);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [typeTarget, setTypeTarget] = useState<{ exerciseId: string; index: number } | null>(null);
   const [replaceTarget, setReplaceTarget] = useState<{ exerciseId: string; index: number } | null>(
     null
   );
@@ -74,16 +82,12 @@ export function Workout() {
   const audioContextRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
-    const stored = localStorage.getItem('active-session');
-    if (stored) {
-      setSession(JSON.parse(stored));
-    }
+    setSession(readActiveSession());
   }, []);
 
   useEffect(() => {
     if (!session) return;
-    localStorage.setItem('active-session', JSON.stringify(session));
-    window.dispatchEvent(new Event('active-session'));
+    writeActiveSession(session);
   }, [session]);
 
   useEffect(() => {
@@ -105,6 +109,44 @@ export function Workout() {
     };
     loadExercises();
   }, [settings.language]);
+
+  useEffect(() => {
+    if (!session || !exerciseOptions.length) return;
+    const needsBackfill = session.exercises.some(
+      (exercise) => exercise.sets.some((set) => !set.suggestion)
+    );
+    const missingEquipment = session.exercises.some(
+      (exercise) => exercise.metricType === 'weight_reps' && !(exercise.equipment?.length)
+    );
+    if (!needsBackfill && !missingEquipment) return;
+
+    let cancelled = false;
+    const optionMap = new Map(exerciseOptions.map((option) => [option.id, option]));
+
+    const backfill = async () => {
+      const nextExercises = await Promise.all(
+        session.exercises.map(async (exercise) => {
+          const option = optionMap.get(exercise.exerciseId);
+          const withEquipment = {
+            ...exercise,
+            equipment: exercise.equipment?.length ? exercise.equipment : option?.equipment ?? []
+          };
+          if (exercise.sets.every((set) => set.suggestion)) {
+            return withEquipment;
+          }
+          const history = await listCompletedExerciseSessions(exercise.exerciseId, 2);
+          return applyProgressionSuggestions(withEquipment, history);
+        })
+      );
+      if (cancelled) return;
+      setSession((prev) => (prev ? { ...prev, exercises: nextExercises } : prev));
+    };
+
+    void backfill();
+    return () => {
+      cancelled = true;
+    };
+  }, [exerciseOptions, session]);
 
   useEffect(() => {
     const loadFavorites = async () => {
@@ -160,7 +202,7 @@ export function Workout() {
   const handleSetChange = (
     exerciseIndex: number,
     setIndex: number,
-    field: keyof WorkoutSet,
+    field: keyof ActiveWorkoutSet,
     value: string
   ) => {
     setSession((prev) => {
@@ -180,7 +222,7 @@ export function Workout() {
           field === 'rpe' && numeric !== undefined
             ? Math.min(10, Math.max(1, numeric))
             : numeric;
-        const updated = { ...sets[setIndex], [field]: nextValue };
+        const updated = syncSuggestionStatus({ ...sets[setIndex], [field]: nextValue });
         sets[setIndex] = updated;
         return { ...exercise, sets };
       });
@@ -220,7 +262,7 @@ export function Workout() {
         if (index !== exerciseIndex) return exercise;
         const sets = [...exercise.sets];
         const nextCompleted = !sets[setIndex].completed;
-        const nextSet: WorkoutSet = {
+        const nextSet: ActiveWorkoutSet = {
           ...sets[setIndex],
           completed: nextCompleted,
           weight:
@@ -232,7 +274,7 @@ export function Workout() {
               ? 0
               : sets[setIndex].reps
         };
-        sets[setIndex] = nextSet;
+        sets[setIndex] = syncSuggestionStatus(nextSet);
         if (nextCompleted && (exercise.restSeconds ?? 0) > 0) {
           void startRestTimer(exercise.exerciseId, exercise.name, exercise.restSeconds ?? 0);
         }
@@ -244,7 +286,7 @@ export function Workout() {
 
   const finalizeWorkout = async (updateRoutine: boolean) => {
     if (session) {
-      const sanitizedSession: WorkoutSession = {
+      const sanitizedSession: ActiveWorkoutSession = {
         ...session,
         exercises: session.exercises.map((exercise) => ({
           ...exercise,
@@ -261,37 +303,65 @@ export function Workout() {
       );
       const exercises = session.exercises.map((exercise, index) => {
         const existingDefaults = defaultsByExercise.get(exercise.exerciseId);
+        const typeChanged = exercise.metricType !== (exercise.originalMetricType ?? exercise.metricType);
+        const lastSet = exercise.sets[exercise.sets.length - 1];
         if (existingDefaults) {
+          if (typeChanged) {
+            return {
+              exerciseId: exercise.exerciseId,
+              order: index,
+              defaults: {
+                metricTypeOverride:
+                  exercise.metricType !== (exercise.catalogMetricType ?? exercise.metricType)
+                    ? exercise.metricType
+                    : undefined,
+                defaultSets: exercise.sets.length,
+                defaultReps: lastSet?.reps,
+                defaultWeight: lastSet?.weight,
+                defaultDuration: lastSet?.duration,
+                defaultDistance: lastSet?.distance,
+                defaultRestSeconds: exercise.restSeconds ?? 0,
+                goalMode: exercise.metricType === 'weight_reps' ? exercise.goalMode ?? 'auto' : undefined
+              }
+            };
+          }
           return {
             exerciseId: exercise.exerciseId,
             order: index,
             defaults: {
+              metricTypeOverride: existingDefaults.metricTypeOverride,
               defaultSets: existingDefaults.defaultSets,
               defaultReps: existingDefaults.defaultReps,
               defaultWeight: existingDefaults.defaultWeight,
               defaultDuration: existingDefaults.defaultDuration,
               defaultDistance: existingDefaults.defaultDistance,
-              defaultRestSeconds: existingDefaults.defaultRestSeconds
+              defaultRestSeconds: existingDefaults.defaultRestSeconds,
+              goalMode: existingDefaults.goalMode
             }
           };
         }
-        const lastSet = exercise.sets[exercise.sets.length - 1];
         return {
           exerciseId: exercise.exerciseId,
           order: index,
           defaults: {
+            metricTypeOverride:
+              exercise.metricType !== (exercise.catalogMetricType ?? exercise.metricType)
+                ? exercise.metricType
+                : undefined,
             defaultSets: exercise.sets.length,
             defaultReps: lastSet?.reps,
             defaultWeight: lastSet?.weight,
-            defaultRestSeconds: exercise.restSeconds ?? 0
+            defaultDuration: lastSet?.duration,
+            defaultDistance: lastSet?.distance,
+            defaultRestSeconds: exercise.restSeconds ?? 0,
+            goalMode: exercise.metricType === 'weight_reps' ? exercise.goalMode ?? 'auto' : undefined
           }
         };
       });
       await overwriteRoutineExercises(session.routineId, exercises);
     }
 
-    localStorage.removeItem('active-session');
-    window.dispatchEvent(new Event('active-session'));
+    clearActiveSession();
     setSession(null);
     setShowFinishPrompt(false);
     navigate('/');
@@ -305,7 +375,10 @@ export function Workout() {
         original.length > 0 &&
         (original.length !== current.length ||
           original.some((exerciseId, index) => exerciseId !== current[index]));
-      if (session.routineId && hasChanges) {
+      const hasTypeChanges = session.exercises.some(
+        (exercise) => exercise.metricType !== (exercise.originalMetricType ?? exercise.metricType)
+      );
+      if (session.routineId && (hasChanges || hasTypeChanges)) {
         setShowFinishPrompt(true);
         return;
       }
@@ -314,19 +387,22 @@ export function Workout() {
   };
 
   const handleDiscard = () => {
-    localStorage.removeItem('active-session');
-    window.dispatchEvent(new Event('active-session'));
+    clearActiveSession();
     setSession(null);
     navigate('/');
   };
 
-  const buildWorkoutExercise = async (option: ExerciseOption): Promise<WorkoutExercise> => {
+  const buildWorkoutExercise = async (option: ExerciseOption): Promise<ActiveWorkoutExercise> => {
     const previousSets = await getLatestExerciseSets(option.id);
-    return {
+    const nextExercise: ActiveWorkoutExercise = {
       exerciseId: option.id,
       name: option.label,
       metricType: option.metricType,
+      catalogMetricType: option.metricType,
+      originalMetricType: option.metricType,
+      goalMode: 'auto',
       notes: '',
+      equipment: option.equipment,
       previousSets: previousSets.map((set) => ({
         weight: set.weight,
         reps: set.reps,
@@ -338,6 +414,8 @@ export function Workout() {
         completed: false
       }))
     };
+    const history = await listCompletedExerciseSessions(option.id, 2);
+    return applySuggestedPrescription(applyProgressionSuggestions(nextExercise, history));
   };
 
   const handleAddExercise = async (optionId: string) => {
@@ -403,10 +481,82 @@ export function Workout() {
     setReplaceQuery('');
   };
 
+  const handleApplySuggestion = (exerciseIndex: number, setIndex: number) => {
+    setSession((prev) => {
+      if (!prev) return prev;
+      const exercises = prev.exercises.map((exercise, index) => {
+        if (index !== exerciseIndex) return exercise;
+        const sets = [...exercise.sets];
+        sets[setIndex] = applySuggestionToSet(sets[setIndex]);
+        return { ...exercise, sets };
+      });
+      return { ...prev, exercises };
+    });
+  };
+
+  const handleChangeMetricType = async (exerciseIndex: number, metricType: ExerciseMetric) => {
+    if (!session) return;
+    const targetExercise = session.exercises[exerciseIndex];
+    const history = await listCompletedExerciseSessions(targetExercise.exerciseId, 2);
+    const nextExercise = applySuggestedPrescription(
+      applyProgressionSuggestions(
+        {
+          ...targetExercise,
+          metricType,
+          sets: targetExercise.sets.map((set) => ({
+            completed: set.completed,
+            rpe: set.rpe,
+            weight:
+              metricType === 'weight_reps'
+                ? set.weight
+                : metricType === 'reps'
+                ? 0
+                : undefined,
+            reps:
+              metricType === 'weight_reps' || metricType === 'reps'
+                ? set.reps ?? getDefaultValueForMetricType(metricType, 'reps')
+                : undefined,
+            duration:
+              metricType === 'time'
+                ? set.duration ?? getDefaultValueForMetricType(metricType, 'duration')
+                : undefined,
+            distance:
+              metricType === 'distance'
+                ? set.distance ?? getDefaultValueForMetricType(metricType, 'distance')
+                : undefined
+          })),
+          previousSets: (targetExercise.previousSets ?? []).map((set) => ({
+            weight:
+              metricType === 'weight_reps'
+                ? set.weight
+                : metricType === 'reps'
+                ? 0
+                : undefined,
+            reps:
+              metricType === 'weight_reps' || metricType === 'reps'
+                ? set.reps
+                : undefined,
+            duration: metricType === 'time' ? set.duration : undefined,
+            distance: metricType === 'distance' ? set.distance : undefined
+          }))
+        },
+        history
+      )
+    );
+    setSession((prev) => {
+      if (!prev) return prev;
+      const exercises = [...prev.exercises];
+      exercises[exerciseIndex] = nextExercise;
+      return { ...prev, exercises };
+    });
+    setTypeTarget(null);
+    setOpenMenuId(null);
+  };
+
   const buildPreviousMatches = (
     metricType: string,
     previous: Array<{ weight?: number; reps?: number; duration?: number; distance?: number }>,
-    current: WorkoutSet[]
+    current: ActiveWorkoutSet[]
   ) => {
     if (!previous.length) return current.map(() => null);
     if (metricType === 'time' || metricType === 'distance') {
@@ -591,6 +741,10 @@ export function Workout() {
             exercise.previousSets ?? [],
             exercise.sets
           );
+          const firstSuggestion = exercise.sets.find((set) => set.suggestion)?.suggestion;
+          const suggestionSummary = firstSuggestion
+            ? `Sugerido: ${firstSuggestion.label}.`
+            : null;
           const metricType = exercise.metricType;
           const showWeight = metricType === 'weight_reps';
           const showReps = metricType === 'weight_reps' || metricType === 'reps';
@@ -618,6 +772,12 @@ export function Workout() {
                         ? ` · ${formatDuration(restSecondsLeft)}`
                         : ''}
                     </button>
+                    {suggestionSummary ? (
+                      <p className="exercise-suggestion-summary">{suggestionSummary}</p>
+                    ) : null}
+                    {exercise.suggestionExplanation ? (
+                      <p className="exercise-helper">{exercise.suggestionExplanation}</p>
+                    ) : null}
                   </div>
                 </div>
                 <div className="exercise-menu-wrapper">
@@ -632,6 +792,9 @@ export function Workout() {
                   </button>
                   {isMenuOpen ? (
                     <div className="exercise-menu">
+                      <p className="exercise-menu-meta">
+                        Tipo actual: {getMetricTypeLabel(exercise.metricType)}
+                      </p>
                       <button
                         type="button"
                         onClick={() => {
@@ -641,6 +804,15 @@ export function Workout() {
                         }}
                       >
                         Reemplazar ejercicio
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setTypeTarget({ exerciseId: exercise.exerciseId, index: exerciseIndex });
+                          setOpenMenuId(null);
+                        }}
+                      >
+                        Cambiar tipo ({getMetricTypeLabel(exercise.metricType)})
                       </button>
                       <button
                         type="button"
@@ -676,11 +848,12 @@ export function Workout() {
                   {showReps ? <span>Reps</span> : null}
                   {showDistance ? <span>Distancia</span> : null}
                   {showTime ? <span>Tiempo</span> : null}
-                  <span>RPE</span>
+                  <span className="set-header-suggestion">Sug.</span>
                   <span />
                 </div>
                 {exercise.sets.map((set, setIndex) => {
                   const match = matches[setIndex];
+                  const suggestion = set.suggestion;
                   const previousLabel = (() => {
                     if (!match) return '-';
                     if (showWeight || showReps) {
@@ -779,17 +952,14 @@ export function Workout() {
                           }
                         />
                       ) : null}
-                      <input
-                        className="rpe-input"
-                        type="number"
-                        min={1}
-                        max={10}
-                        step={1}
-                        value={set.rpe ?? ''}
-                        onChange={(event) =>
-                          handleSetChange(exerciseIndex, setIndex, 'rpe', event.target.value)
-                        }
-                      />
+                      <button
+                        className={`suggestion-button ${suggestion?.status ?? 'empty'}`}
+                        type="button"
+                        disabled={!suggestion}
+                        onClick={() => handleApplySuggestion(exerciseIndex, setIndex)}
+                      >
+                        {suggestion?.label ?? '—'}
+                      </button>
                       <input
                         className="set-check"
                         type="checkbox"
@@ -927,6 +1097,68 @@ export function Workout() {
                 <p className="muted">No hay ejercicios para reemplazar.</p>
               )}
             </div>
+          </div>
+        </div>
+      ) : null}
+
+      {typeTarget ? (
+        <div
+          className="modal-overlay bottom"
+          onClick={() => {
+            setTypeTarget(null);
+          }}
+        >
+          <div className="modal-card" onClick={(event) => event.stopPropagation()}>
+            {(() => {
+              const targetExercise = session?.exercises[typeTarget.index];
+              const currentType = targetExercise ? getMetricTypeLabel(targetExercise.metricType) : '';
+              return (
+                <>
+            <div className="card-header">
+              <h2>Cambiar tipo</h2>
+              <button className="ghost-button" type="button" onClick={() => setTypeTarget(null)}>
+                Cerrar
+              </button>
+            </div>
+            <p className="muted">
+              Tipo actual: <strong>{currentType}</strong>
+            </p>
+            <p className="muted">
+              Define cómo se registra este ejercicio. Usa `Solo reps` para bodyweight o cuando el peso no aporte.
+            </p>
+            <div className="actions">
+              <button
+                className={`ghost-button ${targetExercise?.metricType === 'weight_reps' ? 'selected-type' : ''}`}
+                type="button"
+                onClick={() => handleChangeMetricType(typeTarget.index, 'weight_reps')}
+              >
+                Peso + reps
+              </button>
+              <button
+                className={`ghost-button ${targetExercise?.metricType === 'reps' ? 'selected-type' : ''}`}
+                type="button"
+                onClick={() => handleChangeMetricType(typeTarget.index, 'reps')}
+              >
+                Solo reps
+              </button>
+              <button
+                className={`ghost-button ${targetExercise?.metricType === 'time' ? 'selected-type' : ''}`}
+                type="button"
+                onClick={() => handleChangeMetricType(typeTarget.index, 'time')}
+              >
+                Tiempo
+              </button>
+              <button
+                className={`ghost-button ${targetExercise?.metricType === 'distance' ? 'selected-type' : ''}`}
+                type="button"
+                onClick={() => handleChangeMetricType(typeTarget.index, 'distance')}
+              >
+                Distancia
+              </button>
+            </div>
+                </>
+              );
+            })()}
           </div>
         </div>
       ) : null}

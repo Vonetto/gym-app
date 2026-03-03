@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useActiveSession } from '../hooks/useActiveSession';
-import { saveWorkout, WorkoutSessionPayload } from '../data/workouts';
+import { clearActiveSession, readActiveSession, writeActiveSession } from '../data/activeSession';
+import { saveWorkout } from '../data/workouts';
 
 const formatDuration = (seconds: number) => {
   if (seconds < 60) return `${seconds}s`;
@@ -47,8 +48,7 @@ export function ActiveSessionBanner() {
       delete nextTimers[key];
     });
     const updated = { ...session, restTimers: nextTimers };
-    localStorage.setItem('active-session', JSON.stringify(updated));
-    window.dispatchEvent(new Event('active-session'));
+    writeActiveSession(updated);
     setRestAlert(
       expired.map(([, timer]) => ({
         exerciseName: timer.exerciseName
@@ -76,9 +76,7 @@ export function ActiveSessionBanner() {
     if (isFinishing) return;
     setIsFinishing(true);
     try {
-      const stored = localStorage.getItem('active-session');
-      if (!stored) return;
-      const parsed = JSON.parse(stored) as WorkoutSessionPayload | null;
+      const parsed = readActiveSession();
       if (!parsed) return;
       const completedSets =
         parsed.exercises?.reduce(
@@ -92,8 +90,7 @@ export function ActiveSessionBanner() {
     } catch {
       // ignore and fall through to clearing session
     } finally {
-      localStorage.removeItem('active-session');
-      window.dispatchEvent(new Event('active-session'));
+      clearActiveSession();
       setRestAlert(null);
       setIsFinishing(false);
     }

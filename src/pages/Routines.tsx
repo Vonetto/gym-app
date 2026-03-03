@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createRoutine, deleteRoutine, duplicateRoutine, listRoutines, reorderRoutine } from '../data/routines';
+import { ActiveWorkoutSession, writeActiveSession } from '../data/activeSession';
 
 export function Routines() {
   const [name, setName] = useState('');
@@ -48,13 +49,12 @@ export function Routines() {
   };
 
   const handleStartEmpty = () => {
-    const payload = {
+    const payload: ActiveWorkoutSession = {
       id: `session-${crypto.randomUUID()}`,
       createdAt: new Date().toISOString(),
       exercises: []
     };
-    localStorage.setItem('active-session', JSON.stringify(payload));
-    window.dispatchEvent(new Event('active-session'));
+    writeActiveSession(payload);
     navigate('/workout');
   };
 

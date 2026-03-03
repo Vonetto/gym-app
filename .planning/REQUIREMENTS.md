@@ -143,8 +143,8 @@
 | ANA-01 | Phase 5: Historial + PRs + Analíticas | Pending |
 | ANA-02 | Phase 5: Historial + PRs + Analíticas | Pending |
 | ANA-03 | Phase 5: Historial + PRs + Analíticas | Pending |
-| PRG-01 | Phase 4: Timers + Progresión | Pending |
-| PRG-02 | Phase 4: Timers + Progresión | Pending |
+| PRG-01 | Phase 10: Progresion de Carga | Pending |
+| PRG-02 | Phase 10: Progresion de Carga | Pending |
 | IO-01 | Phase 6: Import/Export + Sets Avanzados | Pending |
 | IO-02 | Phase 6: Import/Export + Sets Avanzados | Pending |
 | IO-03 | Phase 6: Import/Export + Sets Avanzados | Pending |
@@ -163,4 +163,4 @@
 
 ---
 *Requirements defined: 2026-01-26*
-*Last updated: 2026-03-02 after Phase 9 delivery*
+*Last updated: 2026-03-03 after opening Phase 10 research*

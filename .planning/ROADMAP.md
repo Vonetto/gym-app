@@ -138,6 +138,21 @@
 
 ---
 
+## Phase 10: Progresion de Carga
+**Goal:** Separar PRG-01/02 del bucket legacy de timers y entregar sugerencias de sobrecarga utiles, conservadoras y explicables.
+**Status:** In Progress (2026-03-03)
+
+**Requirements**
+- PRG-01, PRG-02
+
+**Success Criteria (observable)**
+1. El usuario ve una sugerencia compacta por ejercicio/set dentro de la tabla actual sin romper movil.
+2. La sugerencia cambia segun el tipo de metrica (`weight_reps`, `reps`, `time`, `distance`) y solo usa historial de sets completados.
+3. El usuario acepta o rechaza la sugerencia y los valores sugeridos se precargan.
+4. La logica es conservadora, explicable y no depende obligatoriamente de RPE.
+
+---
+
 ## Coverage Check
 - Total v1 requirements: 36
 - Mapped to phases: 36

@@ -15,7 +15,14 @@ import {
   updateRoutine
 } from '../data/routines';
 import { useSettings } from '../data/SettingsProvider';
-import { ExerciseMetric } from '../data/db';
+import { ExerciseGoalMode, ExerciseMetric } from '../data/db';
+
+function getMetricTypeLabel(metricType: ExerciseMetric) {
+  if (metricType === 'weight_reps') return 'Peso + reps';
+  if (metricType === 'reps') return 'Solo reps';
+  if (metricType === 'time') return 'Tiempo';
+  return 'Distancia';
+}
 
 export function RoutineDetail() {
   const { routineId } = useParams();
@@ -31,12 +38,14 @@ export function RoutineDetail() {
     Record<
       string,
       {
+        metricTypeOverride?: ExerciseMetric;
         defaultSets?: number;
         defaultReps?: number;
         defaultWeight?: number;
         defaultDuration?: number;
         defaultDistance?: number;
         defaultRestSeconds?: number;
+        goalMode?: ExerciseGoalMode;
       }
     >
   >({});
@@ -45,6 +54,7 @@ export function RoutineDetail() {
   >([]);
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [recentIds, setRecentIds] = useState<string[]>([]);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   const loadDetail = async () => {
     if (!routineId) return;
@@ -59,22 +69,26 @@ export function RoutineDetail() {
     const defaultsMap: Record<
       string,
       {
+        metricTypeOverride?: ExerciseMetric;
         defaultSets?: number;
         defaultReps?: number;
         defaultWeight?: number;
         defaultDuration?: number;
         defaultDistance?: number;
         defaultRestSeconds?: number;
+        goalMode?: ExerciseGoalMode;
       }
     > = {};
     detail.defaults.forEach((item) => {
       defaultsMap[item.exerciseId] = {
+        metricTypeOverride: item.metricTypeOverride,
         defaultSets: item.defaultSets,
         defaultReps: item.defaultReps,
         defaultWeight: item.defaultWeight,
         defaultDuration: item.defaultDuration,
         defaultDistance: item.defaultDistance,
-        defaultRestSeconds: item.defaultRestSeconds
+        defaultRestSeconds: item.defaultRestSeconds,
+        goalMode: item.goalMode ?? 'auto'
       };
     });
     setDefaults(defaultsMap);
@@ -150,19 +164,44 @@ export function RoutineDetail() {
   const handleDefaultChange = async (
     exerciseIdToUpdate: string,
     field:
+      | 'metricTypeOverride'
       | 'defaultSets'
       | 'defaultReps'
       | 'defaultWeight'
       | 'defaultDuration'
       | 'defaultDistance'
-      | 'defaultRestSeconds',
+      | 'defaultRestSeconds'
+      | 'goalMode',
     value: string
   ) => {
     if (!routineId) return;
-    const numeric = value ? Number(value) : undefined;
     const current = defaults[exerciseIdToUpdate] ?? {};
-    const next = { ...current, [field]: numeric };
+    const next =
+      field === 'goalMode'
+        ? { ...current, goalMode: (value || 'auto') as ExerciseGoalMode }
+        : field === 'metricTypeOverride'
+        ? { ...current, metricTypeOverride: value as ExerciseMetric }
+        : { ...current, [field]: value ? Number(value) : undefined };
     setDefaults((prev) => ({ ...prev, [exerciseIdToUpdate]: next }));
+    await updateExerciseDefaults({ routineId, exerciseId: exerciseIdToUpdate, ...next });
+  };
+
+  const handleMetricTypeChange = async (exerciseIdToUpdate: string, metricType: ExerciseMetric) => {
+    if (!routineId) return;
+    const current = defaults[exerciseIdToUpdate] ?? {};
+    const next = {
+      ...current,
+      metricTypeOverride: metricType,
+      defaultWeight:
+        metricType === 'weight_reps' ? current.defaultWeight : metricType === 'reps' ? 0 : undefined,
+      defaultReps:
+        metricType === 'weight_reps' || metricType === 'reps' ? current.defaultReps : undefined,
+      defaultDuration: metricType === 'time' ? current.defaultDuration : undefined,
+      defaultDistance: metricType === 'distance' ? current.defaultDistance : undefined,
+      goalMode: metricType === 'weight_reps' ? current.goalMode ?? 'auto' : undefined
+    };
+    setDefaults((prev) => ({ ...prev, [exerciseIdToUpdate]: next }));
+    setOpenMenuId(null);
     await updateExerciseDefaults({ routineId, exerciseId: exerciseIdToUpdate, ...next });
   };
 
@@ -253,22 +292,84 @@ export function RoutineDetail() {
             {routineExercises.map((exercise, index) => {
               const detail = exerciseMap.get(exercise.exerciseId);
               const defaultValues = defaults[exercise.exerciseId] ?? {};
-              const metricType = detail?.metricType ?? 'reps';
-              const metricLabel =
-                metricType === 'weight_reps'
-                  ? 'Peso + reps'
-                  : metricType === 'time'
-                  ? 'Tiempo'
-                  : metricType === 'distance'
-                  ? 'Distancia'
-                  : 'Reps';
+              const metricType = defaultValues.metricTypeOverride ?? detail?.metricType ?? 'reps';
+              const metricLabel = getMetricTypeLabel(metricType);
               return (
                 <li key={exercise.exerciseId} className="list-row list-row-stack">
-                  <div>
-                    <p className="list-title">{detail?.label ?? 'Ejercicio'}</p>
-                    <p className="muted">
-                      Orden #{index + 1} · Tipo {metricLabel}
-                    </p>
+                  <div className="exercise-header">
+                    <div>
+                      <p className="list-title">{detail?.label ?? 'Ejercicio'}</p>
+                      <p className="muted">
+                        Orden #{index + 1} · Tipo {metricLabel}
+                      </p>
+                    </div>
+                    <div className="exercise-menu-wrapper">
+                      <button
+                        className="menu-button"
+                        type="button"
+                        onClick={() =>
+                          setOpenMenuId((prev) => (prev === exercise.exerciseId ? null : exercise.exerciseId))
+                        }
+                      >
+                        ⋯
+                      </button>
+                      {openMenuId === exercise.exerciseId ? (
+                        <div className="exercise-menu">
+                          <p className="exercise-menu-meta">
+                            Tipo actual: {metricLabel}
+                          </p>
+                          <button
+                            className={metricType === 'weight_reps' ? 'selected' : ''}
+                            type="button"
+                            onClick={() => handleMetricTypeChange(exercise.exerciseId, 'weight_reps')}
+                          >
+                            Tipo: peso + reps
+                          </button>
+                          <button
+                            className={metricType === 'reps' ? 'selected' : ''}
+                            type="button"
+                            onClick={() => handleMetricTypeChange(exercise.exerciseId, 'reps')}
+                          >
+                            Tipo: solo reps
+                          </button>
+                          <button
+                            className={metricType === 'time' ? 'selected' : ''}
+                            type="button"
+                            onClick={() => handleMetricTypeChange(exercise.exerciseId, 'time')}
+                          >
+                            Tipo: tiempo
+                          </button>
+                          <button
+                            className={metricType === 'distance' ? 'selected' : ''}
+                            type="button"
+                            onClick={() => handleMetricTypeChange(exercise.exerciseId, 'distance')}
+                          >
+                            Tipo: distancia
+                          </button>
+                          <button
+                            type="button"
+                            disabled={index === 0}
+                            onClick={() => handleReorder(exercise.exerciseId, 'up')}
+                          >
+                            Subir
+                          </button>
+                          <button
+                            type="button"
+                            disabled={index === routineExercises.length - 1}
+                            onClick={() => handleReorder(exercise.exerciseId, 'down')}
+                          >
+                            Bajar
+                          </button>
+                          <button
+                            className="danger"
+                            type="button"
+                            onClick={() => handleRemoveExercise(exercise.exerciseId)}
+                          >
+                            Quitar
+                          </button>
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
                   <div className="inline">
                     <label className="muted">
@@ -358,29 +459,22 @@ export function RoutineDetail() {
                         />
                       </label>
                     ) : null}
-                  </div>
-                  <div className="actions">
-                    <button
-                      className="ghost-button"
-                      type="button"
-                      onClick={() => handleReorder(exercise.exerciseId, 'up')}
-                    >
-                      Subir
-                    </button>
-                    <button
-                      className="ghost-button"
-                      type="button"
-                      onClick={() => handleReorder(exercise.exerciseId, 'down')}
-                    >
-                      Bajar
-                    </button>
-                    <button
-                      className="danger-button"
-                      type="button"
-                      onClick={() => handleRemoveExercise(exercise.exerciseId)}
-                    >
-                      Quitar
-                    </button>
+                    {metricType === 'weight_reps' ? (
+                      <label className="muted">
+                        Objetivo
+                        <select
+                          value={defaultValues.goalMode ?? 'auto'}
+                          onChange={(event) =>
+                            handleDefaultChange(exercise.exerciseId, 'goalMode', event.target.value)
+                          }
+                        >
+                          <option value="auto">Auto</option>
+                          <option value="strength">Fuerza</option>
+                          <option value="hypertrophy">Hipertrofia</option>
+                          <option value="endurance">Resistencia</option>
+                        </select>
+                      </label>
+                    ) : null}
                   </div>
                 </li>
               );

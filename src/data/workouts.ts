@@ -1,26 +1,15 @@
+import { ActiveWorkoutSession } from './activeSession';
 import { db, WorkoutExerciseRecord, WorkoutRecord, WorkoutSetRecord } from './db';
 
-export interface WorkoutSessionPayload {
-  id: string;
-  createdAt: string;
-  routineId?: string;
-  routineName?: string;
-  tags?: string[];
-  exercises: Array<{
-    exerciseId: string;
-    name: string;
-    metricType: string;
-    notes?: string;
-    restSeconds?: number;
-    sets: Array<{
-      weight?: number;
-      reps?: number;
-      duration?: number;
-      distance?: number;
-      rpe?: number;
-      completed?: boolean;
-    }>;
-  }>;
+export type WorkoutSessionPayload = ActiveWorkoutSession;
+
+export interface CompletedExerciseSession {
+  workoutId: string;
+  routineId: string | undefined;
+  routineName: string;
+  startedAt: string;
+  endedAt: string;
+  sets: WorkoutSetRecord[];
 }
 
 export async function saveWorkout(session: WorkoutSessionPayload) {
@@ -162,4 +151,49 @@ export async function listExerciseHistory(exerciseId: string) {
   return entries
     .filter((entry): entry is NonNullable<typeof entry> => Boolean(entry))
     .sort((a, b) => b.endedAt.localeCompare(a.endedAt));
+}
+
+export async function listCompletedExerciseSessions(exerciseId: string, limit = 3) {
+  const workoutExercises = await db.workoutExercises.where('exerciseId').equals(exerciseId).toArray();
+  if (!workoutExercises.length) return [] as CompletedExerciseSession[];
+
+  const grouped = workoutExercises.reduce<Map<string, WorkoutExerciseRecord[]>>((acc, exercise) => {
+    const current = acc.get(exercise.workoutId) ?? [];
+    current.push(exercise);
+    acc.set(exercise.workoutId, current);
+    return acc;
+  }, new Map());
+
+  const workouts = await db.workouts.where('id').anyOf(Array.from(grouped.keys())).toArray();
+  const workoutMap = new Map(
+    workouts.filter((workout) => !workout.deletedAt).map((workout) => [workout.id, workout])
+  );
+
+  const entries = await Promise.all(
+    Array.from(grouped.entries()).map(async ([workoutId, exerciseEntries]) => {
+      const workout = workoutMap.get(workoutId);
+      if (!workout) return null;
+      const ordered = [...exerciseEntries].sort((a, b) => a.order - b.order);
+      const sets = (
+        await Promise.all(
+          ordered.map(async (exercise) => {
+            const exerciseSets = await getWorkoutSets(exercise.id);
+            return exerciseSets.filter((set) => set.completed);
+          })
+        )
+      ).flat();
+      if (!sets.length) return null;
+      return {
+        workoutId,
+        routineId: workout.routineId,
+        routineName: workout.routineName ?? 'Entreno',
+        startedAt: workout.startedAt,
+        endedAt: workout.endedAt,
+        sets
+      };
+    })
+  );
+
+  const filtered = entries.filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
+  return filtered.sort((a, b) => b.endedAt.localeCompare(a.endedAt)).slice(0, limit);
 }

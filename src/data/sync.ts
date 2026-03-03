@@ -1,4 +1,10 @@
-import { db, type ExerciseMetric, type ExerciseRecord, type ExerciseTranslationRecord } from './db';
+import {
+  db,
+  type ExerciseGoalMode,
+  type ExerciseMetric,
+  type ExerciseRecord,
+  type ExerciseTranslationRecord
+} from './db';
 import { getSupabaseClient } from './supabase';
 import { getSyncState, updateSyncState } from './syncState';
 
@@ -37,12 +43,14 @@ type CloudRoutineExercise = {
   exerciseId: string;
   order: number;
   defaults?: {
+    metricTypeOverride?: ExerciseMetric;
     defaultSets?: number;
     defaultReps?: number;
     defaultWeight?: number;
     defaultDuration?: number;
     defaultDistance?: number;
     defaultRestSeconds?: number;
+    goalMode?: ExerciseGoalMode;
   };
 };
 
@@ -269,12 +277,14 @@ async function serializeRoutines(userId: string, remoteMap: Map<string, CloudRou
           defaults: defaults
             .filter((item) => item.routineId === routine.id && item.exerciseId === exercise.exerciseId)
             .map((item) => ({
+              metricTypeOverride: item.metricTypeOverride,
               defaultSets: item.defaultSets,
               defaultReps: item.defaultReps,
               defaultWeight: item.defaultWeight,
               defaultDuration: item.defaultDuration,
               defaultDistance: item.defaultDistance,
-              defaultRestSeconds: item.defaultRestSeconds
+              defaultRestSeconds: item.defaultRestSeconds,
+              goalMode: item.goalMode
             }))[0]
         })),
       created_at: routine.createdAt,

@@ -64,6 +64,16 @@ const formatDuration = (seconds: number) => {
   return `${minutes}m ${remainder}s`;
 };
 
+const inferMetricTypeFromSets = (
+  sets: Array<{ weight?: number; reps?: number; duration?: number; distance?: number }>
+) => {
+  if (sets.some((set) => (set.distance ?? 0) > 0)) return 'distance';
+  if (sets.some((set) => (set.duration ?? 0) > 0)) return 'time';
+  if (sets.some((set) => (set.weight ?? 0) > 0 && set.reps !== undefined)) return 'weight_reps';
+  if (sets.some((set) => set.reps !== undefined)) return 'reps';
+  return undefined;
+};
+
 const formatSetValue = (
   metricType: string,
   set: { weight?: number; reps?: number; duration?: number; distance?: number }
@@ -168,18 +178,20 @@ export function Calendar() {
       workoutExercises.map(async (exercise) => {
         const sets = await getWorkoutSets(exercise.id);
         const exerciseInfo = exerciseMap.get(exercise.exerciseId);
+        const normalizedSets = sets.map((set) => ({
+          weight: set.weight,
+          reps: set.reps,
+          duration: set.duration,
+          distance: set.distance,
+          rpe: set.rpe
+        }));
         return {
           id: exercise.id,
           name: exerciseInfo?.name ?? exercise.name,
-          metricType: exerciseInfo?.metricType ?? 'weight_reps',
+          metricType:
+            inferMetricTypeFromSets(normalizedSets) ?? exerciseInfo?.metricType ?? 'weight_reps',
           notes: exercise.notes,
-          sets: sets.map((set) => ({
-            weight: set.weight,
-            reps: set.reps,
-            duration: set.duration,
-            distance: set.distance,
-            rpe: set.rpe
-          }))
+          sets: normalizedSets
         };
       })
     );

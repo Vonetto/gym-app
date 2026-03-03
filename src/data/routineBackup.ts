@@ -12,7 +12,7 @@ function normalizeName(value: string) {
 }
 
 export interface RoutineBackupPayload {
-  version: 1;
+  version: 1 | 2 | 3;
   createdAt: string;
   routine: {
     name: string;
@@ -21,12 +21,14 @@ export interface RoutineBackupPayload {
       exerciseId: string;
       order: number;
       defaults?: {
+        metricTypeOverride?: 'weight_reps' | 'reps' | 'time' | 'distance';
         defaultSets?: number;
         defaultReps?: number;
         defaultWeight?: number;
         defaultDuration?: number;
         defaultDistance?: number;
         defaultRestSeconds?: number;
+        goalMode?: 'auto' | 'strength' | 'hypertrophy' | 'endurance';
       };
     }>;
   };
@@ -56,11 +58,13 @@ export async function exportRoutineBackup(routineId: string): Promise<RoutineBac
       item.exerciseId,
       {
         defaultSets: item.defaultSets,
+        metricTypeOverride: item.metricTypeOverride,
         defaultReps: item.defaultReps,
         defaultWeight: item.defaultWeight,
         defaultDuration: item.defaultDuration,
         defaultDistance: item.defaultDistance,
-        defaultRestSeconds: item.defaultRestSeconds
+        defaultRestSeconds: item.defaultRestSeconds,
+        goalMode: item.goalMode
       }
     ])
   );
@@ -90,7 +94,7 @@ export async function exportRoutineBackup(routineId: string): Promise<RoutineBac
     .toArray();
 
   return {
-    version: 1,
+    version: 3,
     createdAt: new Date().toISOString(),
     routine: {
       name: routine.name,
@@ -132,7 +136,7 @@ export async function exportRoutineBackup(routineId: string): Promise<RoutineBac
 }
 
 export async function importRoutineBackup(payload: RoutineBackupPayload) {
-  if (!payload || payload.version !== 1) {
+  if (!payload || (payload.version !== 1 && payload.version !== 2 && payload.version !== 3)) {
     throw new Error('invalid-backup');
   }
 

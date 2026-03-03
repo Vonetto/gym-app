@@ -1,4 +1,4 @@
-import { db, RoutineRecord, RoutineVersionRecord } from './db';
+import { db, ExerciseGoalMode, ExerciseMetric, RoutineRecord, RoutineVersionRecord } from './db';
 
 export interface RoutineSnapshot {
   routine: RoutineRecord;
@@ -7,12 +7,14 @@ export interface RoutineSnapshot {
     exerciseId: string;
     order: number;
     defaults?: {
+      metricTypeOverride?: ExerciseMetric;
       defaultSets?: number;
       defaultReps?: number;
       defaultWeight?: number;
       defaultDuration?: number;
       defaultDistance?: number;
       defaultRestSeconds?: number;
+      goalMode?: ExerciseGoalMode;
     };
   }>;
 }
@@ -100,12 +102,14 @@ export async function overwriteRoutineExercises(
     exerciseId: string;
     order: number;
     defaults?: {
+      metricTypeOverride?: ExerciseMetric;
       defaultSets?: number;
       defaultReps?: number;
       defaultWeight?: number;
       defaultDuration?: number;
       defaultDistance?: number;
       defaultRestSeconds?: number;
+      goalMode?: ExerciseGoalMode;
     };
   }>
 ) {
@@ -220,11 +224,13 @@ export async function duplicateRoutine(routineId: string) {
             id: `default-${crypto.randomUUID()}`,
             routineId: newRoutine.id,
             exerciseId: item.exerciseId,
+            metricTypeOverride: item.metricTypeOverride,
             defaultReps: item.defaultReps,
             defaultWeight: item.defaultWeight,
             defaultDuration: item.defaultDuration,
             defaultDistance: item.defaultDistance,
-            defaultRestSeconds: item.defaultRestSeconds
+            defaultRestSeconds: item.defaultRestSeconds,
+            goalMode: item.goalMode
           }))
         );
       }
@@ -330,16 +336,20 @@ export async function updateExerciseDefaults({
   defaultWeight,
   defaultDuration,
   defaultDistance,
-  defaultRestSeconds
+  defaultRestSeconds,
+  goalMode,
+  metricTypeOverride
 }: {
   routineId: string;
   exerciseId: string;
+  metricTypeOverride?: ExerciseMetric;
   defaultSets?: number;
   defaultReps?: number;
   defaultWeight?: number;
   defaultDuration?: number;
   defaultDistance?: number;
   defaultRestSeconds?: number;
+  goalMode?: ExerciseGoalMode;
 }) {
   const routine = await db.routines.get(routineId);
   if (!routine || routine.deletedAt) return;
@@ -349,12 +359,14 @@ export async function updateExerciseDefaults({
     id: existing?.id ?? `default-${crypto.randomUUID()}`,
     routineId,
     exerciseId,
+    metricTypeOverride,
     defaultSets,
     defaultReps,
     defaultWeight,
     defaultDuration,
     defaultDistance,
-    defaultRestSeconds
+    defaultRestSeconds,
+    goalMode
   };
   await db.transaction('rw', db.exerciseDefaults, db.routines, async () => {
     await db.exerciseDefaults.put(payload);

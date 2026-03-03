@@ -609,6 +609,14 @@ input::placeholder {
   z-index: 5;
 }
 
+.exercise-menu-meta {
+  margin: 0 0 0.25rem;
+  padding: 0.2rem 0.35rem 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
 .exercise-menu button {
   background: transparent;
   border: none;
@@ -621,6 +629,12 @@ input::placeholder {
 
 .exercise-menu button:hover {
   background: var(--surface-muted);
+}
+
+.exercise-menu button.selected,
+.selected-type {
+  border-color: rgba(91, 184, 255, 0.35);
+  color: #5bb8ff;
 }
 
 .exercise-menu button:disabled {
@@ -685,6 +699,21 @@ input::placeholder {
   gap: 0.35rem;
 }
 
+.exercise-helper {
+  margin: 0.3rem 0 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  line-height: 1.25;
+}
+
+.exercise-suggestion-summary {
+  margin: 0.35rem 0 0;
+  color: #5bb8ff;
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
 .set-table {
   display: grid;
   gap: 0.5rem;
@@ -693,8 +722,8 @@ input::placeholder {
 
 .set-row {
   display: grid;
-  grid-template-columns: 28px 62px 52px 52px 38px 24px;
-  gap: 0.4rem;
+  grid-template-columns: 26px 72px 52px 52px 62px 24px;
+  gap: 0.35rem;
   align-items: center;
   background: #222;
   padding: 0.45rem 0.6rem;
@@ -703,13 +732,18 @@ input::placeholder {
   font-size: 0.78rem;
 }
 
+.set-header-suggestion {
+  color: #5bb8ff;
+  font-weight: 700;
+}
+
 .set-table.metric-reps .set-row {
-  grid-template-columns: 28px 62px 62px 38px 24px;
+  grid-template-columns: 26px 72px 64px 62px 24px;
 }
 
 .set-table.metric-distance .set-row,
 .set-table.metric-time .set-row {
-  grid-template-columns: 28px 62px 72px 38px 24px;
+  grid-template-columns: 26px 72px 72px 62px 24px;
 }
 
 .set-row input {
@@ -735,9 +769,37 @@ input::placeholder {
   color: var(--text);
 }
 
-.rpe-input {
-  text-align: center;
-  max-width: 38px;
+.suggestion-button {
+  width: 100%;
+  min-height: 30px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #181818;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0 0.2rem;
+  line-height: 1.1;
+  white-space: normal;
+}
+
+.suggestion-button.pending {
+  color: #5bb8ff;
+  border-color: rgba(91, 184, 255, 0.35);
+}
+
+.suggestion-button.accepted {
+  color: #76f06a;
+  border-color: rgba(118, 240, 106, 0.35);
+}
+
+.suggestion-button.ignored {
+  color: #ffcf6a;
+  border-color: rgba(255, 207, 106, 0.35);
+}
+
+.suggestion-button.empty {
+  opacity: 0.5;
 }
 
 .set-header {

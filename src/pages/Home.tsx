@@ -8,10 +8,13 @@ import {
   getWorkoutById,
   getWorkoutExercises,
   getWorkoutSets,
+  listCompletedExerciseSessions,
   listAllWorkouts,
   listRecentWorkouts,
   listWorkoutsSince
 } from '../data/workouts';
+import { ActiveWorkoutSession, writeActiveSession } from '../data/activeSession';
+import { applyProgressionSuggestions, applySuggestedPrescription } from '../data/progression';
 import { useSettings } from '../data/SettingsProvider';
 import { BodyMap } from '../components/BodyMap';
 import {
@@ -26,30 +29,6 @@ interface RoutineSummary {
   name: string;
   tags: string[];
   exercises: string[];
-}
-
-interface WorkoutSession {
-  id: string;
-  createdAt: string;
-  routineId?: string;
-  routineName?: string;
-  tags?: string[];
-  originalExerciseIds?: string[];
-  exercises: Array<{
-    exerciseId: string;
-    name: string;
-    metricType: string;
-    notes?: string;
-    previousSets?: Array<{ weight?: number; reps?: number; duration?: number; distance?: number }>;
-    restSeconds?: number;
-    sets: Array<{
-      weight?: number;
-      reps?: number;
-      duration?: number;
-      distance?: number;
-      completed?: boolean;
-    }>;
-  }>;
 }
 
 interface WorkoutSummary {
@@ -233,18 +212,20 @@ export function Home() {
       workoutExercises.map(async (exercise) => {
         const sets = await getWorkoutSets(exercise.id);
         const exerciseInfo = exerciseMap.get(exercise.exerciseId);
+        const normalizedSets = sets.map((set) => ({
+          weight: set.weight,
+          reps: set.reps,
+          duration: set.duration,
+          distance: set.distance,
+          rpe: set.rpe
+        }));
         return {
           id: exercise.id,
           name: exerciseInfo?.name ?? exercise.name,
-          metricType: exerciseInfo?.metricType ?? 'weight_reps',
+          metricType:
+            inferMetricTypeFromSets(normalizedSets) ?? exerciseInfo?.metricType ?? 'weight_reps',
           notes: exercise.notes,
-          sets: sets.map((set) => ({
-            weight: set.weight,
-            reps: set.reps,
-            duration: set.duration,
-            distance: set.distance,
-            rpe: set.rpe
-          }))
+          sets: normalizedSets
         };
       })
     );
@@ -280,6 +261,16 @@ export function Home() {
     return `${minutes}m ${remainder}s`;
   };
 
+  const inferMetricTypeFromSets = (
+    sets: Array<{ weight?: number; reps?: number; duration?: number; distance?: number }>
+  ) => {
+    if (sets.some((set) => (set.distance ?? 0) > 0)) return 'distance';
+    if (sets.some((set) => (set.duration ?? 0) > 0)) return 'time';
+    if (sets.some((set) => (set.weight ?? 0) > 0 && set.reps !== undefined)) return 'weight_reps';
+    if (sets.some((set) => set.reps !== undefined)) return 'reps';
+    return undefined;
+  };
+
   const formatSetValue = (
     metricType: string,
     set: { weight?: number; reps?: number; duration?: number; distance?: number }
@@ -313,13 +304,12 @@ export function Home() {
   };
 
   const handleStartEmpty = () => {
-    const payload: WorkoutSession = {
+    const payload: ActiveWorkoutSession = {
       id: `session-${crypto.randomUUID()}`,
       createdAt: new Date().toISOString(),
       exercises: []
     };
-    localStorage.setItem('active-session', JSON.stringify(payload));
-    window.dispatchEvent(new Event('active-session'));
+    writeActiveSession(payload);
     navigate('/workout');
   };
 
@@ -330,7 +320,7 @@ export function Home() {
     const exerciseMap = new Map(exercises.map((exercise) => [exercise.id, exercise]));
     const lastWorkout = await getLastWorkoutForRoutine(routineId);
     const previousNotesByExercise = new Map<string, string>();
-    const session: WorkoutSession = {
+    const session: ActiveWorkoutSession = {
       id: `session-${crypto.randomUUID()}`,
       createdAt: new Date().toISOString(),
       routineId,
@@ -351,9 +341,13 @@ export function Home() {
         return {
           exerciseId: entry.exerciseId,
           name: exercise ? getExerciseDisplayName(exercise, settings.language) : 'Ejercicio',
-          metricType: exercise?.metricType ?? 'weight_reps',
+          metricType: defaults?.metricTypeOverride ?? exercise?.metricType ?? 'weight_reps',
+          catalogMetricType: exercise?.metricType ?? 'weight_reps',
+          originalMetricType: defaults?.metricTypeOverride ?? exercise?.metricType ?? 'weight_reps',
+          goalMode: defaults?.goalMode ?? 'auto',
           notes: '',
           restSeconds: defaults?.defaultRestSeconds ?? 0,
+          equipment: exercise?.equipment ?? [],
           previousSets: [],
           sets
         };
@@ -398,16 +392,18 @@ export function Home() {
       }
       previousSetsByExercise.set(entry.exerciseId, sets);
     }
-    session.exercises = session.exercises.map((exercise) => ({
-      ...exercise,
-      previousSets: previousSetsByExercise.get(exercise.exerciseId) ?? []
-    }));
-    session.exercises = session.exercises.map((exercise) => ({
-      ...exercise,
-      notes: previousNotesByExercise.get(exercise.exerciseId) ?? exercise.notes
-    }));
-    localStorage.setItem('active-session', JSON.stringify(session));
-    window.dispatchEvent(new Event('active-session'));
+    session.exercises = await Promise.all(
+      session.exercises.map(async (exercise) => {
+        const nextExercise = {
+          ...exercise,
+          previousSets: previousSetsByExercise.get(exercise.exerciseId) ?? [],
+          notes: previousNotesByExercise.get(exercise.exerciseId) ?? exercise.notes
+        };
+        const history = await listCompletedExerciseSessions(exercise.exerciseId, 2);
+        return applySuggestedPrescription(applyProgressionSuggestions(nextExercise, history));
+      })
+    );
+    writeActiveSession(session);
     navigate('/workout');
   };
 

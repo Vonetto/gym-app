@@ -19,6 +19,7 @@ export interface RoutineRecord {
 }
 
 export type ExerciseMetric = 'weight_reps' | 'reps' | 'time' | 'distance';
+export type ExerciseGoalMode = 'auto' | 'strength' | 'hypertrophy' | 'endurance';
 
 export interface ExerciseRecord {
   id: string;
@@ -58,12 +59,14 @@ export interface ExerciseDefaultRecord {
   id: string;
   routineId: string;
   exerciseId: string;
+  metricTypeOverride?: ExerciseMetric;
   defaultSets?: number;
   defaultReps?: number;
   defaultWeight?: number;
   defaultDuration?: number;
   defaultDistance?: number;
   defaultRestSeconds?: number;
+  goalMode?: ExerciseGoalMode;
 }
 
 export interface ExerciseFavoriteRecord {
