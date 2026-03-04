@@ -34,8 +34,8 @@
 
 ### Logging de Sets
 
-- [ ] **LOG-01**: Usuario puede registrar sets con métricas mixtas (peso+reps, reps, tiempo, distancia, RPE).
-- [ ] **LOG-02**: UI permite editar peso/reps/RPE inline durante la sesión.
+- [ ] **LOG-01**: Usuario puede registrar sets con métricas mixtas (peso+reps, reps, tiempo, distancia).
+- [ ] **LOG-02**: UI permite editar métricas inline durante la sesión según el tipo de ejercicio.
 - [ ] **LOG-03**: Usuario puede marcar set como completado con check.
 - [ ] **LOG-04**: UI muestra columna “Anterior” para referencia del último entrenamiento.
 - [ ] **LOG-05**: Usuario puede agregar notas por ejercicio.
@@ -45,7 +45,7 @@
 
 - [ ] **UX-01**: Pantalla de rutinas incluye CTA “Empezar Entrenamiento Vacío”.
 - [ ] **UX-02**: Pantalla de sesión muestra métricas (duración, volumen, series, músculos) y botón “Terminar”.
-- [ ] **UX-03**: Tabla de sets con columnas SERIE / ANTERIOR / KG / REPS / RPE / ✓.
+- [ ] **UX-03**: Tabla de sets con columnas compactas de SERIE / ANTERIOR / métricas / SUG. / ✓ según el tipo de ejercicio.
 - [ ] **UX-04**: CTA “+ Agregar Serie” visible arriba y abajo por ejercicio.
 - [ ] **UX-05**: CTA principal “+ Agregar Ejercicio” en sesión.
 - [ ] **UX-06**: Acciones de sesión: “Configuración” y “Descartar Entreno”.
@@ -63,8 +63,8 @@
 
 ### Progresión
 
-- [ ] **PRG-01**: App sugiere progresión de carga/reps/tiempo según historial y tipo de ejercicio.
-- [ ] **PRG-02**: Usuario puede aceptar/rechazar sugerencia por set.
+- [x] **PRG-01**: App sugiere progresión de carga/reps/tiempo según historial y tipo de ejercicio.
+- [x] **PRG-02**: Usuario puede aceptar/rechazar sugerencia por set.
 
 ### Import/Export
 
@@ -143,8 +143,8 @@
 | ANA-01 | Phase 5: Historial + PRs + Analíticas | Pending |
 | ANA-02 | Phase 5: Historial + PRs + Analíticas | Pending |
 | ANA-03 | Phase 5: Historial + PRs + Analíticas | Pending |
-| PRG-01 | Phase 10: Progresion de Carga | Pending |
-| PRG-02 | Phase 10: Progresion de Carga | Pending |
+| PRG-01 | Phase 10: Progresion de Carga | Complete |
+| PRG-02 | Phase 10: Progresion de Carga | Complete |
 | IO-01 | Phase 6: Import/Export + Sets Avanzados | Pending |
 | IO-02 | Phase 6: Import/Export + Sets Avanzados | Pending |
 | IO-03 | Phase 6: Import/Export + Sets Avanzados | Pending |
@@ -163,4 +163,4 @@
 
 ---
 *Requirements defined: 2026-01-26*
-*Last updated: 2026-03-03 after opening Phase 10 research*
+*Last updated: 2026-03-03 after closing Phase 10*
