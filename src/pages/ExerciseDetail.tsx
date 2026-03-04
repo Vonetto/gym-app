@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getExerciseById, getExerciseDisplayName } from '../data/exercises';
+import type { AdvancedSetType } from '../data/db';
 import { listExerciseHistory } from '../data/workouts';
 import { useSettings } from '../data/SettingsProvider';
 import { getWrkoutTips } from '../data/wrkout';
+import { countsForPr, getSetTypeMeta } from '../data/setTypes';
 
 interface HistoryEntry {
   workoutId: string;
@@ -11,11 +13,12 @@ interface HistoryEntry {
   startedAt: string;
   endedAt: string;
   notes?: string;
-  sets: Array<{
-    order: number;
-    weight?: number;
-    reps?: number;
-    duration?: number;
+    sets: Array<{
+      order: number;
+      setType?: AdvancedSetType;
+      weight?: number;
+      reps?: number;
+      duration?: number;
     distance?: number;
     rpe?: number;
   }>;
@@ -131,6 +134,7 @@ export function ExerciseDetail() {
     let bestWeight = 0;
     history.forEach((entry) => {
       entry.sets.forEach((set) => {
+        if (!countsForPr(set.setType)) return;
         if (set.weight !== undefined) {
           bestWeight = Math.max(bestWeight, set.weight);
         }
@@ -154,21 +158,33 @@ export function ExerciseDetail() {
     if (metricType === 'reps') {
       const bestReps = Math.max(
         0,
-        ...history.flatMap((entry) => entry.sets.map((set) => set.reps ?? 0))
+        ...history.flatMap((entry) =>
+          entry.sets
+            .filter((set) => countsForPr(set.setType))
+            .map((set) => set.reps ?? 0)
+        )
       );
       return bestReps ? { label: 'Mejor marca', value: `${bestReps} reps` } : null;
     }
     if (metricType === 'distance') {
       const bestDistance = Math.max(
         0,
-        ...history.flatMap((entry) => entry.sets.map((set) => set.distance ?? 0))
+        ...history.flatMap((entry) =>
+          entry.sets
+            .filter((set) => countsForPr(set.setType))
+            .map((set) => set.distance ?? 0)
+        )
       );
       return bestDistance ? { label: 'Mejor marca', value: `${bestDistance} m` } : null;
     }
     if (metricType === 'time') {
       const bestDuration = Math.max(
         0,
-        ...history.flatMap((entry) => entry.sets.map((set) => set.duration ?? 0))
+        ...history.flatMap((entry) =>
+          entry.sets
+            .filter((set) => countsForPr(set.setType))
+            .map((set) => set.duration ?? 0)
+        )
       );
       return bestDuration ? { label: 'Mejor marca', value: formatDuration(bestDuration) } : null;
     }
@@ -275,7 +291,12 @@ export function ExerciseDetail() {
                 <div className="history-sets">
                   {entry.sets.map((set, index) => (
                     <div key={`${entry.workoutId}-${index}`} className="history-set">
-                      <span>Set {index + 1}</span>
+                      <span className="history-set-label">
+                        <span className={`set-type-badge ${getSetTypeMeta(set.setType, index).type}`}>
+                          {getSetTypeMeta(set.setType, index).badge}
+                        </span>
+                        <span>{getSetTypeMeta(set.setType, index).label}</span>
+                      </span>
                       <span>{formatSetValue(metricType, set)}</span>
                       <span>{set.rpe ? `RPE ${set.rpe}` : 'RPE -'}</span>
                     </div>

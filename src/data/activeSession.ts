@@ -1,4 +1,5 @@
-import { ExerciseGoalMode, ExerciseMetric } from './db';
+import { AdvancedSetType, ExerciseGoalMode, ExerciseMetric } from './db';
+import { DEFAULT_SET_TYPE, normalizeSetType } from './setTypes';
 
 export const ACTIVE_SESSION_STORAGE_KEY = 'active-session';
 
@@ -22,6 +23,7 @@ export interface SetSuggestion {
 }
 
 export interface ActiveWorkoutSet {
+  setType?: AdvancedSetType;
   weight?: number;
   reps?: number;
   duration?: number;
@@ -37,6 +39,7 @@ export interface ActiveWorkoutExercise {
   metricType: ExerciseMetric;
   catalogMetricType?: ExerciseMetric;
   originalMetricType?: ExerciseMetric;
+  originalSetTypes?: AdvancedSetType[];
   goalMode?: ExerciseGoalMode;
   notes?: string;
   previousSets?: PreviousWorkoutSetValues[];
@@ -71,7 +74,20 @@ export function readActiveSession() {
   const stored = localStorage.getItem(ACTIVE_SESSION_STORAGE_KEY);
   if (!stored) return null;
   try {
-    return JSON.parse(stored) as ActiveWorkoutSession;
+    const parsed = JSON.parse(stored) as ActiveWorkoutSession;
+    return {
+      ...parsed,
+      exercises: (parsed.exercises ?? []).map((exercise) => ({
+        ...exercise,
+        originalSetTypes: (exercise.originalSetTypes ?? []).map((setType) =>
+          normalizeSetType(setType ?? DEFAULT_SET_TYPE)
+        ),
+        sets: (exercise.sets ?? []).map((set) => ({
+          ...set,
+          setType: normalizeSetType(set.setType ?? DEFAULT_SET_TYPE)
+        }))
+      }))
+    } as ActiveWorkoutSession;
   } catch {
     return null;
   }

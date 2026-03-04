@@ -12,7 +12,7 @@ function normalizeName(value: string) {
 }
 
 export interface RoutineBackupPayload {
-  version: 1 | 2 | 3;
+  version: 1 | 2 | 3 | 4;
   createdAt: string;
   routine: {
     name: string;
@@ -22,6 +22,7 @@ export interface RoutineBackupPayload {
       order: number;
       defaults?: {
         metricTypeOverride?: 'weight_reps' | 'reps' | 'time' | 'distance';
+        defaultSetTypes?: Array<'normal' | 'warmup' | 'drop' | 'failure' | 'amrap'>;
         defaultSets?: number;
         defaultReps?: number;
         defaultWeight?: number;
@@ -59,6 +60,7 @@ export async function exportRoutineBackup(routineId: string): Promise<RoutineBac
       {
         defaultSets: item.defaultSets,
         metricTypeOverride: item.metricTypeOverride,
+        defaultSetTypes: item.defaultSetTypes,
         defaultReps: item.defaultReps,
         defaultWeight: item.defaultWeight,
         defaultDuration: item.defaultDuration,
@@ -70,14 +72,21 @@ export async function exportRoutineBackup(routineId: string): Promise<RoutineBac
   );
 
   const lastWorkout = await getLastWorkoutForRoutine(routineId);
-  const lastSetsByExercise = new Map<string, Array<{ weight?: number; reps?: number }>>();
+  const lastSetsByExercise = new Map<
+    string,
+    Array<{
+      setType?: 'normal' | 'warmup' | 'drop' | 'failure' | 'amrap';
+      weight?: number;
+      reps?: number;
+    }>
+  >();
   if (lastWorkout) {
     const workoutExercises = await getWorkoutExercises(lastWorkout.id);
     for (const workoutExercise of workoutExercises) {
       const sets = await getWorkoutSets(workoutExercise.id);
       lastSetsByExercise.set(
         workoutExercise.exerciseId,
-        sets.map((set) => ({ weight: set.weight, reps: set.reps }))
+        sets.map((set) => ({ setType: set.setType, weight: set.weight, reps: set.reps }))
       );
     }
   }
@@ -94,7 +103,7 @@ export async function exportRoutineBackup(routineId: string): Promise<RoutineBac
     .toArray();
 
   return {
-    version: 3,
+    version: 4,
     createdAt: new Date().toISOString(),
     routine: {
       name: routine.name,
@@ -106,6 +115,8 @@ export async function exportRoutineBackup(routineId: string): Promise<RoutineBac
 
         const mergedDefaults = {
           ...baseDefaults,
+          defaultSetTypes:
+            lastSets.length > 0 ? lastSets.map((set) => set.setType ?? 'normal') : baseDefaults?.defaultSetTypes,
           defaultSets: lastSets.length || baseDefaults?.defaultSets,
           defaultWeight: lastSet?.weight ?? baseDefaults?.defaultWeight,
           defaultReps: lastSet?.reps ?? baseDefaults?.defaultReps
@@ -136,7 +147,13 @@ export async function exportRoutineBackup(routineId: string): Promise<RoutineBac
 }
 
 export async function importRoutineBackup(payload: RoutineBackupPayload) {
-  if (!payload || (payload.version !== 1 && payload.version !== 2 && payload.version !== 3)) {
+  if (
+    !payload ||
+    (payload.version !== 1 &&
+      payload.version !== 2 &&
+      payload.version !== 3 &&
+      payload.version !== 4)
+  ) {
     throw new Error('invalid-backup');
   }
 

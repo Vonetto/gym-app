@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import type { AdvancedSetType } from '../data/db';
 import {
   getWorkoutById,
   getWorkoutExercises,
@@ -8,6 +9,7 @@ import {
 } from '../data/workouts';
 import { getExerciseDisplayName, listExercises } from '../data/exercises';
 import { useSettings } from '../data/SettingsProvider';
+import { countsForVolume, getSetTypeMeta } from '../data/setTypes';
 
 interface CalendarWorkout {
   id: string;
@@ -30,6 +32,7 @@ interface WorkoutDetail {
     metricType: string;
     notes?: string;
     sets: Array<{
+      setType?: AdvancedSetType;
       weight?: number;
       reps?: number;
       duration?: number;
@@ -179,6 +182,7 @@ export function Calendar() {
         const sets = await getWorkoutSets(exercise.id);
         const exerciseInfo = exerciseMap.get(exercise.exerciseId);
         const normalizedSets = sets.map((set) => ({
+          setType: set.setType,
           weight: set.weight,
           reps: set.reps,
           duration: set.duration,
@@ -209,6 +213,7 @@ export function Calendar() {
     if (!workout) return 0;
     return workout.exercises.reduce((total, exercise) => {
       const exerciseVolume = exercise.sets.reduce((sum, set) => {
+        if (!countsForVolume(set.setType)) return sum;
         const weight = set.weight ?? 0;
         const reps = set.reps ?? 0;
         return sum + weight * reps;
@@ -389,7 +394,12 @@ export function Calendar() {
                   <div className="modal-sets">
                     {exercise.sets.map((set, index) => (
                       <div key={`${exercise.id}-${index}`} className="modal-set-row">
-                        <span>Set {index + 1}</span>
+                        <span className="modal-set-label">
+                          <span className={`set-type-badge ${getSetTypeMeta(set.setType, index).type}`}>
+                            {getSetTypeMeta(set.setType, index).badge}
+                          </span>
+                          <span>{getSetTypeMeta(set.setType, index).label}</span>
+                        </span>
                         <span>
                           {formatSetValue(exercise.metricType, set)}
                         </span>

@@ -15,7 +15,8 @@ import {
   updateRoutine
 } from '../data/routines';
 import { useSettings } from '../data/SettingsProvider';
-import { ExerciseGoalMode, ExerciseMetric } from '../data/db';
+import { AdvancedSetType, ExerciseGoalMode, ExerciseMetric } from '../data/db';
+import { getSetTypeMeta, normalizeSetTypeArray, SET_TYPE_OPTIONS } from '../data/setTypes';
 
 function getMetricTypeLabel(metricType: ExerciseMetric) {
   if (metricType === 'weight_reps') return 'Peso + reps';
@@ -39,6 +40,7 @@ export function RoutineDetail() {
       string,
       {
         metricTypeOverride?: ExerciseMetric;
+        defaultSetTypes?: AdvancedSetType[];
         defaultSets?: number;
         defaultReps?: number;
         defaultWeight?: number;
@@ -55,6 +57,7 @@ export function RoutineDetail() {
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
   const [recentIds, setRecentIds] = useState<string[]>([]);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [presetTarget, setPresetTarget] = useState<{ exerciseId: string; setIndex: number } | null>(null);
 
   const loadDetail = async () => {
     if (!routineId) return;
@@ -70,6 +73,7 @@ export function RoutineDetail() {
       string,
       {
         metricTypeOverride?: ExerciseMetric;
+        defaultSetTypes?: AdvancedSetType[];
         defaultSets?: number;
         defaultReps?: number;
         defaultWeight?: number;
@@ -82,6 +86,7 @@ export function RoutineDetail() {
     detail.defaults.forEach((item) => {
       defaultsMap[item.exerciseId] = {
         metricTypeOverride: item.metricTypeOverride,
+        defaultSetTypes: item.defaultSetTypes,
         defaultSets: item.defaultSets,
         defaultReps: item.defaultReps,
         defaultWeight: item.defaultWeight,
@@ -179,8 +184,17 @@ export function RoutineDetail() {
     const next =
       field === 'goalMode'
         ? { ...current, goalMode: (value || 'auto') as ExerciseGoalMode }
-        : field === 'metricTypeOverride'
+      : field === 'metricTypeOverride'
         ? { ...current, metricTypeOverride: value as ExerciseMetric }
+      : field === 'defaultSets'
+        ? {
+            ...current,
+            defaultSets: value ? Number(value) : undefined,
+            defaultSetTypes: normalizeSetTypeArray(
+              current.defaultSetTypes,
+              value ? Number(value) : 0
+            )
+          }
         : { ...current, [field]: value ? Number(value) : undefined };
     setDefaults((prev) => ({ ...prev, [exerciseIdToUpdate]: next }));
     await updateExerciseDefaults({ routineId, exerciseId: exerciseIdToUpdate, ...next });
@@ -194,6 +208,10 @@ export function RoutineDetail() {
       metricTypeOverride: metricType,
       defaultWeight:
         metricType === 'weight_reps' ? current.defaultWeight : metricType === 'reps' ? 0 : undefined,
+      defaultSetTypes: normalizeSetTypeArray(
+        current.defaultSetTypes,
+        current.defaultSets ?? 3
+      ),
       defaultReps:
         metricType === 'weight_reps' || metricType === 'reps' ? current.defaultReps : undefined,
       defaultDuration: metricType === 'time' ? current.defaultDuration : undefined,
@@ -202,6 +220,44 @@ export function RoutineDetail() {
     };
     setDefaults((prev) => ({ ...prev, [exerciseIdToUpdate]: next }));
     setOpenMenuId(null);
+    await updateExerciseDefaults({ routineId, exerciseId: exerciseIdToUpdate, ...next });
+  };
+
+  const handlePresetSetTypeChange = async (
+    exerciseIdToUpdate: string,
+    setIndex: number,
+    setType: AdvancedSetType
+  ) => {
+    if (!routineId) return;
+    const current = defaults[exerciseIdToUpdate] ?? {};
+    const totalSets = current.defaultSets ?? 3;
+    const defaultSetTypes = normalizeSetTypeArray(current.defaultSetTypes, totalSets);
+    defaultSetTypes[setIndex] = setType;
+    const next = {
+      ...current,
+      defaultSets: totalSets,
+      defaultSetTypes
+    };
+    setDefaults((prev) => ({ ...prev, [exerciseIdToUpdate]: next }));
+    setPresetTarget(null);
+    await updateExerciseDefaults({ routineId, exerciseId: exerciseIdToUpdate, ...next });
+  };
+
+  const handleRemovePresetSet = async (exerciseIdToUpdate: string, setIndex: number) => {
+    if (!routineId) return;
+    const current = defaults[exerciseIdToUpdate] ?? {};
+    const totalSets = Math.max(1, current.defaultSets ?? 3);
+    const nextSetCount = Math.max(1, totalSets - 1);
+    const defaultSetTypes = normalizeSetTypeArray(current.defaultSetTypes, totalSets).filter(
+      (_, index) => index !== setIndex
+    );
+    const next = {
+      ...current,
+      defaultSets: nextSetCount,
+      defaultSetTypes: normalizeSetTypeArray(defaultSetTypes, nextSetCount)
+    };
+    setDefaults((prev) => ({ ...prev, [exerciseIdToUpdate]: next }));
+    setPresetTarget(null);
     await updateExerciseDefaults({ routineId, exerciseId: exerciseIdToUpdate, ...next });
   };
 
@@ -294,6 +350,8 @@ export function RoutineDetail() {
               const defaultValues = defaults[exercise.exerciseId] ?? {};
               const metricType = defaultValues.metricTypeOverride ?? detail?.metricType ?? 'reps';
               const metricLabel = getMetricTypeLabel(metricType);
+              const totalSets = defaultValues.defaultSets ?? 3;
+              const defaultSetTypes = normalizeSetTypeArray(defaultValues.defaultSetTypes, totalSets);
               return (
                 <li key={exercise.exerciseId} className="list-row list-row-stack">
                   <div className="exercise-header">
@@ -476,12 +534,93 @@ export function RoutineDetail() {
                       </label>
                     ) : null}
                   </div>
+                  <div className="routine-set-presets">
+                    <p className="muted">Tipos de set</p>
+                    <div className="inline compact routine-set-preset-row">
+                      {defaultSetTypes.map((setType, setIndex) => {
+                        const meta = getSetTypeMeta(setType, setIndex);
+                        return (
+                          <button
+                            key={`${exercise.exerciseId}-preset-${setIndex}`}
+                            className={`set-index-button ${meta.type}`}
+                            type="button"
+                            onClick={() => setPresetTarget({ exerciseId: exercise.exerciseId, setIndex })}
+                            aria-label={`Cambiar tipo del set ${setIndex + 1}`}
+                          >
+                            {meta.badge}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
                 </li>
               );
             })}
           </ul>
         )}
       </div>
+
+      {presetTarget ? (
+        <div className="modal-overlay bottom" onClick={() => setPresetTarget(null)}>
+          <div className="modal-card" onClick={(event) => event.stopPropagation()}>
+            {(() => {
+              const current = defaults[presetTarget.exerciseId] ?? {};
+              const totalSets = current.defaultSets ?? 3;
+              const defaultSetTypes = normalizeSetTypeArray(current.defaultSetTypes, totalSets);
+              const currentType = defaultSetTypes[presetTarget.setIndex];
+              return (
+                <>
+                  <div className="card-header">
+                    <h2>Tipo de serie</h2>
+                    <button className="ghost-button" type="button" onClick={() => setPresetTarget(null)}>
+                      Cerrar
+                    </button>
+                  </div>
+                  <p className="muted">
+                    Serie {presetTarget.setIndex + 1} · actual:{' '}
+                    <strong>{getSetTypeMeta(currentType, presetTarget.setIndex).label}</strong>
+                  </p>
+                  <div className="set-type-list">
+                    {SET_TYPE_OPTIONS.map((option) => (
+                      <button
+                        key={option.type}
+                        className={`set-type-option ${option.type} ${currentType === option.type ? 'selected' : ''}`}
+                        type="button"
+                        onClick={() =>
+                          handlePresetSetTypeChange(
+                            presetTarget.exerciseId,
+                            presetTarget.setIndex,
+                            option.type
+                          )
+                        }
+                      >
+                        <span className={`set-type-badge ${option.type}`}>
+                          {option.type === 'normal' ? presetTarget.setIndex + 1 : option.badge}
+                        </span>
+                        <span className="set-type-copy">
+                          <strong>{option.label}</strong>
+                          <small>{option.description}</small>
+                        </span>
+                      </button>
+                    ))}
+                    <button
+                      className="set-type-option delete"
+                      type="button"
+                      onClick={() => handleRemovePresetSet(presetTarget.exerciseId, presetTarget.setIndex)}
+                    >
+                      <span className="set-type-badge delete">×</span>
+                      <span className="set-type-copy">
+                        <strong>Eliminar serie</strong>
+                        <small>Reduce el total de sets y quita esta posición de la rutina.</small>
+                      </span>
+                    </button>
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

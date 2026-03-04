@@ -20,6 +20,7 @@ export interface RoutineRecord {
 
 export type ExerciseMetric = 'weight_reps' | 'reps' | 'time' | 'distance';
 export type ExerciseGoalMode = 'auto' | 'strength' | 'hypertrophy' | 'endurance';
+export type AdvancedSetType = 'normal' | 'warmup' | 'drop' | 'failure' | 'amrap';
 
 export interface ExerciseRecord {
   id: string;
@@ -60,6 +61,7 @@ export interface ExerciseDefaultRecord {
   routineId: string;
   exerciseId: string;
   metricTypeOverride?: ExerciseMetric;
+  defaultSetTypes?: AdvancedSetType[];
   defaultSets?: number;
   defaultReps?: number;
   defaultWeight?: number;
@@ -113,6 +115,7 @@ export interface WorkoutSetRecord {
   id: string;
   workoutExerciseId: string;
   order: number;
+  setType?: AdvancedSetType;
   weight?: number;
   reps?: number;
   duration?: number;
@@ -244,6 +247,23 @@ class AppDB extends Dexie {
           workout.updatedAt = workout.updatedAt ?? workout.endedAt ?? workout.startedAt ?? now;
         });
       });
+    this.version(5).stores({
+      settings: 'id',
+      routines: 'id, order, updatedAt, deletedAt, createdAt',
+      exercises: 'id, baseName, normalizedName, updatedAt, deletedAt, *muscles, *equipment, isCustom, source',
+      exerciseTranslations: 'id, exerciseId, language, name',
+      routineExercises: 'id, routineId, exerciseId, [routineId+order]',
+      routineTags: 'id, routineId, tag, [routineId+tag]',
+      exerciseDefaults: 'id, routineId, exerciseId, [routineId+exerciseId]',
+      exerciseFavorites: 'exerciseId, createdAt, updatedAt, deletedAt',
+      exerciseRecents: 'exerciseId, lastUsedAt',
+      routineVersions: 'id, routineId, createdAt',
+      workouts: 'id, routineId, startedAt, endedAt, updatedAt, deletedAt',
+      workoutExercises: 'id, workoutId, exerciseId, [workoutId+order]',
+      workoutSets: 'id, workoutExerciseId, [workoutExerciseId+order]',
+      wrkoutTips: 'exerciseId, wrkoutId, lastFetchedAt',
+      syncState: 'id, updatedAt, lastSyncedAt, status'
+    });
   }
 }
 

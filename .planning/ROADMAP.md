@@ -91,18 +91,16 @@
 
 ---
 
-## Phase 7: Import/Export + Sets Avanzados
-**Goal:** Portabilidad total y soporte de sets avanzados sin romper historial.
+## Phase 7: Import/Export
+**Goal:** Portabilidad total y restauración confiable de datos sin perder compatibilidad.
 
 **Requirements**
 - IO-01, IO-02, IO-03
-- ADV-01, ADV-02
 
 **Success Criteria (observable)**
 1. El usuario exporta un JSON completo con rutinas, ejercicios, historial, PRs y settings.
 2. El usuario importa un JSON versionado y ve todos sus datos restaurados.
 3. La importación rechaza esquemas inválidos y explica el error.
-4. El usuario marca sets como warm-up/drop/fallo/AMRAP y ve consistencia en historial/PRs.
 
 ---
 
@@ -150,6 +148,21 @@
 2. La sugerencia cambia segun el tipo de metrica (`weight_reps`, `reps`, `time`, `distance`) y solo usa historial de sets completados.
 3. El usuario acepta o rechaza la sugerencia y los valores sugeridos se precargan.
 4. La logica es conservadora, explicable y no depende obligatoriamente de RPE.
+
+---
+
+## Phase 11: Sets Avanzados
+**Goal:** Permitir sets especiales (warm-up, drop, fallo, AMRAP) sin romper historial, PRs ni progresion.
+**Status:** Complete (2026-03-03)
+
+**Requirements**
+- ADV-01, ADV-02
+
+**Success Criteria (observable)**
+1. El usuario marca un set como warm-up, drop set, fallo o AMRAP desde la sesion activa sin friccion alta.
+2. El historial y la revision del workout muestran claramente el tipo de set registrado.
+3. PRs, volumen y progresion no se contaminan con sets que no deban contar igual que un working set normal.
+4. Import/export y sync conservan el tipo de set sin ambiguedad.
 
 ---
 

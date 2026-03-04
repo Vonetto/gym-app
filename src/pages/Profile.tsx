@@ -4,6 +4,7 @@ import { getWorkoutExercises, getWorkoutSets, listWorkoutsSince } from '../data/
 import { useSettings } from '../data/SettingsProvider';
 import { useAuth } from '../data/AuthProvider';
 import { useSync } from '../data/SyncProvider';
+import { countsForPr, countsForVolume } from '../data/setTypes';
 
 type MetricKey = 'duration' | 'volume' | 'reps';
 
@@ -90,11 +91,12 @@ export function Profile() {
           const sets = await getWorkoutSets(exercise.id);
           workoutSets += sets.length;
           for (const set of sets) {
+            if (!countsForVolume(set.setType)) continue;
             const weight = set.weight ?? 0;
             const reps = set.reps ?? 0;
             workoutVolume += weight * reps;
             workoutReps += reps;
-            if (weight > 0 && reps > 0) {
+            if (countsForPr(set.setType) && weight > 0 && reps > 0) {
               const oneRm = reps <= 1 ? weight : weight * (1 + reps / ONE_RM_DIVISOR);
               const existing = prMap.get(exercise.exerciseId);
               if (!existing || oneRm > existing.oneRm) {

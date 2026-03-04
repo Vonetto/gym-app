@@ -2,13 +2,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createRoutine, deleteRoutine, getRoutineDetail, listRoutines } from '../data/routines';
 import { listExercises, getExerciseDisplayName } from '../data/exercises';
+import type { AdvancedSetType } from '../data/db';
 import {
   getLatestExerciseSets,
   getLastWorkoutForRoutine,
   getWorkoutById,
   getWorkoutExercises,
   getWorkoutSets,
-  listCompletedExerciseSessions,
+  listProgressionExerciseSessions,
   listAllWorkouts,
   listRecentWorkouts,
   listWorkoutsSince
@@ -16,6 +17,7 @@ import {
 import { ActiveWorkoutSession, writeActiveSession } from '../data/activeSession';
 import { applyProgressionSuggestions, applySuggestedPrescription } from '../data/progression';
 import { useSettings } from '../data/SettingsProvider';
+import { countsForVolume, getSetTypeAtIndex, getSetTypeMeta } from '../data/setTypes';
 import { BodyMap } from '../components/BodyMap';
 import {
   buildSlugVolumes,
@@ -51,6 +53,7 @@ interface WorkoutDetail {
     metricType: string;
     notes?: string;
     sets: Array<{
+      setType?: AdvancedSetType;
       weight?: number;
       reps?: number;
       duration?: number;
@@ -145,6 +148,7 @@ export function Home() {
           const muscles = exerciseMuscles.get(exercise.exerciseId) ?? [];
           const weightedMuscles = getMuscleWeights(muscles);
           for (const set of sets) {
+            if (!countsForVolume(set.setType)) continue;
             const weight = set.weight ?? 0;
             const reps = set.reps ?? 0;
             const volume = weight * reps;
@@ -213,6 +217,7 @@ export function Home() {
         const sets = await getWorkoutSets(exercise.id);
         const exerciseInfo = exerciseMap.get(exercise.exerciseId);
         const normalizedSets = sets.map((set) => ({
+          setType: set.setType,
           weight: set.weight,
           reps: set.reps,
           duration: set.duration,
@@ -295,6 +300,7 @@ export function Home() {
     if (!workout) return 0;
     return workout.exercises.reduce((total, exercise) => {
       const exerciseVolume = exercise.sets.reduce((sum, set) => {
+        if (!countsForVolume(set.setType)) return sum;
         const weight = set.weight ?? 0;
         const reps = set.reps ?? 0;
         return sum + weight * reps;
@@ -331,7 +337,8 @@ export function Home() {
         const exercise = exerciseMap.get(entry.exerciseId);
         const defaults = detail.defaults.find((item) => item.exerciseId === entry.exerciseId);
         const setsCount = defaults?.defaultSets ?? 3;
-        const sets = Array.from({ length: setsCount }, () => ({
+        const sets = Array.from({ length: setsCount }, (_, setIndex) => ({
+          setType: getSetTypeAtIndex(defaults?.defaultSetTypes, setIndex),
           weight: defaults?.defaultWeight,
           reps: defaults?.defaultReps,
           duration: defaults?.defaultDuration,
@@ -344,6 +351,9 @@ export function Home() {
           metricType: defaults?.metricTypeOverride ?? exercise?.metricType ?? 'weight_reps',
           catalogMetricType: exercise?.metricType ?? 'weight_reps',
           originalMetricType: defaults?.metricTypeOverride ?? exercise?.metricType ?? 'weight_reps',
+          originalSetTypes: Array.from({ length: setsCount }, (_, setIndex) =>
+            getSetTypeAtIndex(defaults?.defaultSetTypes, setIndex)
+          ),
           goalMode: defaults?.goalMode ?? 'auto',
           notes: '',
           restSeconds: defaults?.defaultRestSeconds ?? 0,
@@ -399,7 +409,7 @@ export function Home() {
           previousSets: previousSetsByExercise.get(exercise.exerciseId) ?? [],
           notes: previousNotesByExercise.get(exercise.exerciseId) ?? exercise.notes
         };
-        const history = await listCompletedExerciseSessions(exercise.exerciseId, 2);
+        const history = await listProgressionExerciseSessions(exercise.exerciseId, 2);
         return applySuggestedPrescription(applyProgressionSuggestions(nextExercise, history));
       })
     );
@@ -638,7 +648,12 @@ export function Home() {
                   <div className="modal-sets">
                     {exercise.sets.map((set, index) => (
                       <div key={`${exercise.id}-${index}`} className="modal-set-row">
-                        <span>Set {index + 1}</span>
+                        <span className="modal-set-label">
+                          <span className={`set-type-badge ${getSetTypeMeta(set.setType, index).type}`}>
+                            {getSetTypeMeta(set.setType, index).badge}
+                          </span>
+                          <span>{getSetTypeMeta(set.setType, index).label}</span>
+                        </span>
                         <span>
                           {formatSetValue(exercise.metricType, set)}
                         </span>

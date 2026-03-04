@@ -6,6 +6,7 @@ import {
 } from './activeSession';
 import { ExerciseGoalMode } from './db';
 import { CompletedExerciseSession } from './workouts';
+import { countsForProgression } from './setTypes';
 
 const BIG_INCREMENT_EQUIPMENT = ['barbell', 'sz-bar', 'machine', 'cable'];
 const SMALL_INCREMENT_EQUIPMENT = [
@@ -131,6 +132,7 @@ interface SingleMetricSessionSummary {
 
 function getBaseTargetReps(exercise: ActiveWorkoutExercise, latest?: CompletedExerciseSession) {
   const currentReps = exercise.sets
+    .filter((set) => countsForProgression(set.setType))
     .map((set) => set.reps)
     .filter((value): value is number => value !== undefined && value > 0);
   if (currentReps.length) {
@@ -186,6 +188,7 @@ function getBaseMetricTarget(
   latest?: CompletedExerciseSession
 ) {
   const currentValues = exercise.sets
+    .filter((set) => countsForProgression(set.setType))
     .map((set) => set[field])
     .filter((value): value is number => value !== undefined && value > 0);
   if (currentValues.length) {
@@ -242,7 +245,7 @@ function shouldTreatWeightRepsAsBodyweight(
   history: CompletedExerciseSession[]
 ) {
   const weights = [
-    ...exercise.sets.map((set) => set.weight),
+    ...exercise.sets.filter((set) => countsForProgression(set.setType)).map((set) => set.weight),
     ...(exercise.previousSets ?? []).map((set) => set.weight),
     ...history.flatMap((session) => session.sets.map((set) => set.weight))
   ].filter((value): value is number => value !== undefined);
@@ -329,7 +332,11 @@ function applyUniformSuggestion(
   label: string,
   explanation: string
 ) {
-  const sets = exercise.sets.map((set) => createSuggestion(set, values, label, explanation));
+  const sets = exercise.sets.map((set) =>
+    countsForProgression(set.setType)
+      ? createSuggestion(set, values, label, explanation)
+      : { ...set, suggestion: undefined }
+  );
   return {
     ...exercise,
     suggestionExplanation: explanation,
@@ -351,7 +358,8 @@ function buildWeightRepsSuggestions(
     return exercise;
   }
 
-  const plannedSetCount = exercise.sets.length;
+  const plannedSetCount =
+    exercise.sets.filter((set) => countsForProgression(set.setType)).length || exercise.sets.length;
   const resolvedGoalMode = resolveGoalMode(exercise.goalMode, baseTargetReps);
   const repCap = getRepCap(resolvedGoalMode, baseTargetReps);
   const latestSummary = summarizeWeightRepsSession(
@@ -484,7 +492,12 @@ function buildRepsSuggestions(
     return exercise;
   }
 
-  const latestSummary = summarizeSingleMetricSession(latest.sets, 'reps', baseTarget, exercise.sets.length);
+  const latestSummary = summarizeSingleMetricSession(
+    latest.sets,
+    'reps',
+    baseTarget,
+    exercise.sets.filter((set) => countsForProgression(set.setType)).length || exercise.sets.length
+  );
   if (latestSummary.allMet) {
     const nextTarget = latestSummary.target + 1;
     return applyUniformSuggestion(
@@ -530,7 +543,7 @@ function buildTimeSuggestions(
     latest.sets,
     'duration',
     baseTarget,
-    exercise.sets.length
+    exercise.sets.filter((set) => countsForProgression(set.setType)).length || exercise.sets.length
   );
   if (latestSummary.allMet) {
     const nextTarget = latestSummary.target + getTimeStepSeconds(latestSummary.target);
@@ -577,7 +590,7 @@ function buildDistanceSuggestions(
     latest.sets,
     'distance',
     baseTarget,
-    exercise.sets.length
+    exercise.sets.filter((set) => countsForProgression(set.setType)).length || exercise.sets.length
   );
   if (latestSummary.allMet) {
     const nextTarget = latestSummary.target + getDistanceStepMeters(latestSummary.target);

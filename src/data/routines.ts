@@ -1,4 +1,12 @@
-import { db, ExerciseGoalMode, ExerciseMetric, RoutineRecord, RoutineVersionRecord } from './db';
+import {
+  AdvancedSetType,
+  db,
+  ExerciseGoalMode,
+  ExerciseMetric,
+  RoutineRecord,
+  RoutineVersionRecord
+} from './db';
+import { normalizeSetTypeArray } from './setTypes';
 
 export interface RoutineSnapshot {
   routine: RoutineRecord;
@@ -8,6 +16,7 @@ export interface RoutineSnapshot {
     order: number;
     defaults?: {
       metricTypeOverride?: ExerciseMetric;
+      defaultSetTypes?: AdvancedSetType[];
       defaultSets?: number;
       defaultReps?: number;
       defaultWeight?: number;
@@ -103,6 +112,7 @@ export async function overwriteRoutineExercises(
     order: number;
     defaults?: {
       metricTypeOverride?: ExerciseMetric;
+      defaultSetTypes?: AdvancedSetType[];
       defaultSets?: number;
       defaultReps?: number;
       defaultWeight?: number;
@@ -144,7 +154,14 @@ export async function overwriteRoutineExercises(
             id: `default-${crypto.randomUUID()}`,
             routineId,
             exerciseId: exercise.exerciseId,
-            ...exercise.defaults
+            ...exercise.defaults,
+            defaultSetTypes:
+              exercise.defaults?.defaultSetTypes || exercise.defaults?.defaultSets
+                ? normalizeSetTypeArray(
+                    exercise.defaults?.defaultSetTypes,
+                    exercise.defaults?.defaultSets ?? 0
+                  )
+                : undefined
           }));
         if (defaults.length) {
           await db.exerciseDefaults.bulkAdd(defaults);
@@ -225,6 +242,7 @@ export async function duplicateRoutine(routineId: string) {
             routineId: newRoutine.id,
             exerciseId: item.exerciseId,
             metricTypeOverride: item.metricTypeOverride,
+            defaultSetTypes: item.defaultSetTypes,
             defaultReps: item.defaultReps,
             defaultWeight: item.defaultWeight,
             defaultDuration: item.defaultDuration,
@@ -333,6 +351,7 @@ export async function updateExerciseDefaults({
   exerciseId,
   defaultReps,
   defaultSets,
+  defaultSetTypes,
   defaultWeight,
   defaultDuration,
   defaultDistance,
@@ -343,6 +362,7 @@ export async function updateExerciseDefaults({
   routineId: string;
   exerciseId: string;
   metricTypeOverride?: ExerciseMetric;
+  defaultSetTypes?: AdvancedSetType[];
   defaultSets?: number;
   defaultReps?: number;
   defaultWeight?: number;
@@ -360,6 +380,13 @@ export async function updateExerciseDefaults({
     routineId,
     exerciseId,
     metricTypeOverride,
+    defaultSetTypes:
+      defaultSetTypes || defaultSets
+        ? normalizeSetTypeArray(
+            defaultSetTypes ?? existing?.defaultSetTypes,
+            defaultSets ?? existing?.defaultSets ?? 0
+          )
+        : undefined,
     defaultSets,
     defaultReps,
     defaultWeight,

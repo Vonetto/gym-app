@@ -1,4 +1,5 @@
 import {
+  type AdvancedSetType,
   db,
   type ExerciseGoalMode,
   type ExerciseMetric,
@@ -44,6 +45,7 @@ type CloudRoutineExercise = {
   order: number;
   defaults?: {
     metricTypeOverride?: ExerciseMetric;
+    defaultSetTypes?: AdvancedSetType[];
     defaultSets?: number;
     defaultReps?: number;
     defaultWeight?: number;
@@ -68,6 +70,7 @@ type CloudRoutineRow = {
 
 type CloudWorkoutSet = {
   order: number;
+  setType?: AdvancedSetType;
   weight?: number;
   reps?: number;
   duration?: number;
@@ -278,6 +281,7 @@ async function serializeRoutines(userId: string, remoteMap: Map<string, CloudRou
             .filter((item) => item.routineId === routine.id && item.exerciseId === exercise.exerciseId)
             .map((item) => ({
               metricTypeOverride: item.metricTypeOverride,
+              defaultSetTypes: item.defaultSetTypes,
               defaultSets: item.defaultSets,
               defaultReps: item.defaultReps,
               defaultWeight: item.defaultWeight,
@@ -334,6 +338,7 @@ async function serializeWorkouts(userId: string, remoteMap: Map<string, CloudWor
             .sort((a, b) => a.order - b.order)
             .map((set) => ({
               order: set.order,
+              setType: set.setType,
               weight: set.weight,
               reps: set.reps,
               duration: set.duration,
@@ -637,6 +642,7 @@ async function applyRemoteWorkouts(rows: CloudWorkoutRow[]) {
                 id: `workout-set-${crypto.randomUUID()}`,
                 workoutExerciseId,
                 order: set.order,
+                setType: set.setType,
                 weight: set.weight,
                 reps: set.reps,
                 duration: set.duration,

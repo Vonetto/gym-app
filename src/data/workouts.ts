@@ -1,5 +1,6 @@
 import { ActiveWorkoutSession } from './activeSession';
 import { db, WorkoutExerciseRecord, WorkoutRecord, WorkoutSetRecord } from './db';
+import { countsForProgression, normalizeSetType } from './setTypes';
 
 export type WorkoutSessionPayload = ActiveWorkoutSession;
 
@@ -10,6 +11,13 @@ export interface CompletedExerciseSession {
   startedAt: string;
   endedAt: string;
   sets: WorkoutSetRecord[];
+}
+
+function normalizeWorkoutSetRecord(set: WorkoutSetRecord): WorkoutSetRecord {
+  return {
+    ...set,
+    setType: normalizeSetType(set.setType)
+  };
 }
 
 export async function saveWorkout(session: WorkoutSessionPayload) {
@@ -47,6 +55,7 @@ export async function saveWorkout(session: WorkoutSessionPayload) {
         id: `workout-set-${crypto.randomUUID()}`,
         workoutExerciseId,
         order: setIndex,
+        setType: normalizeSetType(set.setType),
         weight: set.weight,
         reps: set.reps,
         duration: set.duration,
@@ -109,7 +118,8 @@ export async function getWorkoutExercises(workoutId: string) {
 }
 
 export async function getWorkoutSets(workoutExerciseId: string) {
-  return db.workoutSets.where('workoutExerciseId').equals(workoutExerciseId).sortBy('order');
+  const sets = await db.workoutSets.where('workoutExerciseId').equals(workoutExerciseId).sortBy('order');
+  return sets.map(normalizeWorkoutSetRecord);
 }
 
 export async function getLatestExerciseSets(exerciseId: string) {
@@ -178,7 +188,7 @@ export async function listCompletedExerciseSessions(exerciseId: string, limit = 
         await Promise.all(
           ordered.map(async (exercise) => {
             const exerciseSets = await getWorkoutSets(exercise.id);
-            return exerciseSets.filter((set) => set.completed);
+            return exerciseSets.filter((set) => set.completed).map(normalizeWorkoutSetRecord);
           })
         )
       ).flat();
@@ -196,4 +206,15 @@ export async function listCompletedExerciseSessions(exerciseId: string, limit = 
 
   const filtered = entries.filter((entry): entry is NonNullable<typeof entry> => Boolean(entry));
   return filtered.sort((a, b) => b.endedAt.localeCompare(a.endedAt)).slice(0, limit);
+}
+
+export async function listProgressionExerciseSessions(exerciseId: string, limit = 3) {
+  const sessions = await listCompletedExerciseSessions(exerciseId, Number.POSITIVE_INFINITY);
+  return sessions
+    .map((session) => ({
+      ...session,
+      sets: session.sets.filter((set) => countsForProgression(set.setType))
+    }))
+    .filter((session) => session.sets.length)
+    .slice(0, limit);
 }

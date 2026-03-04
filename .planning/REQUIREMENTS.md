@@ -79,8 +79,8 @@
 
 ### Sets avanzados (baja prioridad en V1)
 
-- [ ] **ADV-01**: Usuario puede marcar sets como warm‑up / drop set / fallo / AMRAP.
-- [ ] **ADV-02**: UI mantiene consistencia de sets avanzados en historial y PRs.
+- [x] **ADV-01**: Usuario puede marcar sets como warm‑up / drop set / fallo / AMRAP.
+- [x] **ADV-02**: UI mantiene consistencia de sets avanzados en historial y PRs.
 
 ## v2 Requirements
 
@@ -145,13 +145,13 @@
 | ANA-03 | Phase 5: Historial + PRs + Analíticas | Pending |
 | PRG-01 | Phase 10: Progresion de Carga | Complete |
 | PRG-02 | Phase 10: Progresion de Carga | Complete |
-| IO-01 | Phase 6: Import/Export + Sets Avanzados | Pending |
-| IO-02 | Phase 6: Import/Export + Sets Avanzados | Pending |
-| IO-03 | Phase 6: Import/Export + Sets Avanzados | Pending |
+| IO-01 | Phase 7: Import/Export | Pending |
+| IO-02 | Phase 7: Import/Export | Pending |
+| IO-03 | Phase 7: Import/Export | Pending |
 | SET-01 | Phase 1: PWA + Ajustes Base | Complete |
 | SET-02 | Phase 1: PWA + Ajustes Base | Complete |
-| ADV-01 | Phase 6: Import/Export + Sets Avanzados | Pending |
-| ADV-02 | Phase 6: Import/Export + Sets Avanzados | Pending |
+| ADV-01 | Phase 11: Sets Avanzados | Complete |
+| ADV-02 | Phase 11: Sets Avanzados | Complete |
 | ACC-01 | Phase 9: Auth + Sync Base | Complete |
 | ACC-02 | Phase 9: Auth + Sync Base | Complete |
 | ACC-03 | Phase 9: Auth + Sync Base | Complete |
@@ -163,4 +163,4 @@
 
 ---
 *Requirements defined: 2026-01-26*
-*Last updated: 2026-03-03 after closing Phase 10*
+*Last updated: 2026-03-03 after closing Phase 11*

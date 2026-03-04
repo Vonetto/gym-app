@@ -23,11 +23,19 @@ import {
 import { useSettings } from '../data/SettingsProvider';
 import {
   getLatestExerciseSets,
-  listCompletedExerciseSessions,
+  listProgressionExerciseSessions,
   saveWorkout
 } from '../data/workouts';
 import { getRoutineDetail, overwriteRoutineExercises } from '../data/routines';
-import { ExerciseMetric } from '../data/db';
+import { AdvancedSetType, ExerciseMetric } from '../data/db';
+import {
+  countsForProgression,
+  DEFAULT_SET_TYPE,
+  getSetTypeMeta,
+  SET_TYPE_OPTIONS,
+  normalizeSetType,
+  normalizeSetTypeArray
+} from '../data/setTypes';
 
 interface ExerciseOption {
   id: string;
@@ -62,6 +70,34 @@ function getDefaultValueForMetricType(
   return undefined;
 }
 
+async function refreshExerciseSuggestions(exercise: ActiveWorkoutExercise) {
+  if (!exercise.sets.length || !exercise.sets.some((set) => countsForProgression(set.setType))) {
+    return {
+      ...exercise,
+      suggestionExplanation: undefined,
+      sets: exercise.sets.map((set) => ({ ...set, suggestion: undefined }))
+    };
+  }
+  const history = await listProgressionExerciseSessions(exercise.exerciseId, 2);
+  return applyProgressionSuggestions(exercise, history);
+}
+
+function normalizedSetTypes(sets: ActiveWorkoutSet[]) {
+  return normalizeSetTypeArray(
+    sets.map((set) => set.setType),
+    sets.length
+  );
+}
+
+function sameSetTypePlan(current: ActiveWorkoutSet[], original?: AdvancedSetType[]) {
+  const currentTypes = normalizedSetTypes(current);
+  const originalTypes = normalizeSetTypeArray(original, current.length);
+  return (
+    currentTypes.length === originalTypes.length &&
+    currentTypes.every((setType, index) => setType === originalTypes[index])
+  );
+}
+
 export function Workout() {
   const navigate = useNavigate();
   const { settings } = useSettings();
@@ -70,7 +106,12 @@ export function Workout() {
   const [exerciseQuery, setExerciseQuery] = useState('');
   const [exerciseOptions, setExerciseOptions] = useState<ExerciseOption[]>([]);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
-  const [typeTarget, setTypeTarget] = useState<{ exerciseId: string; index: number } | null>(null);
+  const [metricTypeTarget, setMetricTypeTarget] = useState<{ exerciseId: string; index: number } | null>(
+    null
+  );
+  const [setTypeTarget, setSetTypeTarget] = useState<{ exerciseIndex: number; setIndex: number } | null>(
+    null
+  );
   const [replaceTarget, setReplaceTarget] = useState<{ exerciseId: string; index: number } | null>(
     null
   );
@@ -113,7 +154,10 @@ export function Workout() {
   useEffect(() => {
     if (!session || !exerciseOptions.length) return;
     const needsBackfill = session.exercises.some(
-      (exercise) => exercise.sets.some((set) => !set.suggestion)
+      (exercise) =>
+        exercise.sets.some(
+          (set) => countsForProgression(set.setType) && !set.suggestion
+        )
     );
     const missingEquipment = session.exercises.some(
       (exercise) => exercise.metricType === 'weight_reps' && !(exercise.equipment?.length)
@@ -131,11 +175,14 @@ export function Workout() {
             ...exercise,
             equipment: exercise.equipment?.length ? exercise.equipment : option?.equipment ?? []
           };
-          if (exercise.sets.every((set) => set.suggestion)) {
+          if (
+            exercise.sets.every(
+              (set) => !countsForProgression(set.setType) || set.suggestion
+            )
+          ) {
             return withEquipment;
           }
-          const history = await listCompletedExerciseSessions(exercise.exerciseId, 2);
-          return applyProgressionSuggestions(withEquipment, history);
+          return refreshExerciseSuggestions(withEquipment);
         })
       );
       if (cancelled) return;
@@ -192,7 +239,7 @@ export function Workout() {
         if (index !== exerciseIndex) return exercise;
         return {
           ...exercise,
-          sets: [...exercise.sets, { completed: false }]
+          sets: [...exercise.sets, { completed: false, setType: DEFAULT_SET_TYPE }]
         };
       });
       return { ...prev, exercises };
@@ -284,6 +331,49 @@ export function Workout() {
     });
   };
 
+  const handleSetTypeChange = async (
+    exerciseIndex: number,
+    setIndex: number,
+    setType: AdvancedSetType
+  ) => {
+    if (!session) return;
+    const targetExercise = session.exercises[exerciseIndex];
+    const nextExercise = await refreshExerciseSuggestions({
+      ...targetExercise,
+      sets: targetExercise.sets.map((set, index) =>
+        index === setIndex
+          ? {
+              ...set,
+              setType
+            }
+          : set
+      )
+    });
+    setSession((prev) => {
+      if (!prev) return prev;
+      const exercises = [...prev.exercises];
+      exercises[exerciseIndex] = nextExercise;
+      return { ...prev, exercises };
+    });
+    setSetTypeTarget(null);
+  };
+
+  const handleRemoveSet = async (exerciseIndex: number, setIndex: number) => {
+    if (!session) return;
+    const targetExercise = session.exercises[exerciseIndex];
+    const nextExercise = await refreshExerciseSuggestions({
+      ...targetExercise,
+      sets: targetExercise.sets.filter((_, index) => index !== setIndex)
+    });
+    setSession((prev) => {
+      if (!prev) return prev;
+      const exercises = [...prev.exercises];
+      exercises[exerciseIndex] = nextExercise;
+      return { ...prev, exercises };
+    });
+    setSetTypeTarget(null);
+  };
+
   const finalizeWorkout = async (updateRoutine: boolean) => {
     if (session) {
       const sanitizedSession: ActiveWorkoutSession = {
@@ -304,6 +394,7 @@ export function Workout() {
       const exercises = session.exercises.map((exercise, index) => {
         const existingDefaults = defaultsByExercise.get(exercise.exerciseId);
         const typeChanged = exercise.metricType !== (exercise.originalMetricType ?? exercise.metricType);
+        const setTypeChanged = !sameSetTypePlan(exercise.sets, existingDefaults?.defaultSetTypes);
         const lastSet = exercise.sets[exercise.sets.length - 1];
         if (existingDefaults) {
           if (typeChanged) {
@@ -321,7 +412,28 @@ export function Workout() {
                 defaultDuration: lastSet?.duration,
                 defaultDistance: lastSet?.distance,
                 defaultRestSeconds: exercise.restSeconds ?? 0,
+                defaultSetTypes: normalizeSetTypeArray(
+                  exercise.sets.map((set) => set.setType),
+                  exercise.sets.length
+                ),
                 goalMode: exercise.metricType === 'weight_reps' ? exercise.goalMode ?? 'auto' : undefined
+              }
+            };
+          }
+          if (setTypeChanged) {
+            return {
+              exerciseId: exercise.exerciseId,
+              order: index,
+              defaults: {
+                metricTypeOverride: existingDefaults.metricTypeOverride,
+                defaultSets: exercise.sets.length,
+                defaultReps: existingDefaults.defaultReps,
+                defaultWeight: existingDefaults.defaultWeight,
+                defaultDuration: existingDefaults.defaultDuration,
+                defaultDistance: existingDefaults.defaultDistance,
+                defaultRestSeconds: existingDefaults.defaultRestSeconds,
+                defaultSetTypes: normalizedSetTypes(exercise.sets),
+                goalMode: existingDefaults.goalMode
               }
             };
           }
@@ -336,6 +448,10 @@ export function Workout() {
               defaultDuration: existingDefaults.defaultDuration,
               defaultDistance: existingDefaults.defaultDistance,
               defaultRestSeconds: existingDefaults.defaultRestSeconds,
+              defaultSetTypes: normalizeSetTypeArray(
+                existingDefaults.defaultSetTypes,
+                existingDefaults.defaultSets ?? exercise.sets.length
+              ),
               goalMode: existingDefaults.goalMode
             }
           };
@@ -354,6 +470,10 @@ export function Workout() {
             defaultDuration: lastSet?.duration,
             defaultDistance: lastSet?.distance,
             defaultRestSeconds: exercise.restSeconds ?? 0,
+            defaultSetTypes: normalizeSetTypeArray(
+              exercise.sets.map((set) => set.setType),
+              exercise.sets.length
+            ),
             goalMode: exercise.metricType === 'weight_reps' ? exercise.goalMode ?? 'auto' : undefined
           }
         };
@@ -378,7 +498,10 @@ export function Workout() {
       const hasTypeChanges = session.exercises.some(
         (exercise) => exercise.metricType !== (exercise.originalMetricType ?? exercise.metricType)
       );
-      if (session.routineId && (hasChanges || hasTypeChanges)) {
+      const hasSetTypeChanges = session.exercises.some(
+        (exercise) => !sameSetTypePlan(exercise.sets, exercise.originalSetTypes)
+      );
+      if (session.routineId && (hasChanges || hasTypeChanges || hasSetTypeChanges)) {
         setShowFinishPrompt(true);
         return;
       }
@@ -400,6 +523,7 @@ export function Workout() {
       metricType: option.metricType,
       catalogMetricType: option.metricType,
       originalMetricType: option.metricType,
+      originalSetTypes: normalizeSetTypeArray(undefined, 3),
       goalMode: 'auto',
       notes: '',
       equipment: option.equipment,
@@ -411,11 +535,11 @@ export function Workout() {
       })),
       restSeconds: 0,
       sets: Array.from({ length: 3 }, () => ({
-        completed: false
+        completed: false,
+        setType: DEFAULT_SET_TYPE
       }))
     };
-    const history = await listCompletedExerciseSessions(option.id, 2);
-    return applySuggestedPrescription(applyProgressionSuggestions(nextExercise, history));
+    return applySuggestedPrescription(await refreshExerciseSuggestions(nextExercise));
   };
 
   const handleAddExercise = async (optionId: string) => {
@@ -497,15 +621,14 @@ export function Workout() {
   const handleChangeMetricType = async (exerciseIndex: number, metricType: ExerciseMetric) => {
     if (!session) return;
     const targetExercise = session.exercises[exerciseIndex];
-    const history = await listCompletedExerciseSessions(targetExercise.exerciseId, 2);
     const nextExercise = applySuggestedPrescription(
-      applyProgressionSuggestions(
+      await refreshExerciseSuggestions(
         {
           ...targetExercise,
           metricType,
           sets: targetExercise.sets.map((set) => ({
+            setType: set.setType ?? DEFAULT_SET_TYPE,
             completed: set.completed,
-            rpe: set.rpe,
             weight:
               metricType === 'weight_reps'
                 ? set.weight
@@ -539,8 +662,7 @@ export function Workout() {
             duration: metricType === 'time' ? set.duration : undefined,
             distance: metricType === 'distance' ? set.distance : undefined
           }))
-        },
-        history
+        }
       )
     );
     setSession((prev) => {
@@ -549,7 +671,7 @@ export function Workout() {
       exercises[exerciseIndex] = nextExercise;
       return { ...prev, exercises };
     });
-    setTypeTarget(null);
+    setMetricTypeTarget(null);
     setOpenMenuId(null);
   };
 
@@ -808,7 +930,7 @@ export function Workout() {
                       <button
                         type="button"
                         onClick={() => {
-                          setTypeTarget({ exerciseId: exercise.exerciseId, index: exerciseIndex });
+                          setMetricTypeTarget({ exerciseId: exercise.exerciseId, index: exerciseIndex });
                           setOpenMenuId(null);
                         }}
                       >
@@ -872,9 +994,17 @@ export function Workout() {
                     }
                     return '-';
                   })();
+                  const setTypeMeta = getSetTypeMeta(set.setType, setIndex);
                   return (
                     <div key={`${exercise.exerciseId}-${setIndex}`} className="set-row">
-                      <span>{setIndex + 1}</span>
+                      <button
+                        className={`set-index-button ${setTypeMeta.type}`}
+                        type="button"
+                        onClick={() => setSetTypeTarget({ exerciseIndex, setIndex })}
+                        aria-label={`Cambiar tipo de serie (${setTypeMeta.label})`}
+                      >
+                        {setTypeMeta.badge}
+                      </button>
                       <button
                         className="previous-button"
                         type="button"
@@ -1101,22 +1231,22 @@ export function Workout() {
         </div>
       ) : null}
 
-      {typeTarget ? (
+      {metricTypeTarget ? (
         <div
           className="modal-overlay bottom"
           onClick={() => {
-            setTypeTarget(null);
+            setMetricTypeTarget(null);
           }}
         >
           <div className="modal-card" onClick={(event) => event.stopPropagation()}>
             {(() => {
-              const targetExercise = session?.exercises[typeTarget.index];
+              const targetExercise = session?.exercises[metricTypeTarget.index];
               const currentType = targetExercise ? getMetricTypeLabel(targetExercise.metricType) : '';
               return (
                 <>
             <div className="card-header">
               <h2>Cambiar tipo</h2>
-              <button className="ghost-button" type="button" onClick={() => setTypeTarget(null)}>
+              <button className="ghost-button" type="button" onClick={() => setMetricTypeTarget(null)}>
                 Cerrar
               </button>
             </div>
@@ -1130,32 +1260,93 @@ export function Workout() {
               <button
                 className={`ghost-button ${targetExercise?.metricType === 'weight_reps' ? 'selected-type' : ''}`}
                 type="button"
-                onClick={() => handleChangeMetricType(typeTarget.index, 'weight_reps')}
+                onClick={() => handleChangeMetricType(metricTypeTarget.index, 'weight_reps')}
               >
                 Peso + reps
               </button>
               <button
                 className={`ghost-button ${targetExercise?.metricType === 'reps' ? 'selected-type' : ''}`}
                 type="button"
-                onClick={() => handleChangeMetricType(typeTarget.index, 'reps')}
+                onClick={() => handleChangeMetricType(metricTypeTarget.index, 'reps')}
               >
                 Solo reps
               </button>
               <button
                 className={`ghost-button ${targetExercise?.metricType === 'time' ? 'selected-type' : ''}`}
                 type="button"
-                onClick={() => handleChangeMetricType(typeTarget.index, 'time')}
+                onClick={() => handleChangeMetricType(metricTypeTarget.index, 'time')}
               >
                 Tiempo
               </button>
               <button
                 className={`ghost-button ${targetExercise?.metricType === 'distance' ? 'selected-type' : ''}`}
                 type="button"
-                onClick={() => handleChangeMetricType(typeTarget.index, 'distance')}
+                onClick={() => handleChangeMetricType(metricTypeTarget.index, 'distance')}
               >
                 Distancia
               </button>
             </div>
+                </>
+              );
+            })()}
+          </div>
+        </div>
+      ) : null}
+
+      {setTypeTarget ? (
+        <div
+          className="modal-overlay bottom"
+          onClick={() => {
+            setSetTypeTarget(null);
+          }}
+        >
+          <div className="modal-card" onClick={(event) => event.stopPropagation()}>
+            {(() => {
+              const targetExercise = session?.exercises[setTypeTarget.exerciseIndex];
+              const targetSet = targetExercise?.sets[setTypeTarget.setIndex];
+              const currentType = normalizeSetType(targetSet?.setType);
+              return (
+                <>
+                  <div className="card-header">
+                    <h2>Seleccionar tipo de serie</h2>
+                    <button className="ghost-button" type="button" onClick={() => setSetTypeTarget(null)}>
+                      Cerrar
+                    </button>
+                  </div>
+                  <p className="muted">
+                    Serie {setTypeTarget.setIndex + 1} · actual: <strong>{getSetTypeMeta(currentType, setTypeTarget.setIndex).label}</strong>
+                  </p>
+                  <div className="set-type-list">
+                    {SET_TYPE_OPTIONS.map((option) => (
+                      <button
+                        key={option.type}
+                        className={`set-type-option ${option.type} ${currentType === option.type ? 'selected' : ''}`}
+                        type="button"
+                        onClick={() =>
+                          handleSetTypeChange(setTypeTarget.exerciseIndex, setTypeTarget.setIndex, option.type)
+                        }
+                      >
+                        <span className={`set-type-badge ${option.type}`}>
+                          {option.type === 'normal' ? setTypeTarget.setIndex + 1 : option.badge}
+                        </span>
+                        <span className="set-type-copy">
+                          <strong>{option.label}</strong>
+                          <small>{option.description}</small>
+                        </span>
+                      </button>
+                    ))}
+                    <button
+                      className="set-type-option delete"
+                      type="button"
+                      onClick={() => handleRemoveSet(setTypeTarget.exerciseIndex, setTypeTarget.setIndex)}
+                    >
+                      <span className="set-type-badge delete">×</span>
+                      <span className="set-type-copy">
+                        <strong>Eliminar serie</strong>
+                        <small>Quita esta serie del ejercicio actual.</small>
+                      </span>
+                    </button>
+                  </div>
                 </>
               );
             })()}
