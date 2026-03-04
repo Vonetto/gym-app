@@ -55,6 +55,12 @@ export interface ActiveSessionRestTimer {
   exerciseName: string;
 }
 
+export interface ActivePlannedOccurrenceRef {
+  seriesId: string;
+  occurrenceDate: string;
+  routineId: string;
+}
+
 export interface ActiveWorkoutSession {
   id: string;
   createdAt: string;
@@ -62,6 +68,7 @@ export interface ActiveWorkoutSession {
   routineName?: string;
   tags?: string[];
   originalExerciseIds?: string[];
+  plannedOccurrence?: ActivePlannedOccurrenceRef;
   restTimers?: Record<string, ActiveSessionRestTimer>;
   exercises: ActiveWorkoutExercise[];
 }

@@ -184,7 +184,15 @@ export async function deleteRoutine(routineId: string) {
   const now = new Date().toISOString();
   await db.transaction(
     'rw',
-    [db.routines, db.routineTags, db.routineExercises, db.exerciseDefaults, db.routineVersions],
+    [
+      db.routines,
+      db.routineTags,
+      db.routineExercises,
+      db.exerciseDefaults,
+      db.routineVersions,
+      db.plannedWorkoutSeries,
+      db.plannedWorkoutOccurrences
+    ],
     async () => {
       await db.routines.update(routineId, {
         updatedAt: now,
@@ -194,6 +202,32 @@ export async function deleteRoutine(routineId: string) {
       await db.routineExercises.where('routineId').equals(routineId).delete();
       await db.exerciseDefaults.where('routineId').equals(routineId).delete();
       await db.routineVersions.where('routineId').equals(routineId).delete();
+      const plannedSeries = await db.plannedWorkoutSeries.where('routineId').equals(routineId).toArray();
+      if (plannedSeries.length) {
+        await Promise.all(
+          plannedSeries.map((series) =>
+            db.plannedWorkoutSeries.update(series.id, {
+              updatedAt: now,
+              deletedAt: now
+            })
+          )
+        );
+        const seriesIds = plannedSeries.map((series) => series.id);
+        const occurrenceRows = await db.plannedWorkoutOccurrences
+          .where('seriesId')
+          .anyOf(seriesIds)
+          .toArray();
+        if (occurrenceRows.length) {
+          await Promise.all(
+            occurrenceRows.map((row) =>
+              db.plannedWorkoutOccurrences.update(row.id, {
+                updatedAt: now,
+                deletedAt: now
+              })
+            )
+          );
+        }
+      }
     }
   );
 }

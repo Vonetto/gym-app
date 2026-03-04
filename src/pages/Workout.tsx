@@ -28,6 +28,7 @@ import {
 } from '../data/workouts';
 import { getRoutineDetail, overwriteRoutineExercises } from '../data/routines';
 import { AdvancedSetType, ExerciseMetric } from '../data/db';
+import { upsertPlannedWorkoutOccurrence } from '../data/plans';
 import {
   countsForProgression,
   DEFAULT_SET_TYPE,
@@ -375,6 +376,7 @@ export function Workout() {
   };
 
   const finalizeWorkout = async (updateRoutine: boolean) => {
+    let completedSetCount = 0;
     if (session) {
       const sanitizedSession: ActiveWorkoutSession = {
         ...session,
@@ -383,7 +385,19 @@ export function Workout() {
           sets: exercise.sets.filter((set) => set.completed)
         }))
       };
+      completedSetCount = sanitizedSession.exercises.reduce(
+        (total, exercise) => total + exercise.sets.length,
+        0
+      );
       await saveWorkout(sanitizedSession);
+      if (completedSetCount > 0 && session.plannedOccurrence) {
+        await upsertPlannedWorkoutOccurrence(
+          session.plannedOccurrence.seriesId,
+          session.plannedOccurrence.occurrenceDate,
+          'completed',
+          session.id
+        );
+      }
     }
 
     if (updateRoutine && session?.routineId) {

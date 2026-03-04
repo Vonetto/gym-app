@@ -4,20 +4,16 @@ import { createRoutine, deleteRoutine, getRoutineDetail, listRoutines } from '..
 import { listExercises, getExerciseDisplayName } from '../data/exercises';
 import type { AdvancedSetType } from '../data/db';
 import {
-  getLatestExerciseSets,
-  getLastWorkoutForRoutine,
   getWorkoutById,
   getWorkoutExercises,
   getWorkoutSets,
-  listProgressionExerciseSessions,
   listAllWorkouts,
   listRecentWorkouts,
   listWorkoutsSince
 } from '../data/workouts';
 import { ActiveWorkoutSession, writeActiveSession } from '../data/activeSession';
-import { applyProgressionSuggestions, applySuggestedPrescription } from '../data/progression';
 import { useSettings } from '../data/SettingsProvider';
-import { countsForVolume, getSetTypeAtIndex, getSetTypeMeta } from '../data/setTypes';
+import { countsForVolume, getSetTypeMeta } from '../data/setTypes';
 import { BodyMap } from '../components/BodyMap';
 import {
   buildSlugVolumes,
@@ -25,6 +21,9 @@ import {
   SLUG_LABELS,
   MUSCLE_DECAY_HALF_LIFE_DAYS
 } from '../components/bodyMapData';
+import { buildRoutineSession } from '../data/sessionFactory';
+import { getMonthRange, formatLocalDate, parseLocalDate } from '../data/localDate';
+import { listPlannedOccurrencesForRange } from '../data/plans';
 
 interface RoutineSummary {
   id: string;
@@ -63,6 +62,20 @@ interface WorkoutDetail {
   }>;
 }
 
+interface CalendarPreviewPlan {
+  id: string;
+  routineName: string;
+  occurrenceDate: string;
+  status: 'pending' | 'completed' | 'omitted';
+}
+
+const WEEKDAYS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
+const formatMonthLabel = (date: Date) => {
+  const label = date.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+  return label.charAt(0).toUpperCase() + label.slice(1);
+};
+
 export function Home() {
   const navigate = useNavigate();
   const { settings } = useSettings();
@@ -77,6 +90,13 @@ export function Home() {
   const [muscleVolumes, setMuscleVolumes] = useState<Record<string, number>>({});
   const [mapView, setMapView] = useState<'front' | 'back'>('front');
   const [activeSlug, setActiveSlug] = useState<string | null>(null);
+  const [activityTab, setActivityTab] = useState<'workouts' | 'calendar'>('workouts');
+  const [calendarPreviewMonth, setCalendarPreviewMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
+  const [calendarWorkoutDateKeys, setCalendarWorkoutDateKeys] = useState<string[]>([]);
+  const [calendarPlans, setCalendarPlans] = useState<CalendarPreviewPlan[]>([]);
 
   const loadRoutines = async () => {
     const baseRoutines = await listRoutines();
@@ -130,6 +150,7 @@ export function Home() {
     const loadData = async () => {
       const routineSummaries = await loadRoutines();
       const workouts = await listRecentWorkouts(8);
+      const allWorkoutRows = await listAllWorkouts();
       const summaries = await buildWorkoutSummaries(workouts);
       const since = new Date();
       since.setDate(since.getDate() - 90);
@@ -164,12 +185,40 @@ export function Home() {
       setRoutines(routineSummaries);
       setRecentWorkouts(summaries);
       setMuscleVolumes(muscleTotals);
+      setCalendarWorkoutDateKeys(
+        allWorkoutRows.map((workout) => formatLocalDate(new Date(workout.endedAt)))
+      );
     };
     void loadData();
     return () => {
       active = false;
     };
   }, [settings.language]);
+
+  useEffect(() => {
+    let active = true;
+    const loadCalendarPreview = async () => {
+      const { start, end } = getMonthRange(calendarPreviewMonth);
+      const [occurrences, routineRows] = await Promise.all([
+        listPlannedOccurrencesForRange(start, end),
+        listRoutines()
+      ]);
+      const routineMap = new Map(routineRows.map((routine) => [routine.id, routine.name]));
+      if (!active) return;
+      setCalendarPlans(
+        occurrences.map((occurrence) => ({
+          id: occurrence.id,
+          routineName: routineMap.get(occurrence.routineId) ?? 'Rutina eliminada',
+          occurrenceDate: occurrence.occurrenceDate,
+          status: occurrence.status
+        }))
+      );
+    };
+    void loadCalendarPreview();
+    return () => {
+      active = false;
+    };
+  }, [calendarPreviewMonth]);
 
   const hasRoutines = routines.length > 0;
 
@@ -320,99 +369,11 @@ export function Home() {
   };
 
   const handleStartRoutine = async (routineId: string) => {
-    const detail = await getRoutineDetail(routineId);
-    if (!detail) return;
-    const exercises = await listExercises();
-    const exerciseMap = new Map(exercises.map((exercise) => [exercise.id, exercise]));
-    const lastWorkout = await getLastWorkoutForRoutine(routineId);
-    const previousNotesByExercise = new Map<string, string>();
-    const session: ActiveWorkoutSession = {
-      id: `session-${crypto.randomUUID()}`,
-      createdAt: new Date().toISOString(),
+    const session = await buildRoutineSession({
       routineId,
-      routineName: detail.routine.name,
-      tags: detail.tags,
-      originalExerciseIds: detail.exercises.map((entry) => entry.exerciseId),
-      exercises: detail.exercises.map((entry) => {
-        const exercise = exerciseMap.get(entry.exerciseId);
-        const defaults = detail.defaults.find((item) => item.exerciseId === entry.exerciseId);
-        const setsCount = defaults?.defaultSets ?? 3;
-        const sets = Array.from({ length: setsCount }, (_, setIndex) => ({
-          setType: getSetTypeAtIndex(defaults?.defaultSetTypes, setIndex),
-          weight: defaults?.defaultWeight,
-          reps: defaults?.defaultReps,
-          duration: defaults?.defaultDuration,
-          distance: defaults?.defaultDistance,
-          completed: false
-        }));
-        return {
-          exerciseId: entry.exerciseId,
-          name: exercise ? getExerciseDisplayName(exercise, settings.language) : 'Ejercicio',
-          metricType: defaults?.metricTypeOverride ?? exercise?.metricType ?? 'weight_reps',
-          catalogMetricType: exercise?.metricType ?? 'weight_reps',
-          originalMetricType: defaults?.metricTypeOverride ?? exercise?.metricType ?? 'weight_reps',
-          originalSetTypes: Array.from({ length: setsCount }, (_, setIndex) =>
-            getSetTypeAtIndex(defaults?.defaultSetTypes, setIndex)
-          ),
-          goalMode: defaults?.goalMode ?? 'auto',
-          notes: '',
-          restSeconds: defaults?.defaultRestSeconds ?? 0,
-          equipment: exercise?.equipment ?? [],
-          previousSets: [],
-          sets
-        };
-      })
-    };
-    const previousSetsByExercise = new Map<
-      string,
-      Array<{ weight?: number; reps?: number; duration?: number; distance?: number }>
-    >();
-    const workoutExerciseMap = new Map<
-      string,
-      Array<{ weight?: number; reps?: number; duration?: number; distance?: number }>
-    >();
-    if (lastWorkout) {
-      const workoutExercises = await getWorkoutExercises(lastWorkout.id);
-      for (const workoutExercise of workoutExercises) {
-        const sets = await getWorkoutSets(workoutExercise.id);
-        workoutExerciseMap.set(
-          workoutExercise.exerciseId,
-          sets.map((set) => ({
-            weight: set.weight,
-            reps: set.reps,
-            duration: set.duration,
-            distance: set.distance
-          }))
-        );
-        if (workoutExercise.notes) {
-          previousNotesByExercise.set(workoutExercise.exerciseId, workoutExercise.notes);
-        }
-      }
-    }
-    for (const entry of detail.exercises) {
-      let sets = workoutExerciseMap.get(entry.exerciseId) ?? [];
-      if (!sets.length) {
-        const latestSets = await getLatestExerciseSets(entry.exerciseId);
-        sets = latestSets.map((set) => ({
-          weight: set.weight,
-          reps: set.reps,
-          duration: set.duration,
-          distance: set.distance
-        }));
-      }
-      previousSetsByExercise.set(entry.exerciseId, sets);
-    }
-    session.exercises = await Promise.all(
-      session.exercises.map(async (exercise) => {
-        const nextExercise = {
-          ...exercise,
-          previousSets: previousSetsByExercise.get(exercise.exerciseId) ?? [],
-          notes: previousNotesByExercise.get(exercise.exerciseId) ?? exercise.notes
-        };
-        const history = await listProgressionExerciseSessions(exercise.exerciseId, 2);
-        return applySuggestedPrescription(applyProgressionSuggestions(nextExercise, history));
-      })
-    );
+      language: settings.language
+    });
+    if (!session) return;
     writeActiveSession(session);
     navigate('/workout');
   };
@@ -424,6 +385,35 @@ export function Home() {
   const slugVolumes = useMemo(() => buildSlugVolumes(muscleVolumes), [muscleVolumes]);
   const activeSlugLabel = activeSlug ? SLUG_LABELS[activeSlug] ?? activeSlug : null;
   const activeSlugValue = activeSlug ? slugVolumes[activeSlug] ?? 0 : 0;
+  const calendarPlansByDate = useMemo(() => {
+    const map: Record<string, CalendarPreviewPlan[]> = {};
+    calendarPlans.forEach((plan) => {
+      if (!map[plan.occurrenceDate]) map[plan.occurrenceDate] = [];
+      map[plan.occurrenceDate].push(plan);
+    });
+    return map;
+  }, [calendarPlans]);
+  const previewDayCells = useMemo(() => {
+    const year = calendarPreviewMonth.getFullYear();
+    const month = calendarPreviewMonth.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const weekStartsOn = 1;
+    const offset = (firstDay.getDay() - weekStartsOn + 7) % 7;
+    const totalCells = Math.ceil((offset + daysInMonth) / 7) * 7;
+    return Array.from({ length: totalCells }, (_, index) => {
+      const dayIndex = index - offset + 1;
+      if (dayIndex < 1 || dayIndex > daysInMonth) return null;
+      return new Date(year, month, dayIndex);
+    });
+  }, [calendarPreviewMonth]);
+  const upcomingPlans = useMemo(() => {
+    const todayKey = formatLocalDate(new Date());
+    return calendarPlans
+      .filter((plan) => plan.status === 'pending' && plan.occurrenceDate >= todayKey)
+      .sort((a, b) => a.occurrenceDate.localeCompare(b.occurrenceDate))
+      .slice(0, 3);
+  }, [calendarPlans]);
 
   return (
     <section className="stack wide">
@@ -554,48 +544,219 @@ export function Home() {
       </div>
 
       <div className="card">
-        <div className="card-header">
-          <h2>Últimos entrenamientos</h2>
-          <div className="inline">
-            <span className="muted">{recentWorkouts.length ? 'Recientes' : 'Sin datos'}</span>
-            {recentWorkouts.length ? (
-              <button className="ghost-button" type="button" onClick={handleOpenAllWorkouts}>
-                Ver más
-              </button>
-            ) : null}
+        <div className="activity-card-header">
+          <div>
+            <h2>Actividad</h2>
           </div>
         </div>
-        {recentWorkouts.length ? (
-          <div className="recent-list">
-            {recentWorkouts.slice(0, 4).map((workout) => (
-              <button
-                key={workout.id}
-                className="compact-card compact-card-button"
-                type="button"
-                onClick={() => handleOpenWorkout(workout.id)}
-              >
+        <div className="activity-tabs" role="tablist" aria-label="Actividad">
+          <button
+            className={`activity-tab ${activityTab === 'workouts' ? 'active' : ''}`}
+            type="button"
+            onClick={() => setActivityTab('workouts')}
+          >
+            Entrenamientos
+          </button>
+          <button
+            className={`activity-tab ${activityTab === 'calendar' ? 'active' : ''}`}
+            type="button"
+            onClick={() => setActivityTab('calendar')}
+          >
+            Calendario
+          </button>
+        </div>
+        {activityTab === 'workouts' ? (
+          recentWorkouts.length ? (
+            <div className="activity-panel">
+              <div className="activity-toolbar">
                 <div>
-                  <p className="compact-title">{workout.routineName}</p>
-                  <p className="compact-meta">
-                    {new Date(workout.createdAt).toLocaleDateString()} · {workout.setCount} sets
-                  </p>
-                  {workout.tags.length ? (
-                    <div className="compact-tags">
-                      {workout.tags.slice(0, 3).map((tag) => (
-                        <span key={tag} className="tag-chip">
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  ) : null}
+                  <p className="activity-kicker">Últimos entrenamientos</p>
+                  <p className="muted">Tus 4 sesiones más recientes.</p>
                 </div>
-              </button>
-            ))}
-          </div>
+                <button className="activity-link-button" type="button" onClick={handleOpenAllWorkouts}>
+                  Ver más
+                </button>
+              </div>
+              <div className="activity-list">
+                {recentWorkouts.slice(0, 4).map((workout) => (
+                  <button
+                    key={workout.id}
+                    className="activity-item"
+                    type="button"
+                    onClick={() => handleOpenWorkout(workout.id)}
+                  >
+                    <div className="activity-item-copy">
+                      <p className="activity-item-title">{workout.routineName}</p>
+                      <p className="activity-item-meta">
+                        {new Date(workout.createdAt).toLocaleDateString()} · {workout.setCount} sets
+                      </p>
+                      {workout.tags.length ? (
+                        <div className="compact-tags activity-item-tags">
+                          {workout.tags.slice(0, 3).map((tag) => (
+                            <span key={tag} className="tag-chip">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      ) : null}
+                    </div>
+                    <span className="activity-item-count">{workout.setCount}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="activity-empty">
+              <p className="activity-kicker">Sin entrenamientos recientes</p>
+              <p className="muted">
+                Aquí verás el resumen de tus últimas sesiones cuando completes entrenamientos.
+              </p>
+            </div>
+          )
         ) : (
-          <p className="muted">
-            Aquí verás el resumen de tus últimas sesiones cuando completes entrenamientos.
-          </p>
+          <div className="activity-panel">
+            <div className="activity-calendar-toolbar">
+              <div className="activity-month-nav">
+                <button
+                  className="activity-nav-button"
+                  type="button"
+                  aria-label="Mes anterior"
+                  onClick={() =>
+                    setCalendarPreviewMonth(
+                      (prev) => new Date(prev.getFullYear(), prev.getMonth() - 1, 1)
+                    )
+                  }
+                >
+                  ‹
+                </button>
+                <div className="activity-month-copy">
+                  <h3>{formatMonthLabel(calendarPreviewMonth)}</h3>
+                </div>
+                <button
+                  className="activity-nav-button"
+                  type="button"
+                  aria-label="Mes siguiente"
+                  onClick={() =>
+                    setCalendarPreviewMonth(
+                      (prev) => new Date(prev.getFullYear(), prev.getMonth() + 1, 1)
+                    )
+                  }
+                >
+                  ›
+                </button>
+              </div>
+              <button
+                className="activity-calendar-link"
+                type="button"
+                onClick={() =>
+                  navigate('/calendar', {
+                    state: {
+                      visibleMonth: formatLocalDate(calendarPreviewMonth)
+                    }
+                  })
+                }
+              >
+                Abrir calendario
+              </button>
+            </div>
+            <div className="calendar-grid activity-calendar-grid">
+              {WEEKDAYS.map((day) => (
+                <span key={day} className="calendar-weekday">
+                  {day}
+                </span>
+              ))}
+              {previewDayCells.map((date, index) => {
+                if (!date) {
+                  return <div key={`home-empty-${index}`} className="calendar-day empty" />;
+                }
+                const key = formatLocalDate(date);
+                const hasWorkout = calendarWorkoutDateKeys.includes(key);
+                const dayPlans = calendarPlansByDate[key] ?? [];
+                const hasCompletedPlan = dayPlans.some((plan) => plan.status === 'completed');
+                const hasPendingPlan = dayPlans.some((plan) => plan.status === 'pending');
+                const hasOmittedPlan = dayPlans.some((plan) => plan.status === 'omitted');
+                const isToday = key === formatLocalDate(new Date());
+                return (
+                  <button
+                    key={key}
+                    className={`calendar-day activity-calendar-day ${hasWorkout ? 'has-workout' : ''} ${
+                      hasPendingPlan ? 'has-plan-pending' : ''
+                    } ${hasCompletedPlan ? 'has-plan-completed' : ''} ${
+                      hasOmittedPlan ? 'has-plan-omitted' : ''
+                    } ${isToday ? 'today' : ''}`}
+                    type="button"
+                    onClick={() =>
+                      navigate('/calendar', {
+                        state: {
+                          selectedDate: key,
+                          visibleMonth: formatLocalDate(calendarPreviewMonth)
+                        }
+                      })
+                    }
+                  >
+                    <span>{date.getDate()}</span>
+                    <span className="calendar-markers">
+                      {hasWorkout ? <span className="calendar-dot" /> : null}
+                      {hasPendingPlan ? <span className="calendar-ring" /> : null}
+                      {hasCompletedPlan ? <span className="calendar-check">✓</span> : null}
+                      {hasOmittedPlan ? <span className="calendar-omit-dot" /> : null}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+            {upcomingPlans.length ? (
+              <div className="activity-subsection">
+                <div className="activity-toolbar">
+                  <div>
+                    <p className="activity-kicker">Próximas planificaciones</p>
+                    <p className="muted">Acceso rápido a tus próximos entrenamientos.</p>
+                  </div>
+                </div>
+                <div className="activity-list">
+                {upcomingPlans.map((plan) => (
+                  <button
+                    key={plan.id}
+                    className="activity-item"
+                    type="button"
+                    onClick={() =>
+                      navigate('/calendar', {
+                        state: {
+                          selectedDate: plan.occurrenceDate,
+                          visibleMonth: plan.occurrenceDate
+                        }
+                      })
+                    }
+                  >
+                    <div className="activity-item-copy">
+                      <p className="activity-item-title">{plan.routineName}</p>
+                      <p className="activity-item-meta">
+                        {parseLocalDate(plan.occurrenceDate).toLocaleDateString()} ·{' '}
+                        {plan.status === 'pending'
+                          ? 'Pendiente'
+                          : plan.status === 'completed'
+                            ? 'Completado'
+                            : 'Omitido'}
+                      </p>
+                    </div>
+                    <span className={`activity-status-pill ${plan.status}`}>
+                      {plan.status === 'pending'
+                        ? 'Pend.'
+                        : plan.status === 'completed'
+                          ? 'OK'
+                          : 'Omit.'}
+                    </span>
+                  </button>
+                ))}
+              </div>
+              </div>
+            ) : (
+              <div className="activity-empty">
+                <p className="activity-kicker">Sin planes próximos</p>
+                <p className="muted">Programa una rutina desde el calendario para verla aquí.</p>
+              </div>
+            )}
+          </div>
         )}
       </div>
 

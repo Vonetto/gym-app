@@ -266,9 +266,20 @@ export function RoutineDetail() {
       <div className="card">
         <div className="card-header">
           <h1>Editar rutina</h1>
-          <Link className="ghost-button" to="/">
-            Volver al inicio
-          </Link>
+          <div className="inline-actions">
+            {routineId ? (
+              <Link
+                className="ghost-button"
+                to="/calendar"
+                state={{ openPlanner: true, plannerRoutineId: routineId }}
+              >
+                Programar esta rutina
+              </Link>
+            ) : null}
+            <Link className="ghost-button" to="/">
+              Volver al inicio
+            </Link>
+          </div>
         </div>
         <div className="field">
           <label className="label" htmlFor="routine-name-edit">

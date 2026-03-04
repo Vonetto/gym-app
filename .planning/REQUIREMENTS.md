@@ -82,6 +82,12 @@
 - [x] **ADV-01**: Usuario puede marcar sets como warm‑up / drop set / fallo / AMRAP.
 - [x] **ADV-02**: UI mantiene consistencia de sets avanzados en historial y PRs.
 
+### Calendario & Planificación
+
+- [x] **CAL-01**: Usuario puede programar una rutina para una fecha futura desde el calendario.
+- [x] **CAL-02**: Usuario puede definir recurrencia simple para una rutina planificada.
+- [x] **CAL-03**: Calendario distingue claramente entrenamientos realizados y planificados, y permite abrir el detalle de ambos.
+
 ## v2 Requirements
 
 ### Cuentas & Sync
@@ -152,15 +158,18 @@
 | SET-02 | Phase 1: PWA + Ajustes Base | Complete |
 | ADV-01 | Phase 11: Sets Avanzados | Complete |
 | ADV-02 | Phase 11: Sets Avanzados | Complete |
+| CAL-01 | Phase 12: Calendario + Planificación | Complete |
+| CAL-02 | Phase 12: Calendario + Planificación | Complete |
+| CAL-03 | Phase 12: Calendario + Planificación | Complete |
 | ACC-01 | Phase 9: Auth + Sync Base | Complete |
 | ACC-02 | Phase 9: Auth + Sync Base | Complete |
 | ACC-03 | Phase 9: Auth + Sync Base | Complete |
 
 **Coverage:**
-- v1 requirements: 36 total
-- Mapped to phases: 36
+- v1 requirements: 39 total
+- Mapped to phases: 39
 - Unmapped: 0 ✅
 
 ---
 *Requirements defined: 2026-01-26*
-*Last updated: 2026-03-03 after closing Phase 11*
+*Last updated: 2026-03-04 after closing Phase 12*

@@ -166,7 +166,22 @@
 
 ---
 
+## Phase 12: Calendario + Planificación
+**Goal:** Convertir el calendario en una herramienta de planificación real con rutinas futuras, recurrencia y revisión clara por día.
+**Status:** Complete (2026-03-04)
+
+**Requirements**
+- CAL-01, CAL-02, CAL-03
+
+**Success Criteria (observable)**
+1. El usuario puede planificar una rutina para una fecha futura desde el calendario.
+2. El usuario puede crear repeticiones simples (por ejemplo semanal) sin reingresar la rutina cada vez.
+3. El calendario distingue visualmente entrenamientos realizados vs. planificados.
+4. El usuario puede tocar un día futuro y ver qué rutina está programada para ese día.
+
+---
+
 ## Coverage Check
-- Total v1 requirements: 36
-- Mapped to phases: 36
+- Total v1 requirements: 39
+- Mapped to phases: 39
 - Unmapped: 0 ✅

@@ -21,6 +21,8 @@ export interface RoutineRecord {
 export type ExerciseMetric = 'weight_reps' | 'reps' | 'time' | 'distance';
 export type ExerciseGoalMode = 'auto' | 'strength' | 'hypertrophy' | 'endurance';
 export type AdvancedSetType = 'normal' | 'warmup' | 'drop' | 'failure' | 'amrap';
+export type PlannedWorkoutSeriesKind = 'once' | 'weekly' | 'weekdays';
+export type PlannedWorkoutStatus = 'pending' | 'completed' | 'omitted';
 
 export interface ExerciseRecord {
   id: string;
@@ -143,6 +145,29 @@ export interface SyncStateRecord {
   updatedAt: string;
 }
 
+export interface PlannedWorkoutSeriesRecord {
+  id: string;
+  routineId: string;
+  kind: PlannedWorkoutSeriesKind;
+  startDate: string;
+  weekdays?: number[];
+  endDate?: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string;
+}
+
+export interface PlannedWorkoutOccurrenceRecord {
+  id: string;
+  seriesId: string;
+  occurrenceDate: string;
+  status: PlannedWorkoutStatus;
+  workoutId?: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt?: string;
+}
+
 class AppDB extends Dexie {
   settings!: Table<SettingsRecord, 'app'>;
   routines!: Table<RoutineRecord, string>;
@@ -159,6 +184,8 @@ class AppDB extends Dexie {
   workoutSets!: Table<WorkoutSetRecord, string>;
   wrkoutTips!: Table<WrkoutTipRecord, string>;
   syncState!: Table<SyncStateRecord, string>;
+  plannedWorkoutSeries!: Table<PlannedWorkoutSeriesRecord, string>;
+  plannedWorkoutOccurrences!: Table<PlannedWorkoutOccurrenceRecord, string>;
 
   constructor() {
     super('gym-tracker');
@@ -263,6 +290,26 @@ class AppDB extends Dexie {
       workoutSets: 'id, workoutExerciseId, [workoutExerciseId+order]',
       wrkoutTips: 'exerciseId, wrkoutId, lastFetchedAt',
       syncState: 'id, updatedAt, lastSyncedAt, status'
+    });
+    this.version(6).stores({
+      settings: 'id',
+      routines: 'id, order, updatedAt, deletedAt, createdAt',
+      exercises: 'id, baseName, normalizedName, updatedAt, deletedAt, *muscles, *equipment, isCustom, source',
+      exerciseTranslations: 'id, exerciseId, language, name',
+      routineExercises: 'id, routineId, exerciseId, [routineId+order]',
+      routineTags: 'id, routineId, tag, [routineId+tag]',
+      exerciseDefaults: 'id, routineId, exerciseId, [routineId+exerciseId]',
+      exerciseFavorites: 'exerciseId, createdAt, updatedAt, deletedAt',
+      exerciseRecents: 'exerciseId, lastUsedAt',
+      routineVersions: 'id, routineId, createdAt',
+      workouts: 'id, routineId, startedAt, endedAt, updatedAt, deletedAt',
+      workoutExercises: 'id, workoutId, exerciseId, [workoutId+order]',
+      workoutSets: 'id, workoutExerciseId, [workoutExerciseId+order]',
+      wrkoutTips: 'exerciseId, wrkoutId, lastFetchedAt',
+      syncState: 'id, updatedAt, lastSyncedAt, status',
+      plannedWorkoutSeries: 'id, routineId, kind, startDate, endDate, updatedAt, deletedAt',
+      plannedWorkoutOccurrences:
+        'id, seriesId, occurrenceDate, status, workoutId, updatedAt, deletedAt, [seriesId+occurrenceDate]'
     });
   }
 }
