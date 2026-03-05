@@ -1998,6 +1998,69 @@ input::placeholder {
   border: 1px solid var(--border);
 }
 
+.backup-preview-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem 0.9rem;
+  font-size: 0.9rem;
+}
+
+.backup-result {
+  margin-top: 0.5rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.backup-result summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.settings-nav-list {
+  display: grid;
+  gap: 0.7rem;
+  margin-top: 1rem;
+}
+
+.settings-nav-item {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-muted);
+  color: var(--text);
+  padding: 0.85rem 0.95rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+  text-align: left;
+}
+
+.settings-nav-item > span:first-child {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.settings-nav-item small {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.settings-nav-item > span:last-child {
+  color: var(--muted);
+  font-size: 1.1rem;
+}
+
+.settings-section-header h1 {
+  margin-bottom: 0.35rem;
+}
+
+.settings-breadcrumb {
+  margin: 0.85rem 0 0.25rem;
+}
+
 .warning {
   color: var(--danger);
   font-weight: 600;
@@ -2050,6 +2113,10 @@ button:disabled {
   .notification-option-row .ghost-button,
   .notification-option-row .toggle {
     width: 100%;
+  }
+
+  .backup-preview-grid {
+    grid-template-columns: 1fr;
   }
 
   .account-grid {

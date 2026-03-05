@@ -10,6 +10,7 @@ function detectTimezone() {
 
 export const defaultSettings: SettingsRecord = {
   id: 'app',
+  settingsUpdatedAt: '1970-01-01T00:00:00.000Z',
   theme: 'dark',
   language: 'es',
   units: 'kg',
@@ -29,12 +30,17 @@ export const defaultSettings: SettingsRecord = {
 export async function loadSettings(): Promise<SettingsRecord> {
   const stored = await db.settings.get('app');
   if (stored) {
+    const legacySettingsTs = stored.settingsUpdatedAt ?? stored.notificationSettingsUpdatedAt;
     const next = {
       ...defaultSettings,
       ...stored,
+      settingsUpdatedAt: legacySettingsTs ?? defaultSettings.settingsUpdatedAt,
       notificationTimezone: stored.notificationTimezone ?? detectTimezone()
     };
-    if (next.notificationTimezone !== stored.notificationTimezone) {
+    if (
+      next.notificationTimezone !== stored.notificationTimezone ||
+      next.settingsUpdatedAt !== stored.settingsUpdatedAt
+    ) {
       await db.settings.put(next);
     }
     return next;
@@ -45,7 +51,12 @@ export async function loadSettings(): Promise<SettingsRecord> {
 }
 
 export async function saveSettings(settings: SettingsRecord) {
-  await db.settings.put(settings);
+  const now = new Date().toISOString();
+  const next: SettingsRecord = {
+    ...settings,
+    settingsUpdatedAt: now
+  };
+  await db.settings.put(next);
   if (typeof window !== 'undefined') {
     window.dispatchEvent(new Event(SETTINGS_CHANGE_EVENT));
   }

@@ -68,20 +68,24 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const updateTheme = async (theme: Theme) => {
-    const next = { ...settings, theme };
+    const next = { ...settings, theme, settingsUpdatedAt: new Date().toISOString() };
     setSettings(next);
     setTheme(theme);
     await saveSettings(next);
   };
 
   const updateStatsRange = async (days: 7 | 30 | 180 | 365) => {
-    const next = { ...settings, statsRangeDays: days };
+    const next = {
+      ...settings,
+      statsRangeDays: days,
+      settingsUpdatedAt: new Date().toISOString()
+    };
     setSettings(next);
     await saveSettings(next);
   };
 
   const updateWrkoutApiKey = async (apiKey: string) => {
-    const next = { ...settings, wrkoutApiKey: apiKey };
+    const next = { ...settings, wrkoutApiKey: apiKey, settingsUpdatedAt: new Date().toISOString() };
     setSettings(next);
     await saveSettings(next);
   };
@@ -103,6 +107,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     const next = {
       ...settings,
       ...patch,
+      settingsUpdatedAt: new Date().toISOString(),
       notificationSettingsUpdatedAt: new Date().toISOString()
     };
     setSettings(next);

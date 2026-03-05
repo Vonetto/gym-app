@@ -2,6 +2,7 @@ import Dexie, { Table } from 'dexie';
 
 export interface SettingsRecord {
   id: 'app';
+  settingsUpdatedAt?: string;
   theme: 'dark' | 'light';
   language: 'es';
   units: 'kg';
@@ -154,6 +155,14 @@ export interface SyncStateRecord {
   updatedAt: string;
 }
 
+export interface BackupSnapshotRecord {
+  id: string;
+  kind: 'pre-import';
+  createdAt: string;
+  schemaVersion: number;
+  payload: string;
+}
+
 export interface PlannedWorkoutSeriesRecord {
   id: string;
   routineId: string;
@@ -193,6 +202,7 @@ class AppDB extends Dexie {
   workoutSets!: Table<WorkoutSetRecord, string>;
   wrkoutTips!: Table<WrkoutTipRecord, string>;
   syncState!: Table<SyncStateRecord, string>;
+  backupSnapshots!: Table<BackupSnapshotRecord, string>;
   plannedWorkoutSeries!: Table<PlannedWorkoutSeriesRecord, string>;
   plannedWorkoutOccurrences!: Table<PlannedWorkoutOccurrenceRecord, string>;
 
@@ -316,6 +326,27 @@ class AppDB extends Dexie {
       workoutSets: 'id, workoutExerciseId, [workoutExerciseId+order]',
       wrkoutTips: 'exerciseId, wrkoutId, lastFetchedAt',
       syncState: 'id, updatedAt, lastSyncedAt, status',
+      plannedWorkoutSeries: 'id, routineId, kind, startDate, endDate, updatedAt, deletedAt',
+      plannedWorkoutOccurrences:
+        'id, seriesId, occurrenceDate, status, workoutId, updatedAt, deletedAt, [seriesId+occurrenceDate]'
+    });
+    this.version(7).stores({
+      settings: 'id',
+      routines: 'id, order, updatedAt, deletedAt, createdAt',
+      exercises: 'id, baseName, normalizedName, updatedAt, deletedAt, *muscles, *equipment, isCustom, source',
+      exerciseTranslations: 'id, exerciseId, language, name',
+      routineExercises: 'id, routineId, exerciseId, [routineId+order]',
+      routineTags: 'id, routineId, tag, [routineId+tag]',
+      exerciseDefaults: 'id, routineId, exerciseId, [routineId+exerciseId]',
+      exerciseFavorites: 'exerciseId, createdAt, updatedAt, deletedAt',
+      exerciseRecents: 'exerciseId, lastUsedAt',
+      routineVersions: 'id, routineId, createdAt',
+      workouts: 'id, routineId, startedAt, endedAt, updatedAt, deletedAt',
+      workoutExercises: 'id, workoutId, exerciseId, [workoutId+order]',
+      workoutSets: 'id, workoutExerciseId, [workoutExerciseId+order]',
+      wrkoutTips: 'exerciseId, wrkoutId, lastFetchedAt',
+      syncState: 'id, updatedAt, lastSyncedAt, status',
+      backupSnapshots: 'id, kind, createdAt',
       plannedWorkoutSeries: 'id, routineId, kind, startDate, endDate, updatedAt, deletedAt',
       plannedWorkoutOccurrences:
         'id, seriesId, occurrenceDate, status, workoutId, updatedAt, deletedAt, [seriesId+occurrenceDate]'
