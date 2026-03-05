@@ -1,10 +1,10 @@
 # Project State: Gym Tracker PWA (Hevy-inspired)
 
-**Date:** 2026-03-04
-**Status:** Phase 13 en ejecución.
+**Date:** 2026-03-05
+**Status:** Phase 13 cerrada; Phase 14 en preparación.
 
 ## Current Phase
-- Phase 13: Recordatorios + Notificaciones (Execute in progress)
+- Phase 14: Import/Export Total + Recovery (Discuss pending)
 
 ## Progress Summary
 - Phase 1 completed: PWA shell, offline indicator, theme toggle, reset flow, local persistence.
@@ -29,6 +29,8 @@
 - Phase 13 planificada: la ejecución se divide en settings/capabilities, base service-worker, UX local para descanso/sesión activa, sync cloud de agenda y preferencias, schema/subscriptions en Supabase, flujo cliente de `PushSubscription` y scheduler backend para recordatorios de rutinas planificadas.
 - Phase 13 bloque cliente implementado: `Ajustes` ya expone toggles globales y por tipo, hora/offset global, delay de `¿Sigues entrenando?`, estado de soporte/permisos y flujo explícito de permiso/suscripción push; `rest finished` y background-session reminders ya usan `showNotification()` y el `service worker`.
 - Phase 13 bloque cloud desplegado: sync ya incluye agenda futura + preferencias de notificación; Supabase tiene tablas de schedule/preferences/push subscriptions/delivery log, `planned-reminders` está desplegada, el cron quedó configurado y la function respondió `200` en `dryRun`.
+- Phase 13 completada: validación manual del usuario reportada OK, cierre formal con `13-SUMMARY.md` y hardening UX móvil (refresh PWA, modal de reloj estilo Hevy, sync inmediato de preferencias de notificación).
+- Phase 14 abierta: siguiente foco definido en backup/restore total versionado y UX de recuperación (`fusionar` vs `reemplazar`) con validaciones robustas.
 
 ## Risks & Notes
 - La evidencia sigue siendo mucho mas fuerte para `weight_reps` que para `time`/`distance`; esos dos dominios deben seguir tratandose como reglas conservadoras de producto y no como precision cientifica.

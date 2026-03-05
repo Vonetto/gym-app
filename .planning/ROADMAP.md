@@ -183,7 +183,7 @@
 
 ## Phase 13: Recordatorios + Notificaciones
 **Goal:** Añadir recordatorios útiles sobre rutinas planificadas y timers relevantes sin romper el modo local-first ni la UX móvil.
-**Status:** Planned (2026-03-04)
+**Status:** Complete (2026-03-05)
 
 **Requirements**
 - NTF-01, NTF-02, NTF-03, NTF-04, NTF-05
@@ -193,6 +193,21 @@
 2. La app muestra avisos claros cuando corresponde entrenar o volver del descanso.
 3. Los recordatorios no generan ruido excesivo ni falsos positivos.
 4. La base queda lista para notificaciones más robustas en iOS más adelante.
+
+---
+
+## Phase 14: Import/Export Total + Recovery
+**Goal:** Consolidar un backup/restauración completo, versionado y confiable para toda la app.
+**Status:** Planned (2026-03-05)
+
+**Requirements**
+- IO-01, IO-02, IO-03
+
+**Success Criteria (observable)**
+1. El usuario puede exportar un backup total con rutinas, ejercicios, historial, planificación y ajustes.
+2. El usuario puede importar ese backup con validación de esquema y versión.
+3. El usuario puede elegir modo de restauración (`fusionar` o `reemplazar`) con resultado predecible.
+4. La importación inválida falla con mensajes claros sin corromper datos existentes.
 
 ---
 

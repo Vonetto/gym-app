@@ -90,11 +90,11 @@
 
 ### Notificaciones & Recordatorios
 
-- [ ] **NTF-01**: Usuario puede activar/desactivar notificaciones globalmente y por tipo desde Ajustes.
-- [ ] **NTF-02**: App puede recordar rutinas planificadas usando una hora global configurable y un offset opcional.
-- [ ] **NTF-03**: App avisa cuando termina un descanso con foreground UX fuerte y notificación del sistema cuando sea viable.
-- [ ] **NTF-04**: App avisa cuando existe una sesión activa en background tras un umbral configurable.
-- [ ] **NTF-05**: Ajustes muestra estado de permiso/soporte y explica cómo habilitar notificaciones en PWA/iPhone.
+- [x] **NTF-01**: Usuario puede activar/desactivar notificaciones globalmente y por tipo desde Ajustes.
+- [x] **NTF-02**: App puede recordar rutinas planificadas usando una hora global configurable y un offset opcional.
+- [x] **NTF-03**: App avisa cuando termina un descanso con foreground UX fuerte y notificación del sistema cuando sea viable.
+- [x] **NTF-04**: App avisa cuando existe una sesión activa en background tras un umbral configurable.
+- [x] **NTF-05**: Ajustes muestra estado de permiso/soporte y explica cómo habilitar notificaciones en PWA/iPhone.
 
 ## v2 Requirements
 
@@ -159,9 +159,9 @@
 | ANA-03 | Phase 5: Historial + PRs + Analíticas | Pending |
 | PRG-01 | Phase 10: Progresion de Carga | Complete |
 | PRG-02 | Phase 10: Progresion de Carga | Complete |
-| IO-01 | Phase 7: Import/Export | Pending |
-| IO-02 | Phase 7: Import/Export | Pending |
-| IO-03 | Phase 7: Import/Export | Pending |
+| IO-01 | Phase 14: Import/Export Total + Recovery | Pending |
+| IO-02 | Phase 14: Import/Export Total + Recovery | Pending |
+| IO-03 | Phase 14: Import/Export Total + Recovery | Pending |
 | SET-01 | Phase 1: PWA + Ajustes Base | Complete |
 | SET-02 | Phase 1: PWA + Ajustes Base | Complete |
 | ADV-01 | Phase 11: Sets Avanzados | Complete |
@@ -169,11 +169,11 @@
 | CAL-01 | Phase 12: Calendario + Planificación | Complete |
 | CAL-02 | Phase 12: Calendario + Planificación | Complete |
 | CAL-03 | Phase 12: Calendario + Planificación | Complete |
-| NTF-01 | Phase 13: Recordatorios + Notificaciones | Pending |
-| NTF-02 | Phase 13: Recordatorios + Notificaciones | Pending |
-| NTF-03 | Phase 13: Recordatorios + Notificaciones | Pending |
-| NTF-04 | Phase 13: Recordatorios + Notificaciones | Pending |
-| NTF-05 | Phase 13: Recordatorios + Notificaciones | Pending |
+| NTF-01 | Phase 13: Recordatorios + Notificaciones | Complete |
+| NTF-02 | Phase 13: Recordatorios + Notificaciones | Complete |
+| NTF-03 | Phase 13: Recordatorios + Notificaciones | Complete |
+| NTF-04 | Phase 13: Recordatorios + Notificaciones | Complete |
+| NTF-05 | Phase 13: Recordatorios + Notificaciones | Complete |
 | ACC-01 | Phase 9: Auth + Sync Base | Complete |
 | ACC-02 | Phase 9: Auth + Sync Base | Complete |
 | ACC-03 | Phase 9: Auth + Sync Base | Complete |
@@ -185,4 +185,4 @@
 
 ---
 *Requirements defined: 2026-01-26*
-*Last updated: 2026-03-04 after research for Phase 13*
+*Last updated: 2026-03-05 after closing Phase 13 and opening Phase 14*
