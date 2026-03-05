@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSettings } from '../data/SettingsProvider';
 import { useAuth } from '../data/AuthProvider';
+import { useSync } from '../data/SyncProvider';
 import { exportRoutineBackup, importRoutineBackup } from '../data/routineBackup';
 import { listRoutines } from '../data/routines';
 import {
@@ -23,6 +24,7 @@ export function Settings() {
     resetAllData
   } = useSettings();
   const { user, status } = useAuth();
+  const { syncNow, isOnline } = useSync();
   const [confirmingReset, setConfirmingReset] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [importing, setImporting] = useState(false);
@@ -119,6 +121,18 @@ export function Settings() {
     }
   };
 
+  const syncNotificationPreferencesNow = async () => {
+    if (!user || status !== 'authenticated' || !isOnline) return;
+    await syncNow('merge');
+  };
+
+  const updateNotificationSettingsAndSync = async (
+    patch: Parameters<typeof updateNotificationSettings>[0]
+  ) => {
+    await updateNotificationSettings(patch);
+    await syncNotificationPreferencesNow();
+  };
+
   const waitForControllerChange = (timeoutMs = 1500) =>
     new Promise<void>((resolve) => {
       if (!('serviceWorker' in navigator)) {
@@ -188,7 +202,7 @@ export function Settings() {
 
   const handleGlobalNotificationsToggle = async () => {
     if (settings.notificationsEnabled) {
-      await updateNotificationSettings({
+      await updateNotificationSettingsAndSync({
         notificationsEnabled: false,
         plannedWorkoutNotificationsEnabled: false,
         restFinishedNotificationsEnabled: false,
@@ -214,7 +228,7 @@ export function Settings() {
     }
 
     if (permission !== 'granted') {
-      await updateNotificationSettings({
+      await updateNotificationSettingsAndSync({
         notificationsEnabled: false,
         plannedWorkoutNotificationsEnabled: false,
         restFinishedNotificationsEnabled: false,
@@ -223,7 +237,7 @@ export function Settings() {
       return;
     }
 
-    await updateNotificationSettings({
+    await updateNotificationSettingsAndSync({
       notificationsEnabled: true,
       plannedWorkoutNotificationsEnabled: true,
       restFinishedNotificationsEnabled: true,
@@ -254,7 +268,7 @@ export function Settings() {
       | 'restFinishedNotificationsEnabled'
       | 'backgroundSessionNotificationsEnabled'
   ) => {
-    await updateNotificationSettings({
+    await updateNotificationSettingsAndSync({
       [key]: !settings[key]
     });
   };
@@ -472,6 +486,10 @@ export function Settings() {
                   </button>
                 </div>
               </div>
+              <p className="muted">
+                En iPhone, los avisos push confiables en segundo plano aplican a rutinas planificadas.
+                Descanso y “¿Sigues entrenando?” dependen del estado activo de la app.
+              </p>
             </div>
 
             {settings.plannedWorkoutNotificationsEnabled ? (
@@ -484,7 +502,9 @@ export function Settings() {
                       type="time"
                       value={settings.plannedReminderTime ?? '19:00'}
                       onChange={(event) =>
-                        updateNotificationSettings({ plannedReminderTime: event.target.value })
+                        void updateNotificationSettingsAndSync({
+                          plannedReminderTime: event.target.value
+                        })
                       }
                     />
                   </label>
@@ -493,7 +513,7 @@ export function Settings() {
                     <select
                       value={settings.plannedReminderOffsetMinutes ?? 0}
                       onChange={(event) =>
-                        updateNotificationSettings({
+                        void updateNotificationSettingsAndSync({
                           plannedReminderOffsetMinutes: Number(event.target.value)
                         })
                       }
@@ -517,7 +537,7 @@ export function Settings() {
                   <select
                     value={settings.backgroundSessionReminderDelayMinutes ?? 10}
                     onChange={(event) =>
-                      updateNotificationSettings({
+                      void updateNotificationSettingsAndSync({
                         backgroundSessionReminderDelayMinutes: Number(event.target.value)
                       })
                     }
