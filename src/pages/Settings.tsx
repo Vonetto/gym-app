@@ -36,6 +36,8 @@ export function Settings() {
   const [requestingPermission, setRequestingPermission] = useState(false);
   const [pushSubscribed, setPushSubscribed] = useState(false);
   const [pushBusy, setPushBusy] = useState(false);
+  const [pwaRefreshing, setPwaRefreshing] = useState(false);
+  const [pwaStatusMessage, setPwaStatusMessage] = useState<string | null>(null);
   const navigate = useNavigate();
   const statsRangeDays = settings.statsRangeDays ?? 30;
   const notificationStatus = getNotificationStatusLabel(notificationCapability);
@@ -114,6 +116,73 @@ export function Settings() {
       }
     } finally {
       setPushBusy(false);
+    }
+  };
+
+  const waitForControllerChange = (timeoutMs = 1500) =>
+    new Promise<void>((resolve) => {
+      if (!('serviceWorker' in navigator)) {
+        resolve();
+        return;
+      }
+
+      let resolved = false;
+      const finish = () => {
+        if (resolved) return;
+        resolved = true;
+        navigator.serviceWorker.removeEventListener('controllerchange', onChange);
+        resolve();
+      };
+      const onChange = () => finish();
+      navigator.serviceWorker.addEventListener('controllerchange', onChange);
+      window.setTimeout(finish, timeoutMs);
+    });
+
+  const handleRefreshPwa = async () => {
+    if (typeof window === 'undefined') return;
+    if (!('serviceWorker' in navigator)) {
+      setPwaStatusMessage('Este navegador no soporta PWA.');
+      return;
+    }
+
+    setPwaRefreshing(true);
+    setPwaStatusMessage('Buscando actualizaciones...');
+    try {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(registrations.map((registration) => registration.update()));
+
+      let waitingFound = false;
+      registrations.forEach((registration) => {
+        if (registration.waiting) {
+          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+          waitingFound = true;
+        }
+      });
+
+      let clearedCaches = 0;
+      if ('caches' in window) {
+        const cacheKeys = await caches.keys();
+        await Promise.all(
+          cacheKeys.map(async (key) => {
+            const deleted = await caches.delete(key);
+            if (deleted) clearedCaches += 1;
+          })
+        );
+      }
+
+      if (waitingFound) {
+        await waitForControllerChange();
+      }
+
+      setPwaStatusMessage(
+        `App actualizada. Caché limpiada (${clearedCaches}). Recargando...`
+      );
+      const nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.set('refresh', Date.now().toString());
+      window.location.replace(nextUrl.toString());
+    } catch {
+      setPwaStatusMessage('No se pudo actualizar la app. Intenta nuevamente.');
+      setPwaRefreshing(false);
     }
   };
 
@@ -264,6 +333,27 @@ export function Settings() {
               </button>
             ))}
           </div>
+        </div>
+      </div>
+
+      <div className="card">
+        <h2>App (PWA)</h2>
+        <p className="muted">
+          Si ves una versión anterior, fuerza actualización y limpieza de caché.
+        </p>
+        <div className="actions-stack">
+          <button
+            className="ghost-button"
+            type="button"
+            onClick={handleRefreshPwa}
+            disabled={pwaRefreshing}
+          >
+            {pwaRefreshing ? 'Actualizando...' : 'Actualizar app y limpiar caché'}
+          </button>
+          <p className="muted">
+            Esto no borra rutinas ni entrenamientos: solo refresca archivos de la app.
+          </p>
+          {pwaStatusMessage ? <p className="muted">{pwaStatusMessage}</p> : null}
         </div>
       </div>
 

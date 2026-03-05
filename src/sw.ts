@@ -1,4 +1,5 @@
 /// <reference lib="webworker" />
+import { clientsClaim } from 'workbox-core';
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
 import { registerRoute, setCatchHandler } from 'workbox-routing';
 import { NetworkFirst, StaleWhileRevalidate } from 'workbox-strategies';
@@ -6,6 +7,14 @@ import { NetworkFirst, StaleWhileRevalidate } from 'workbox-strategies';
 declare let self: ServiceWorkerGlobalScope;
 
 precacheAndRoute(self.__WB_MANIFEST);
+clientsClaim();
+
+self.addEventListener('message', (event) => {
+  const data = event.data as { type?: string } | undefined;
+  if (data?.type === 'SKIP_WAITING') {
+    void self.skipWaiting();
+  }
+});
 
 const navigationHandler = createHandlerBoundToURL('/index.html');
 
