@@ -1,10 +1,10 @@
 # Project State: Gym Tracker PWA (Hevy-inspired)
 
 **Date:** 2026-03-05
-**Status:** Phase 13 cerrada; Phase 14 en curso (plan completado).
+**Status:** Phase 14 cerrada; lista para abrir la siguiente fase.
 
 ## Current Phase
-- Phase 14: Import/Export Total + Recovery (Execute pending)
+- Sin fase activa (pendiente discutir/planificar la siguiente)
 
 ## Progress Summary
 - Phase 1 completed: PWA shell, offline indicator, theme toggle, reset flow, local persistence.
@@ -34,12 +34,12 @@
 - Phase 14 discutida: alcance y UX acordados (separar rutina individual vs backup total, modos `fusionar/reemplazar`, `schemaVersion` obligatorio, import atómico con preview, confirmación fuerte `REEMPLAZAR` y auto-backup previo).
 - Phase 14 investigada: se definió arquitectura para backup total versionado, validación por etapas, import atómico Dexie y estrategia de conflictos LWW+tombstones alineada con sync.
 - Phase 14 planificada: se definieron bloques ejecutables para schema/migraciones de backup total, exporter, validación+preview, auto-backup previo, modos `fusionar/reemplazar` y UX final en `Ajustes > Datos`.
+- Phase 14 completada: backup total versionado ya operativo con validación robusta, preview de import, auto-backup previo, modos `fusionar/reemplazar` y cierre formal en `14-SUMMARY.md`.
 
 ## Risks & Notes
 - La evidencia sigue siendo mucho mas fuerte para `weight_reps` que para `time`/`distance`; esos dos dominios deben seguir tratandose como reglas conservadoras de producto y no como precision cientifica.
 - El roadmap legacy de fases 4-7 sigue parcialmente desalineado con lo ya implementado; conviene normalizarlo al abrir la proxima fase.
 - Sets avanzados ya tienen semantica analitica fija; el riesgo restante esta en no romper layout movil al introducir badges/menus en la primera columna del set.
-- La planificación futura local ya está cerrada para V1; el siguiente paso lógico es conectar recordatorios/notificaciones sobre ocurrencias planificadas.
-- Lo pendiente de mayor impacto ya no es el modelo base, sino el pulido fino: más UX alrededor de ocurrencias completadas/omitidas, posibles atajos desde otras pantallas y eventual preparación de sync para agenda futura.
-- La investigación de Phase 13 deja una dependencia explícita: para recordatorios robustos de rutinas planificadas hay que sincronizar agenda futura a cloud; no basta con el modelo local actual.
+- El siguiente bloque de trabajo debería priorizar consolidación de `REQUIREMENTS.md` legacy (aún hay filas históricas en `Pending` pese a features ya entregadas).
+- El import total quedó con buena cobertura funcional, pero aún sin tests automáticos de regresión para archivos corruptos/edge-cases de merge LWW.
 - La validación local del Edge Function queda limitada porque `supabase functions serve` requiere Docker Desktop; el frontend sí sigue compilando con `npm run build`.

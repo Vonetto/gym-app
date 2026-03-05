@@ -159,9 +159,9 @@
 | ANA-03 | Phase 5: Historial + PRs + Analíticas | Pending |
 | PRG-01 | Phase 10: Progresion de Carga | Complete |
 | PRG-02 | Phase 10: Progresion de Carga | Complete |
-| IO-01 | Phase 14: Import/Export Total + Recovery | Pending |
-| IO-02 | Phase 14: Import/Export Total + Recovery | Pending |
-| IO-03 | Phase 14: Import/Export Total + Recovery | Pending |
+| IO-01 | Phase 14: Import/Export Total + Recovery | Complete |
+| IO-02 | Phase 14: Import/Export Total + Recovery | Complete |
+| IO-03 | Phase 14: Import/Export Total + Recovery | Complete |
 | SET-01 | Phase 1: PWA + Ajustes Base | Complete |
 | SET-02 | Phase 1: PWA + Ajustes Base | Complete |
 | ADV-01 | Phase 11: Sets Avanzados | Complete |
@@ -185,4 +185,4 @@
 
 ---
 *Requirements defined: 2026-01-26*
-*Last updated: 2026-03-05 after closing Phase 13 and opening Phase 14*
+*Last updated: 2026-03-05 after closing Phase 14*
