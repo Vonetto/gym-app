@@ -1,10 +1,10 @@
 # Project State: Gym Tracker PWA (Hevy-inspired)
 
 **Date:** 2026-03-05
-**Status:** Phase 13 cerrada; Phase 14 en preparación.
+**Status:** Phase 13 cerrada; Phase 14 en curso (research completado).
 
 ## Current Phase
-- Phase 14: Import/Export Total + Recovery (Discuss pending)
+- Phase 14: Import/Export Total + Recovery (Plan pending)
 
 ## Progress Summary
 - Phase 1 completed: PWA shell, offline indicator, theme toggle, reset flow, local persistence.
@@ -31,6 +31,8 @@
 - Phase 13 bloque cloud desplegado: sync ya incluye agenda futura + preferencias de notificación; Supabase tiene tablas de schedule/preferences/push subscriptions/delivery log, `planned-reminders` está desplegada, el cron quedó configurado y la function respondió `200` en `dryRun`.
 - Phase 13 completada: validación manual del usuario reportada OK, cierre formal con `13-SUMMARY.md` y hardening UX móvil (refresh PWA, modal de reloj estilo Hevy, sync inmediato de preferencias de notificación).
 - Phase 14 abierta: siguiente foco definido en backup/restore total versionado y UX de recuperación (`fusionar` vs `reemplazar`) con validaciones robustas.
+- Phase 14 discutida: alcance y UX acordados (separar rutina individual vs backup total, modos `fusionar/reemplazar`, `schemaVersion` obligatorio, import atómico con preview, confirmación fuerte `REEMPLAZAR` y auto-backup previo).
+- Phase 14 investigada: se definió arquitectura para backup total versionado, validación por etapas, import atómico Dexie y estrategia de conflictos LWW+tombstones alineada con sync.
 
 ## Risks & Notes
 - La evidencia sigue siendo mucho mas fuerte para `weight_reps` que para `time`/`distance`; esos dos dominios deben seguir tratandose como reglas conservadoras de producto y no como precision cientifica.
