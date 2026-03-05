@@ -49,6 +49,7 @@
 
 ## Phase 4: Logging de Sesión + UX Hevy-like
 **Goal:** Flujo de sesión rápido con sets editables y controles principales.
+**Status:** Consolidated (scope delivered across Phases 2, 10, 11, 13)
 
 **Requirements**
 - LOG-01, LOG-02, LOG-03, LOG-04, LOG-05, LOG-06
@@ -65,6 +66,7 @@
 
 ## Phase 5: Timers + Progresión
 **Goal:** Descansos configurables y sugerencias de progresión por set.
+**Status:** Consolidated (timers in Phase 13; progression in Phase 10)
 
 **Requirements**
 - TMR-01, TMR-02
@@ -80,6 +82,7 @@
 
 ## Phase 6: Historial + PRs + Analíticas
 **Goal:** Insight de progreso con historial y gráficos claros.
+**Status:** Consolidated (scope delivered across Phases 2 and 3)
 
 **Requirements**
 - ANA-01, ANA-02, ANA-03
@@ -93,6 +96,7 @@
 
 ## Phase 7: Import/Export
 **Goal:** Portabilidad total y restauración confiable de datos sin perder compatibilidad.
+**Status:** Consolidated (routine export/import in Phase 2, full backup in Phase 14)
 
 **Requirements**
 - IO-01, IO-02, IO-03
@@ -208,6 +212,21 @@
 2. El usuario puede importar ese backup con validación de esquema y versión.
 3. El usuario puede elegir modo de restauración (`fusionar` o `reemplazar`) con resultado predecible.
 4. La importación inválida falla con mensajes claros sin corromper datos existentes.
+
+---
+
+## Phase 15: Consolidación V1 (Hardening + Cierre)
+**Goal:** Cerrar V1 con calidad verificable: hardening técnico, normalización de docs/requirements y pulido UX final acotado.
+**Status:** Complete (2026-03-05)
+
+**Requirements**
+- (to be mapped in plan)
+
+**Success Criteria (observable)**
+1. No quedan bugs críticos ni altos abiertos para V1.
+2. `npm run build` y suite de tests definida para core (Sync/Notificaciones/Workout) pasan en local.
+3. Roadmap/State/Requirements quedan alineados con lo realmente implementado (sin `Pending` falsos en alcance V1).
+4. Existe evidencia de cierre con `15-SUMMARY.md`, checklist QA y pendientes explícitos.
 
 ---
 

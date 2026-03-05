@@ -7,24 +7,24 @@
 
 ### PWA & Offline
 
-- [ ] **PWA-01**: App funciona offline-first y guarda datos localmente de forma persistente.
-- [ ] **PWA-02**: App puede instalarse como PWA (home screen) con manifest e ícono.
-- [ ] **PWA-03**: App muestra estado offline/online de manera no invasiva.
+- [x] **PWA-01**: App funciona offline-first y guarda datos localmente de forma persistente.
+- [x] **PWA-02**: App puede instalarse como PWA (home screen) con manifest e ícono.
+- [x] **PWA-03**: App muestra estado offline/online de manera no invasiva.
 
 ### Rutinas & Entrenos
 
-- [ ] **RTN-01**: Usuario puede crear, editar, duplicar y eliminar rutinas ilimitadas.
-- [ ] **RTN-02**: Usuario puede reordenar rutinas con drag/press.
-- [ ] **RTN-03**: Usuario puede iniciar un entrenamiento vacío.
-- [ ] **RTN-04**: Usuario puede iniciar una rutina y convertirla en sesión activa.
-- [ ] **RTN-05**: Usuario puede guardar un entrenamiento como nueva rutina.
+- [x] **RTN-01**: Usuario puede crear, editar, duplicar y eliminar rutinas ilimitadas.
+- [x] **RTN-02**: Usuario puede reordenar rutinas con drag/press.
+- [x] **RTN-03**: Usuario puede iniciar un entrenamiento vacío.
+- [x] **RTN-04**: Usuario puede iniciar una rutina y convertirla en sesión activa.
+- [x] **RTN-05**: Usuario puede decidir si aplica cambios del entreno en vivo a la rutina base o los mantiene solo en la sesión.
 
 ### Ejercicios & Catálogo
 
-- [ ] **EXE-01**: Usuario puede buscar ejercicios por nombre en el catálogo.
-- [ ] **EXE-02**: Usuario puede crear ejercicios personalizados con nombre, músculos, equipamiento y tipo de métrica.
-- [ ] **EXE-03**: Usuario puede editar ejercicios personalizados.
-- [ ] **EXE-04**: Sistema previene duplicados evidentes en ejercicios personalizados (normalización básica).
+- [x] **EXE-01**: Usuario puede buscar ejercicios por nombre en el catálogo.
+- [x] **EXE-02**: Usuario puede crear ejercicios personalizados con nombre, músculos, equipamiento y tipo de métrica.
+- [x] **EXE-03**: Usuario puede editar ejercicios personalizados.
+- [x] **EXE-04**: Sistema previene duplicados evidentes en ejercicios personalizados (normalización básica).
 
 ### Directorio de Ejercicios
 
@@ -34,32 +34,32 @@
 
 ### Logging de Sets
 
-- [ ] **LOG-01**: Usuario puede registrar sets con métricas mixtas (peso+reps, reps, tiempo, distancia).
-- [ ] **LOG-02**: UI permite editar métricas inline durante la sesión según el tipo de ejercicio.
-- [ ] **LOG-03**: Usuario puede marcar set como completado con check.
-- [ ] **LOG-04**: UI muestra columna “Anterior” para referencia del último entrenamiento.
-- [ ] **LOG-05**: Usuario puede agregar notas por ejercicio.
-- [ ] **LOG-06**: Usuario puede agregar/eliminar ejercicios durante una sesión activa.
+- [x] **LOG-01**: Usuario puede registrar sets con métricas mixtas (peso+reps, reps, tiempo, distancia).
+- [x] **LOG-02**: UI permite editar métricas inline durante la sesión según el tipo de ejercicio.
+- [x] **LOG-03**: Usuario puede marcar set como completado con check.
+- [x] **LOG-04**: UI muestra columna “Anterior” para referencia del último entrenamiento.
+- [x] **LOG-05**: Usuario puede agregar notas por ejercicio.
+- [x] **LOG-06**: Usuario puede agregar/eliminar ejercicios durante una sesión activa.
 
 ### UX Parity (Hevy-like)
 
-- [ ] **UX-01**: Pantalla de rutinas incluye CTA “Empezar Entrenamiento Vacío”.
-- [ ] **UX-02**: Pantalla de sesión muestra métricas (duración, volumen, series, músculos) y botón “Terminar”.
-- [ ] **UX-03**: Tabla de sets con columnas compactas de SERIE / ANTERIOR / métricas / SUG. / ✓ según el tipo de ejercicio.
-- [ ] **UX-04**: CTA “+ Agregar Serie” visible arriba y abajo por ejercicio.
-- [ ] **UX-05**: CTA principal “+ Agregar Ejercicio” en sesión.
-- [ ] **UX-06**: Acciones de sesión: “Configuración” y “Descartar Entreno”.
+- [x] **UX-01**: Pantalla de rutinas incluye CTA “Empezar Entrenamiento Vacío”.
+- [x] **UX-02**: Pantalla de sesión muestra métricas (duración, volumen, series, músculos) y botón “Terminar”.
+- [x] **UX-03**: Tabla de sets con columnas compactas de SERIE / ANTERIOR / métricas / SUG. / ✓ según el tipo de ejercicio.
+- [x] **UX-04**: CTA “+ Agregar Serie” visible por ejercicio.
+- [x] **UX-05**: CTA principal “+ Agregar Ejercicio” en sesión.
+- [x] **UX-06**: Acciones de sesión incluyen descarte seguro y controles principales vía CTA/header/menú contextual.
 
 ### Timers
 
-- [ ] **TMR-01**: Usuario puede definir descanso por ejercicio (en sesión).
-- [ ] **TMR-02**: Timer persiste en background (cuando PWA está minimizada).
+- [x] **TMR-01**: Usuario puede definir descanso por ejercicio (en sesión).
+- [x] **TMR-02**: Timer persiste en background (cuando PWA está minimizada).
 
 ### PRs & Analytics
 
-- [ ] **ANA-01**: Usuario puede ver historial de entrenamientos por fecha.
-- [ ] **ANA-02**: Usuario puede ver gráficos de volumen (por semana/mes).
-- [ ] **ANA-03**: Usuario puede ver PRs por ejercicio (peso, reps, tiempo o distancia según métrica).
+- [x] **ANA-01**: Usuario puede ver historial de entrenamientos por fecha.
+- [x] **ANA-02**: Usuario puede ver gráficos de volumen (por semana/mes).
+- [x] **ANA-03**: Usuario puede ver PRs por ejercicio (peso, reps, tiempo o distancia según métrica).
 
 ### Progresión
 
@@ -68,14 +68,14 @@
 
 ### Import/Export
 
-- [ ] **IO-01**: Usuario puede exportar todos sus datos a JSON (rutinas, ejercicios, historial, PRs, settings).
-- [ ] **IO-02**: Usuario puede importar JSON y restaurar datos completos.
-- [ ] **IO-03**: Esquema de import/export es versionado y validado.
+- [x] **IO-01**: Usuario puede exportar todos sus datos a JSON (rutinas, ejercicios, historial, PRs, settings).
+- [x] **IO-02**: Usuario puede importar JSON y restaurar datos completos.
+- [x] **IO-03**: Esquema de import/export es versionado y validado.
 
 ### Ajustes
 
-- [ ] **SET-01**: App tiene configuración básica (idioma español, unidades kg/m, tema oscuro).
-- [ ] **SET-02**: Usuario puede resetear datos locales desde configuración.
+- [x] **SET-01**: App tiene configuración básica (idioma español, unidades kg/m, tema oscuro).
+- [x] **SET-02**: Usuario puede resetear datos locales desde configuración.
 
 ### Sets avanzados (baja prioridad en V1)
 
@@ -128,35 +128,35 @@
 | PWA-01 | Phase 1: PWA + Ajustes Base | Complete |
 | PWA-02 | Phase 1: PWA + Ajustes Base | Complete |
 | PWA-03 | Phase 1: PWA + Ajustes Base | Complete |
-| RTN-01 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
-| RTN-02 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
-| RTN-03 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
-| RTN-04 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
-| RTN-05 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
-| EXE-01 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
-| EXE-02 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
-| EXE-03 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
-| EXE-04 | Phase 2: Rutinas + Catálogo de Ejercicios | Pending |
+| RTN-01 | Phase 2: Rutinas + Catálogo de Ejercicios | Complete |
+| RTN-02 | Phase 2: Rutinas + Catálogo de Ejercicios | Complete |
+| RTN-03 | Phase 2: Rutinas + Catálogo de Ejercicios | Complete |
+| RTN-04 | Phase 2: Rutinas + Catálogo de Ejercicios | Complete |
+| RTN-05 | Phase 2: Rutinas + Catálogo de Ejercicios | Complete |
+| EXE-01 | Phase 2: Rutinas + Catálogo de Ejercicios | Complete |
+| EXE-02 | Phase 2: Rutinas + Catálogo de Ejercicios | Complete |
+| EXE-03 | Phase 2: Rutinas + Catálogo de Ejercicios | Complete |
+| EXE-04 | Phase 2: Rutinas + Catálogo de Ejercicios | Complete |
 | EXD-01 | Phase 3: Ejercicios — Directorio + Detalle | Complete |
 | EXD-02 | Phase 3: Ejercicios — Directorio + Detalle | Complete |
 | EXD-03 | Phase 3: Ejercicios — Directorio + Detalle | Complete |
-| LOG-01 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
-| LOG-02 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
-| LOG-03 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
-| LOG-04 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
-| LOG-05 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
-| LOG-06 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
-| UX-01 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
-| UX-02 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
-| UX-03 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
-| UX-04 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
-| UX-05 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
-| UX-06 | Phase 3: Logging de Sesión + UX Hevy-like | Pending |
-| TMR-01 | Phase 4: Timers + Progresión | Pending |
-| TMR-02 | Phase 4: Timers + Progresión | Pending |
-| ANA-01 | Phase 5: Historial + PRs + Analíticas | Pending |
-| ANA-02 | Phase 5: Historial + PRs + Analíticas | Pending |
-| ANA-03 | Phase 5: Historial + PRs + Analíticas | Pending |
+| LOG-01 | Phase 2 (consolidated legacy of Phase 4) | Complete |
+| LOG-02 | Phase 2 (consolidated legacy of Phase 4) | Complete |
+| LOG-03 | Phase 2 (consolidated legacy of Phase 4) | Complete |
+| LOG-04 | Phase 2 (consolidated legacy of Phase 4) | Complete |
+| LOG-05 | Phase 2 (consolidated legacy of Phase 4) | Complete |
+| LOG-06 | Phase 2 (consolidated legacy of Phase 4) | Complete |
+| UX-01 | Phase 2 (consolidated legacy of Phase 4) | Complete |
+| UX-02 | Phase 2 (consolidated legacy of Phase 4) | Complete |
+| UX-03 | Phase 2 + Phase 10 (consolidated legacy of Phase 4) | Complete |
+| UX-04 | Phase 2 (consolidated legacy of Phase 4) | Complete |
+| UX-05 | Phase 2 (consolidated legacy of Phase 4) | Complete |
+| UX-06 | Phase 2 + Phase 13 (consolidated legacy of Phase 4) | Complete |
+| TMR-01 | Phase 2 + Phase 13 (consolidated legacy of Phase 5) | Complete |
+| TMR-02 | Phase 13 (consolidated legacy of Phase 5) | Complete |
+| ANA-01 | Phase 2 + Phase 3 (consolidated legacy of Phase 6) | Complete |
+| ANA-02 | Phase 2 + Phase 3 (consolidated legacy of Phase 6) | Complete |
+| ANA-03 | Phase 2 + Phase 3 (consolidated legacy of Phase 6) | Complete |
 | PRG-01 | Phase 10: Progresion de Carga | Complete |
 | PRG-02 | Phase 10: Progresion de Carga | Complete |
 | IO-01 | Phase 14: Import/Export Total + Recovery | Complete |
@@ -178,6 +178,9 @@
 | ACC-02 | Phase 9: Auth + Sync Base | Complete |
 | ACC-03 | Phase 9: Auth + Sync Base | Complete |
 
+**Legacy normalization note**
+- Phase 4, 5, 6 y 7 se mantienen como referencia histórica en roadmap, pero su alcance se entregó en fases posteriores (2, 3, 10, 13 y 14).
+
 **Coverage:**
 - v1 requirements: 44 total
 - Mapped to phases: 44
@@ -185,4 +188,4 @@
 
 ---
 *Requirements defined: 2026-01-26*
-*Last updated: 2026-03-05 after closing Phase 14*
+*Last updated: 2026-03-05 after closing Phase 15*

@@ -35,5 +35,13 @@ export default defineConfig({
         changeOrigin: true
       }
     }
+  },
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['src/test/setup.ts'],
+    include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
+    maxWorkers: 1,
+    clearMocks: true,
+    restoreMocks: true
   }
 });

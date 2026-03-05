@@ -174,6 +174,13 @@ function shouldApplyRemote(localUpdatedAt?: string, localDeletedAt?: string, rem
   return latestTs(remoteUpdatedAt, remoteDeletedAt) > latestTs(localUpdatedAt, localDeletedAt);
 }
 
+// Exposed for deterministic unit tests around conflict resolution.
+export const syncConflictHelpers = {
+  latestTs,
+  shouldPush,
+  shouldApplyRemote
+};
+
 async function fetchAllRows<T>(table: string): Promise<T[]> {
   const supabase = getSupabaseClient();
   if (!supabase) {

@@ -1,10 +1,10 @@
 # Project State: Gym Tracker PWA (Hevy-inspired)
 
 **Date:** 2026-03-05
-**Status:** Phase 14 cerrada; lista para abrir la siguiente fase.
+**Status:** Phase 15 cerrada; V1 consolidada y lista para definir siguiente fase.
 
 ## Current Phase
-- Sin fase activa (pendiente discutir/planificar la siguiente)
+- Sin fase activa (pendiente definición de siguiente fase)
 
 ## Progress Summary
 - Phase 1 completed: PWA shell, offline indicator, theme toggle, reset flow, local persistence.
@@ -35,11 +35,17 @@
 - Phase 14 investigada: se definió arquitectura para backup total versionado, validación por etapas, import atómico Dexie y estrategia de conflictos LWW+tombstones alineada con sync.
 - Phase 14 planificada: se definieron bloques ejecutables para schema/migraciones de backup total, exporter, validación+preview, auto-backup previo, modos `fusionar/reemplazar` y UX final en `Ajustes > Datos`.
 - Phase 14 completada: backup total versionado ya operativo con validación robusta, preview de import, auto-backup previo, modos `fusionar/reemplazar` y cierre formal en `14-SUMMARY.md`.
+- Phase 15 abierta: foco en consolidación final de V1 (hardening + saneamiento docs + pulido UX acotado).
+- Phase 15 discutida: definido criterio de cierre (0 críticos/altos), módulos core de hardening (Sync/Notificaciones/Workout), normalización completa de `REQUIREMENTS.md` legacy y alcance UX final en Workout/Ajustes/Home.
+- Phase 15 investigada: definido stack mínimo de hardening (Vitest + Testing Library + fake-indexeddb), matriz de casos obligatorios por riesgo (backup/sync/notificaciones/workout) y estrategia de normalización documental con trazabilidad requirement -> fase real.
+- Phase 15 planificada: definido plan ejecutable con bootstrap de tests, suites core de riesgo, normalización legacy 4-7, pulido UX acotado y checklist formal de cierre V1.
+- Phase 15 ejecución (slice 1): stack de tests agregado (`vitest`, `@testing-library/react`, `fake-indexeddb`), nuevos scripts `test/test:watch/test:coverage`, suites core para `fullBackup`, `sync`, `notifications` y `workouts`; `npm run test` y `npm run build` pasan.
+- Phase 15 ejecución (slice 2): normalización legacy aplicada en docs (`ROADMAP` fases 4-7 como `Consolidated`, y `REQUIREMENTS` sin `Pending` falsos + tabla de equivalencias requirement -> fase real).
+- Phase 15 cerrada: QA manual completado, micro-fix UX móvil aplicado al tab bar, y cierre formal documentado en `15-SUMMARY.md` + `15-VERIFICATION.md`.
 
 ## Risks & Notes
 - La evidencia sigue siendo mucho mas fuerte para `weight_reps` que para `time`/`distance`; esos dos dominios deben seguir tratandose como reglas conservadoras de producto y no como precision cientifica.
-- El roadmap legacy de fases 4-7 sigue parcialmente desalineado con lo ya implementado; conviene normalizarlo al abrir la proxima fase.
 - Sets avanzados ya tienen semantica analitica fija; el riesgo restante esta en no romper layout movil al introducir badges/menus en la primera columna del set.
-- El siguiente bloque de trabajo debería priorizar consolidación de `REQUIREMENTS.md` legacy (aún hay filas históricas en `Pending` pese a features ya entregadas).
-- El import total quedó con buena cobertura funcional, pero aún sin tests automáticos de regresión para archivos corruptos/edge-cases de merge LWW.
+- El pulido UX acotado de Phase 15 debe mantenerse en fixes menores para evitar scope creep.
 - La validación local del Edge Function queda limitada porque `supabase functions serve` requiere Docker Desktop; el frontend sí sigue compilando con `npm run build`.
+- V1 ya cerró funcionalmente; cualquier feature nueva debe entrar por fase nueva (evitar mezclar cierre con expansión de alcance).
