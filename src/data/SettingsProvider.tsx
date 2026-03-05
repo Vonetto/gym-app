@@ -1,8 +1,15 @@
 import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
-import { defaultSettings, loadSettings, saveSettings, setTheme } from './settings';
+import {
+  defaultSettings,
+  loadSettings,
+  saveSettings,
+  setTheme,
+  SETTINGS_CHANGE_EVENT
+} from './settings';
 import { resetAll } from './db';
 import { seedExerciseCatalog } from './exercises';
 import { Theme } from '../theme/theme';
+import { SettingsRecord } from './db';
 
 interface SettingsContextValue {
   settings: typeof defaultSettings;
@@ -10,6 +17,20 @@ interface SettingsContextValue {
   updateTheme: (theme: Theme) => Promise<void>;
   updateStatsRange: (days: 7 | 30 | 180 | 365) => Promise<void>;
   updateWrkoutApiKey: (apiKey: string) => Promise<void>;
+  updateNotificationSettings: (
+    patch: Partial<
+      Pick<
+        SettingsRecord,
+        | 'notificationsEnabled'
+        | 'plannedWorkoutNotificationsEnabled'
+        | 'restFinishedNotificationsEnabled'
+        | 'backgroundSessionNotificationsEnabled'
+        | 'plannedReminderTime'
+        | 'plannedReminderOffsetMinutes'
+        | 'backgroundSessionReminderDelayMinutes'
+      >
+    >
+  ) => Promise<void>;
   resetAllData: () => Promise<void>;
 }
 
@@ -32,6 +53,20 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  useEffect(() => {
+    const handleSettingsChange = () => {
+      loadSettings().then((loaded) => {
+        setSettings(loaded);
+        setTheme(loaded.theme);
+      });
+    };
+
+    window.addEventListener(SETTINGS_CHANGE_EVENT, handleSettingsChange);
+    return () => {
+      window.removeEventListener(SETTINGS_CHANGE_EVENT, handleSettingsChange);
+    };
+  }, []);
+
   const updateTheme = async (theme: Theme) => {
     const next = { ...settings, theme };
     setSettings(next);
@@ -51,6 +86,29 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     await saveSettings(next);
   };
 
+  const updateNotificationSettings = async (
+    patch: Partial<
+      Pick<
+        SettingsRecord,
+        | 'notificationsEnabled'
+        | 'plannedWorkoutNotificationsEnabled'
+        | 'restFinishedNotificationsEnabled'
+        | 'backgroundSessionNotificationsEnabled'
+        | 'plannedReminderTime'
+        | 'plannedReminderOffsetMinutes'
+        | 'backgroundSessionReminderDelayMinutes'
+      >
+    >
+  ) => {
+    const next = {
+      ...settings,
+      ...patch,
+      notificationSettingsUpdatedAt: new Date().toISOString()
+    };
+    setSettings(next);
+    await saveSettings(next);
+  };
+
   const resetAllData = async () => {
     await resetAll();
     await seedExerciseCatalog();
@@ -66,6 +124,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       updateTheme,
       updateStatsRange,
       updateWrkoutApiKey,
+      updateNotificationSettings,
       resetAllData
     }),
     [settings, ready]

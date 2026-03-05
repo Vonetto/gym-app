@@ -1,11 +1,28 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSettings } from '../data/SettingsProvider';
+import { useAuth } from '../data/AuthProvider';
 import { exportRoutineBackup, importRoutineBackup } from '../data/routineBackup';
 import { listRoutines } from '../data/routines';
+import {
+  getCurrentPushSubscription,
+  getNotificationCapability,
+  getNotificationStatusLabel,
+  hasPushPublicKey,
+  requestNotificationPermission
+} from '../data/notifications';
+import { subscribeDeviceToPush, unsubscribeDeviceFromPush } from '../data/notifications';
 
 export function Settings() {
-  const { settings, updateTheme, updateStatsRange, updateWrkoutApiKey, resetAllData } = useSettings();
+  const {
+    settings,
+    updateTheme,
+    updateStatsRange,
+    updateWrkoutApiKey,
+    updateNotificationSettings,
+    resetAllData
+  } = useSettings();
+  const { user, status } = useAuth();
   const [confirmingReset, setConfirmingReset] = useState(false);
   const [resetting, setResetting] = useState(false);
   const [importing, setImporting] = useState(false);
@@ -13,8 +30,20 @@ export function Settings() {
   const [routines, setRoutines] = useState<Array<{ id: string; name: string }>>([]);
   const [routineId, setRoutineId] = useState('');
   const [wrkoutKey, setWrkoutKey] = useState(settings.wrkoutApiKey ?? '');
+  const [notificationCapability, setNotificationCapability] = useState(() =>
+    getNotificationCapability()
+  );
+  const [requestingPermission, setRequestingPermission] = useState(false);
+  const [pushSubscribed, setPushSubscribed] = useState(false);
+  const [pushBusy, setPushBusy] = useState(false);
   const navigate = useNavigate();
   const statsRangeDays = settings.statsRangeDays ?? 30;
+  const notificationStatus = getNotificationStatusLabel(notificationCapability);
+  const pushConfigured = hasPushPublicKey();
+
+  const refreshNotificationCapability = () => {
+    setNotificationCapability(getNotificationCapability());
+  };
 
   const handleReset = async () => {
     setResetting(true);
@@ -37,8 +66,128 @@ export function Settings() {
     setWrkoutKey(settings.wrkoutApiKey ?? '');
   }, [settings.wrkoutApiKey]);
 
+  useEffect(() => {
+    refreshNotificationCapability();
+    const handleVisibility = () => {
+      refreshNotificationCapability();
+    };
+    window.addEventListener('focus', handleVisibility);
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => {
+      window.removeEventListener('focus', handleVisibility);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, []);
+
+  useEffect(() => {
+    const loadPushState = async () => {
+      const subscription = await getCurrentPushSubscription();
+      setPushSubscribed(Boolean(subscription));
+    };
+    void loadPushState();
+  }, [notificationCapability.permission, notificationCapability.pushSupported]);
+
   const handleWrkoutSave = async () => {
     await updateWrkoutApiKey(wrkoutKey.trim());
+  };
+
+  const handleNotificationPermission = async () => {
+    setRequestingPermission(true);
+    try {
+      await requestNotificationPermission();
+    } finally {
+      refreshNotificationCapability();
+      setRequestingPermission(false);
+    }
+  };
+
+  const handlePushSubscription = async () => {
+    if (!user) return;
+    setPushBusy(true);
+    try {
+      if (pushSubscribed) {
+        await unsubscribeDeviceFromPush(user.id);
+        setPushSubscribed(false);
+      } else {
+        await subscribeDeviceToPush(user.id);
+        setPushSubscribed(true);
+      }
+    } finally {
+      setPushBusy(false);
+    }
+  };
+
+  const handleGlobalNotificationsToggle = async () => {
+    if (settings.notificationsEnabled) {
+      await updateNotificationSettings({
+        notificationsEnabled: false,
+        plannedWorkoutNotificationsEnabled: false,
+        restFinishedNotificationsEnabled: false,
+        backgroundSessionNotificationsEnabled: false
+      });
+      return;
+    }
+
+    if (!notificationCapability.supported) {
+      alert('Este navegador no soporta notificaciones.');
+      return;
+    }
+
+    let permission = notificationCapability.permission;
+    if (permission !== 'granted') {
+      setRequestingPermission(true);
+      try {
+        permission = await requestNotificationPermission();
+      } finally {
+        setRequestingPermission(false);
+      }
+      refreshNotificationCapability();
+    }
+
+    if (permission !== 'granted') {
+      await updateNotificationSettings({
+        notificationsEnabled: false,
+        plannedWorkoutNotificationsEnabled: false,
+        restFinishedNotificationsEnabled: false,
+        backgroundSessionNotificationsEnabled: false
+      });
+      return;
+    }
+
+    await updateNotificationSettings({
+      notificationsEnabled: true,
+      plannedWorkoutNotificationsEnabled: true,
+      restFinishedNotificationsEnabled: true,
+      backgroundSessionNotificationsEnabled: true
+    });
+
+    const capability = getNotificationCapability();
+    setNotificationCapability(capability);
+    if (
+      user &&
+      status === 'authenticated' &&
+      capability.pushSupported &&
+      pushConfigured &&
+      capability.permission === 'granted'
+    ) {
+      try {
+        await subscribeDeviceToPush(user.id);
+        setPushSubscribed(true);
+      } catch {
+        // Si falla la suscripción automática, el usuario puede reintentar manualmente.
+      }
+    }
+  };
+
+  const toggleNotificationType = async (
+    key:
+      | 'plannedWorkoutNotificationsEnabled'
+      | 'restFinishedNotificationsEnabled'
+      | 'backgroundSessionNotificationsEnabled'
+  ) => {
+    await updateNotificationSettings({
+      [key]: !settings[key]
+    });
   };
 
   const handleExportRoutine = async () => {
@@ -81,7 +230,7 @@ export function Settings() {
     <section className="stack">
       <div className="card">
         <h1>Ajustes</h1>
-        <p className="muted">Configura el tema y gestiona tus datos locales.</p>
+        <p className="muted">Configura el tema, tus recordatorios y tus datos locales.</p>
         <div className="field">
           <span className="label">Tema</span>
           <div className="toggle-group" role="group" aria-label="Tema">
@@ -116,6 +265,223 @@ export function Settings() {
             ))}
           </div>
         </div>
+      </div>
+
+      <div className="card">
+        <h2>Notificaciones</h2>
+        <p className="muted">
+          Activa todo de una vez y luego oculta solo los avisos que no quieras ver.
+        </p>
+
+        <div className="field">
+          <div className="notification-master">
+            <div>
+              <p className="list-title">Notificaciones de la app</p>
+              <p className="muted">
+                {settings.notificationsEnabled ? 'Activadas' : 'Desactivadas'}
+              </p>
+            </div>
+            <button
+              className={settings.notificationsEnabled ? 'danger-button' : 'primary-button'}
+              type="button"
+              onClick={handleGlobalNotificationsToggle}
+              disabled={requestingPermission || !notificationCapability.supported}
+            >
+              {requestingPermission
+                ? 'Activando...'
+                : settings.notificationsEnabled
+                  ? 'Desactivar notificaciones'
+                  : 'Activar notificaciones'}
+            </button>
+          </div>
+          <div className="notification-system-status">
+            <p className="muted">
+              Permiso del sistema: <strong>{notificationStatus}</strong>
+            </p>
+            {!notificationCapability.supported ? (
+              <p className="muted">Este navegador no soporta notificaciones del sistema.</p>
+            ) : null}
+            {notificationCapability.permission === 'denied' ? (
+              <p className="muted">
+                El permiso está bloqueado. Debes habilitarlo desde ajustes del navegador/iPhone.
+              </p>
+            ) : null}
+            {notificationCapability.permission !== 'granted' &&
+            notificationCapability.permission !== 'denied' ? (
+              <button
+                className="ghost-button"
+                type="button"
+                onClick={handleNotificationPermission}
+                disabled={requestingPermission}
+              >
+                Reintentar permiso
+              </button>
+            ) : null}
+            <p className="muted">
+              {notificationCapability.requiresStandaloneForPush
+                ? 'Si estás en iPhone, abre esta app desde pantalla de inicio y vuelve aquí para permitir notificaciones.'
+                : 'Cuando el sistema lo soporte, la app podrá avisarte aunque esté en segundo plano.'}
+            </p>
+          </div>
+        </div>
+
+        {settings.notificationsEnabled ? (
+          <>
+            <div className="list-row list-row-stack">
+              <span className="list-title">Zona horaria del recordatorio</span>
+              <span className="muted">{settings.notificationTimezone ?? 'UTC'}</span>
+            </div>
+            <div className="field">
+              <span className="label">Tipos de aviso</span>
+              <div className="notification-option-list">
+                <div className="notification-option-row">
+                  <div className="notification-option-copy">
+                    <p className="list-title">Rutina planificada</p>
+                    <p className="muted">Recordatorio diario para rutinas agendadas.</p>
+                  </div>
+                  <button
+                    type="button"
+                    className={settings.plannedWorkoutNotificationsEnabled ? 'ghost-button' : 'toggle active'}
+                    onClick={() => toggleNotificationType('plannedWorkoutNotificationsEnabled')}
+                  >
+                    {settings.plannedWorkoutNotificationsEnabled
+                      ? 'No mostrar esta notificación'
+                      : 'Mostrar'}
+                  </button>
+                </div>
+                <div className="notification-option-row">
+                  <div className="notification-option-copy">
+                    <p className="list-title">Descanso</p>
+                    <p className="muted">Aviso y silbato cuando termina el descanso.</p>
+                  </div>
+                  <button
+                    type="button"
+                    className={settings.restFinishedNotificationsEnabled ? 'ghost-button' : 'toggle active'}
+                    onClick={() => toggleNotificationType('restFinishedNotificationsEnabled')}
+                  >
+                    {settings.restFinishedNotificationsEnabled
+                      ? 'No mostrar esta notificación'
+                      : 'Mostrar'}
+                  </button>
+                </div>
+                <div className="notification-option-row">
+                  <div className="notification-option-copy">
+                    <p className="list-title">“¿Sigues entrenando?”</p>
+                    <p className="muted">Aviso si sales de la app con una sesión activa.</p>
+                  </div>
+                  <button
+                    type="button"
+                    className={
+                      settings.backgroundSessionNotificationsEnabled ? 'ghost-button' : 'toggle active'
+                    }
+                    onClick={() => toggleNotificationType('backgroundSessionNotificationsEnabled')}
+                  >
+                    {settings.backgroundSessionNotificationsEnabled
+                      ? 'No mostrar esta notificación'
+                      : 'Mostrar'}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {settings.plannedWorkoutNotificationsEnabled ? (
+              <div className="field">
+                <span className="label">Recordatorio de rutina planificada</span>
+                <div className="field grid">
+                  <label className="actions-stack">
+                    <span className="label">Hora global</span>
+                    <input
+                      type="time"
+                      value={settings.plannedReminderTime ?? '19:00'}
+                      onChange={(event) =>
+                        updateNotificationSettings({ plannedReminderTime: event.target.value })
+                      }
+                    />
+                  </label>
+                  <label className="actions-stack">
+                    <span className="label">Avisar</span>
+                    <select
+                      value={settings.plannedReminderOffsetMinutes ?? 0}
+                      onChange={(event) =>
+                        updateNotificationSettings({
+                          plannedReminderOffsetMinutes: Number(event.target.value)
+                        })
+                      }
+                    >
+                      <option value={0}>A la hora exacta</option>
+                      <option value={5}>5 min antes</option>
+                      <option value={10}>10 min antes</option>
+                      <option value={15}>15 min antes</option>
+                      <option value={30}>30 min antes</option>
+                      <option value={60}>1 hora antes</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+            ) : null}
+
+            {settings.backgroundSessionNotificationsEnabled ? (
+              <div className="field">
+                <label className="actions-stack">
+                  <span className="label">Umbral para “¿Sigues entrenando?”</span>
+                  <select
+                    value={settings.backgroundSessionReminderDelayMinutes ?? 10}
+                    onChange={(event) =>
+                      updateNotificationSettings({
+                        backgroundSessionReminderDelayMinutes: Number(event.target.value)
+                      })
+                    }
+                  >
+                    <option value={5}>5 min</option>
+                    <option value={10}>10 min</option>
+                    <option value={15}>15 min</option>
+                    <option value={20}>20 min</option>
+                    <option value={30}>30 min</option>
+                  </select>
+                </label>
+              </div>
+            ) : null}
+
+            <div className="field">
+              <span className="label">Push del dispositivo (cuenta)</span>
+              <div className="list-row">
+                <span className="list-title">Estado</span>
+                <span>{pushSubscribed ? 'Suscrito' : 'No suscrito'}</span>
+              </div>
+              <button
+                className="ghost-button"
+                type="button"
+                onClick={handlePushSubscription}
+                disabled={
+                  pushBusy ||
+                  !user ||
+                  status !== 'authenticated' ||
+                  !notificationCapability.pushSupported ||
+                  !pushConfigured ||
+                  notificationCapability.permission !== 'granted'
+                }
+              >
+                {pushBusy
+                  ? 'Actualizando...'
+                  : pushSubscribed
+                    ? 'Desactivar push'
+                    : 'Activar push'}
+              </button>
+              <p className="muted">
+                {!user || status !== 'authenticated'
+                  ? 'Inicia sesión para asociar este dispositivo a recordatorios de rutinas.'
+                  : !pushConfigured
+                    ? 'Falta configurar la VAPID public key en el frontend.'
+                  : notificationCapability.permission !== 'granted'
+                      ? 'Debes otorgar permiso del sistema primero.'
+                      : notificationCapability.requiresStandaloneForPush &&
+                          !notificationCapability.isStandalone
+                        ? 'En iPhone debes abrir la app desde pantalla de inicio.'
+                        : 'Este dispositivo ya puede recibir recordatorios de rutinas planificadas.'}
+              </p>
+            </div>
+          </>
+        ) : null}
       </div>
 
       <div className="card">

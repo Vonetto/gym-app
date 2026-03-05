@@ -181,7 +181,22 @@
 
 ---
 
+## Phase 13: Recordatorios + Notificaciones
+**Goal:** Añadir recordatorios útiles sobre rutinas planificadas y timers relevantes sin romper el modo local-first ni la UX móvil.
+**Status:** Planned (2026-03-04)
+
+**Requirements**
+- NTF-01, NTF-02, NTF-03, NTF-04, NTF-05
+
+**Success Criteria (observable)**
+1. El usuario puede activar recordatorios para rutinas planificadas.
+2. La app muestra avisos claros cuando corresponde entrenar o volver del descanso.
+3. Los recordatorios no generan ruido excesivo ni falsos positivos.
+4. La base queda lista para notificaciones más robustas en iOS más adelante.
+
+---
+
 ## Coverage Check
-- Total v1 requirements: 39
-- Mapped to phases: 39
+- Total v1 requirements: 44
+- Mapped to phases: 44
 - Unmapped: 0 ✅

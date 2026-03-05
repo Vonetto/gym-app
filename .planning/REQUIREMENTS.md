@@ -88,6 +88,14 @@
 - [x] **CAL-02**: Usuario puede definir recurrencia simple para una rutina planificada.
 - [x] **CAL-03**: Calendario distingue claramente entrenamientos realizados y planificados, y permite abrir el detalle de ambos.
 
+### Notificaciones & Recordatorios
+
+- [ ] **NTF-01**: Usuario puede activar/desactivar notificaciones globalmente y por tipo desde Ajustes.
+- [ ] **NTF-02**: App puede recordar rutinas planificadas usando una hora global configurable y un offset opcional.
+- [ ] **NTF-03**: App avisa cuando termina un descanso con foreground UX fuerte y notificación del sistema cuando sea viable.
+- [ ] **NTF-04**: App avisa cuando existe una sesión activa en background tras un umbral configurable.
+- [ ] **NTF-05**: Ajustes muestra estado de permiso/soporte y explica cómo habilitar notificaciones en PWA/iPhone.
+
 ## v2 Requirements
 
 ### Cuentas & Sync
@@ -161,15 +169,20 @@
 | CAL-01 | Phase 12: Calendario + Planificación | Complete |
 | CAL-02 | Phase 12: Calendario + Planificación | Complete |
 | CAL-03 | Phase 12: Calendario + Planificación | Complete |
+| NTF-01 | Phase 13: Recordatorios + Notificaciones | Pending |
+| NTF-02 | Phase 13: Recordatorios + Notificaciones | Pending |
+| NTF-03 | Phase 13: Recordatorios + Notificaciones | Pending |
+| NTF-04 | Phase 13: Recordatorios + Notificaciones | Pending |
+| NTF-05 | Phase 13: Recordatorios + Notificaciones | Pending |
 | ACC-01 | Phase 9: Auth + Sync Base | Complete |
 | ACC-02 | Phase 9: Auth + Sync Base | Complete |
 | ACC-03 | Phase 9: Auth + Sync Base | Complete |
 
 **Coverage:**
-- v1 requirements: 39 total
-- Mapped to phases: 39
+- v1 requirements: 44 total
+- Mapped to phases: 44
 - Unmapped: 0 ✅
 
 ---
 *Requirements defined: 2026-01-26*
-*Last updated: 2026-03-04 after closing Phase 12*
+*Last updated: 2026-03-04 after research for Phase 13*

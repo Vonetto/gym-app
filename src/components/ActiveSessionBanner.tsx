@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useActiveSession } from '../hooks/useActiveSession';
 import { clearActiveSession, readActiveSession, writeActiveSession } from '../data/activeSession';
 import { saveWorkout } from '../data/workouts';
+import { useSettings } from '../data/SettingsProvider';
+import { showAppNotification } from '../data/notifications';
 
 const formatDuration = (seconds: number) => {
   if (seconds < 60) return `${seconds}s`;
@@ -13,11 +15,14 @@ const formatDuration = (seconds: number) => {
 
 export function ActiveSessionBanner() {
   const session = useActiveSession();
+  const { settings } = useSettings();
   const navigate = useNavigate();
   const location = useLocation();
   const [now, setNow] = useState(() => Date.now());
   const [restAlert, setRestAlert] = useState<Array<{ exerciseName: string }> | null>(null);
   const dismissTimeoutRef = useRef<number | null>(null);
+  const backgroundReminderTimeoutRef = useRef<number | null>(null);
+  const backgroundReminderSessionRef = useRef<string | null>(null);
   const [isFinishing, setIsFinishing] = useState(false);
 
   useEffect(() => {
@@ -32,16 +37,25 @@ export function ActiveSessionBanner() {
     if (!session?.restTimers || isWorkoutRoute) return;
     const entries = Object.entries(session.restTimers);
     if (!entries.length) return;
-    const expired = entries.filter(([, timer]) => new Date(timer.endAt).getTime() <= now);
+    const expired = entries.filter(([, timer]) => {
+      const mode = timer.mode ?? (timer.totalSeconds <= 0 ? 'stopwatch' : 'countdown');
+      if (mode !== 'countdown' || !timer.endAt) return false;
+      return new Date(timer.endAt).getTime() <= now;
+    });
     if (!expired.length) return;
 
-    expired.forEach(([, timer]) => {
-      if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('Descanso terminado', {
-          body: `Continúa con ${timer.exerciseName}.`
+    const canAlert = settings.notificationsEnabled && settings.restFinishedNotificationsEnabled;
+
+    if (canAlert) {
+      expired.forEach(([, timer]) => {
+        void showAppNotification({
+          title: 'Descanso terminado',
+          body: `Continúa con ${timer.exerciseName}.`,
+          tag: `rest-${timer.exerciseName}`,
+          url: '/workout'
         });
-      }
-    });
+      });
+    }
 
     const nextTimers = { ...session.restTimers };
     expired.forEach(([key]) => {
@@ -49,21 +63,88 @@ export function ActiveSessionBanner() {
     });
     const updated = { ...session, restTimers: nextTimers };
     writeActiveSession(updated);
-    setRestAlert(
-      expired.map(([, timer]) => ({
-        exerciseName: timer.exerciseName
-      }))
-    );
-    if ('vibrate' in navigator) {
+    if (canAlert) {
+      setRestAlert(
+        expired.map(([, timer]) => ({
+          exerciseName: timer.exerciseName
+        }))
+      );
+    }
+    if (canAlert && 'vibrate' in navigator) {
       navigator.vibrate(200);
     }
-    if (dismissTimeoutRef.current) {
+    if (canAlert && dismissTimeoutRef.current) {
       window.clearTimeout(dismissTimeoutRef.current);
     }
-    dismissTimeoutRef.current = window.setTimeout(() => {
-      setRestAlert(null);
-    }, 6000);
-  }, [isWorkoutRoute, now, session]);
+    if (canAlert) {
+      dismissTimeoutRef.current = window.setTimeout(() => {
+        setRestAlert(null);
+      }, 6000);
+    }
+  }, [isWorkoutRoute, now, session, settings.notificationsEnabled, settings.restFinishedNotificationsEnabled]);
+
+  useEffect(() => {
+    const clearBackgroundReminder = () => {
+      if (backgroundReminderTimeoutRef.current) {
+        window.clearTimeout(backgroundReminderTimeoutRef.current);
+        backgroundReminderTimeoutRef.current = null;
+      }
+    };
+
+    if (!session) {
+      backgroundReminderSessionRef.current = null;
+    }
+
+    const canNotifyBackground =
+      settings.notificationsEnabled &&
+      settings.backgroundSessionNotificationsEnabled &&
+      Boolean(session);
+
+    const scheduleBackgroundReminder = () => {
+      clearBackgroundReminder();
+      if (!canNotifyBackground || !session || !document.hidden) return;
+
+      const delayMinutes = Math.max(1, settings.backgroundSessionReminderDelayMinutes ?? 10);
+      backgroundReminderTimeoutRef.current = window.setTimeout(() => {
+        const active = readActiveSession();
+        if (!active || active.id !== session.id || !document.hidden) return;
+        if (backgroundReminderSessionRef.current === session.id) return;
+
+        backgroundReminderSessionRef.current = session.id;
+        void showAppNotification({
+          title: '¿Sigues entrenando?',
+          body: `${active.routineName ?? 'Tu sesión'} sigue abierta. Vuelve para terminarla.`,
+          tag: `background-session-${session.id}`,
+          url: '/workout',
+          requireInteraction: true
+        });
+      }, delayMinutes * 60 * 1000);
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        scheduleBackgroundReminder();
+        return;
+      }
+
+      clearBackgroundReminder();
+      backgroundReminderSessionRef.current = null;
+    };
+
+    handleVisibilityChange();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      clearBackgroundReminder();
+    };
+  }, [
+    session,
+    settings.notificationsEnabled,
+    settings.backgroundSessionNotificationsEnabled,
+    settings.backgroundSessionReminderDelayMinutes
+  ]);
+
   const elapsed = useMemo(() => {
     if (!session) return 0;
     const createdAt = new Date(session.createdAt).getTime();

@@ -2,3 +2,6 @@ project_id = "gym-app"
 
 [functions.wrkout-proxy]
 verify_jwt = false
+
+[functions.planned-reminders]
+verify_jwt = false

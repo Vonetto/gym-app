@@ -50,7 +50,9 @@ export interface ActiveWorkoutExercise {
 }
 
 export interface ActiveSessionRestTimer {
-  endAt: string;
+  endAt?: string;
+  startedAt?: string;
+  mode?: 'countdown' | 'stopwatch';
   totalSeconds: number;
   exerciseName: string;
 }
@@ -82,8 +84,26 @@ export function readActiveSession() {
   if (!stored) return null;
   try {
     const parsed = JSON.parse(stored) as ActiveWorkoutSession;
+    const normalizedTimers = parsed.restTimers
+      ? Object.fromEntries(
+          Object.entries(parsed.restTimers).map(([exerciseId, timer]) => {
+            const mode =
+              timer.mode ?? (timer.totalSeconds <= 0 ? 'stopwatch' : 'countdown');
+            const startedAt = timer.startedAt ?? timer.endAt ?? parsed.createdAt;
+            return [
+              exerciseId,
+              {
+                ...timer,
+                mode,
+                startedAt
+              } satisfies ActiveSessionRestTimer
+            ];
+          })
+        )
+      : undefined;
     return {
       ...parsed,
+      restTimers: normalizedTimers,
       exercises: (parsed.exercises ?? []).map((exercise) => ({
         ...exercise,
         originalSetTypes: (exercise.originalSetTypes ?? []).map((setType) =>

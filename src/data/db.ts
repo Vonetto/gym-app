@@ -7,6 +7,15 @@ export interface SettingsRecord {
   units: 'kg';
   statsRangeDays?: 7 | 30 | 180 | 365;
   wrkoutApiKey?: string;
+  notificationSettingsUpdatedAt?: string;
+  notificationTimezone?: string;
+  notificationsEnabled?: boolean;
+  plannedWorkoutNotificationsEnabled?: boolean;
+  restFinishedNotificationsEnabled?: boolean;
+  backgroundSessionNotificationsEnabled?: boolean;
+  plannedReminderTime?: string;
+  plannedReminderOffsetMinutes?: number;
+  backgroundSessionReminderDelayMinutes?: number;
 }
 
 export interface RoutineRecord {

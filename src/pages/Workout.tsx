@@ -29,6 +29,7 @@ import {
 import { getRoutineDetail, overwriteRoutineExercises } from '../data/routines';
 import { AdvancedSetType, ExerciseMetric } from '../data/db';
 import { upsertPlannedWorkoutOccurrence } from '../data/plans';
+import { showAppNotification } from '../data/notifications';
 import {
   countsForProgression,
   DEFAULT_SET_TYPE,
@@ -47,6 +48,8 @@ interface ExerciseOption {
   normalizedLabel: string;
 }
 
+const REST_PRESET_SECONDS = [30, 45, 60, 75, 90, 120, 150, 180, 240, 300];
+
 function formatDuration(seconds: number) {
   if (seconds < 60) return `${seconds}s`;
   const minutes = Math.floor(seconds / 60);
@@ -59,6 +62,12 @@ function getMetricTypeLabel(metricType: ExerciseMetric) {
   if (metricType === 'reps') return 'Solo reps';
   if (metricType === 'time') return 'Tiempo';
   return 'Distancia';
+}
+
+function getRestLabel(restSeconds?: number) {
+  if (restSeconds === -1) return 'CRONÓMETRO';
+  if (!restSeconds || restSeconds <= 0) return 'APAGADO';
+  return formatDuration(restSeconds);
 }
 
 function getDefaultValueForMetricType(
@@ -110,6 +119,7 @@ export function Workout() {
   const [metricTypeTarget, setMetricTypeTarget] = useState<{ exerciseId: string; index: number } | null>(
     null
   );
+  const [restTarget, setRestTarget] = useState<number | null>(null);
   const [setTypeTarget, setSetTypeTarget] = useState<{ exerciseIndex: number; setIndex: number } | null>(
     null
   );
@@ -216,6 +226,8 @@ export function Workout() {
     if (!entries.length) return;
     const expired: Array<{ key: string; exerciseName: string }> = [];
     entries.forEach(([key, timer]) => {
+      const mode = timer.mode ?? (timer.totalSeconds <= 0 ? 'stopwatch' : 'countdown');
+      if (mode !== 'countdown' || !timer.endAt) return;
       const endAt = new Date(timer.endAt).getTime();
       if (endAt <= now) {
         expired.push({ key, exerciseName: timer.exerciseName });
@@ -289,18 +301,27 @@ export function Workout() {
     });
   };
 
-  const handleRestCycle = (exerciseIndex: number) => {
-    const options = Array.from({ length: 11 }, (_, index) => index * 30);
+  const updateRestForExercise = (exerciseIndex: number, restSeconds: number) => {
     setSession((prev) => {
       if (!prev) return prev;
-      const exercises = prev.exercises.map((exercise, index) => {
-        if (index !== exerciseIndex) return exercise;
-        const current = exercise.restSeconds ?? 0;
-        const nextIndex = (options.indexOf(current) + 1) % options.length;
-        return { ...exercise, restSeconds: options[nextIndex] };
-      });
-      return { ...prev, exercises };
+      const targetExercise = prev.exercises[exerciseIndex];
+      if (!targetExercise) return prev;
+      const exercises = prev.exercises.map((exercise, index) =>
+        index === exerciseIndex ? { ...exercise, restSeconds } : exercise
+      );
+      const restTimers = prev.restTimers ? { ...prev.restTimers } : undefined;
+      if (restTimers && targetExercise.exerciseId in restTimers) {
+        delete restTimers[targetExercise.exerciseId];
+      }
+      return { ...prev, exercises, restTimers };
     });
+  };
+
+  const handleRestAdjust = (exerciseIndex: number, deltaSeconds: number) => {
+    const current = session?.exercises[exerciseIndex]?.restSeconds ?? 0;
+    const base = current > 0 ? current : 90;
+    const next = Math.max(15, Math.min(600, base + deltaSeconds));
+    updateRestForExercise(exerciseIndex, next);
   };
 
   const toggleComplete = (exerciseIndex: number, setIndex: number) => {
@@ -323,7 +344,7 @@ export function Workout() {
               : sets[setIndex].reps
         };
         sets[setIndex] = syncSuggestionStatus(nextSet);
-        if (nextCompleted && (exercise.restSeconds ?? 0) > 0) {
+        if (nextCompleted && (exercise.restSeconds ?? 0) !== 0) {
           void startRestTimer(exercise.exerciseId, exercise.name, exercise.restSeconds ?? 0);
         }
         return { ...exercise, sets };
@@ -801,26 +822,32 @@ export function Workout() {
   };
 
   const notifyRestComplete = (exerciseName: string) => {
-    if ('Notification' in window && Notification.permission === 'granted') {
-      new Notification('Descanso terminado', {
-        body: `Continúa con ${exerciseName}.`
+    if (settings.notificationsEnabled && settings.restFinishedNotificationsEnabled) {
+      void showAppNotification({
+        title: 'Descanso terminado',
+        body: `Continúa con ${exerciseName}.`,
+        tag: `rest-${exerciseName}`,
+        url: '/workout'
       });
+      playWhistle();
     }
-    playWhistle();
   };
 
   const startRestTimer = async (exerciseId: string, exerciseName: string, restSeconds: number) => {
-    if (restSeconds <= 0) return;
-    if ('Notification' in window && Notification.permission === 'default') {
-      await Notification.requestPermission();
+    if (restSeconds === 0) return;
+    const mode: 'countdown' | 'stopwatch' =
+      restSeconds === -1 ? 'stopwatch' : 'countdown';
+    if (mode === 'countdown' && settings.notificationsEnabled && settings.restFinishedNotificationsEnabled) {
+      await ensureAudioContext();
     }
-    await ensureAudioContext();
-    const endAt = new Date(Date.now() + restSeconds * 1000).toISOString();
+    const startedAt = new Date().toISOString();
+    const endAt =
+      mode === 'countdown' ? new Date(Date.now() + restSeconds * 1000).toISOString() : undefined;
     setSession((prev) => {
       if (!prev) return prev;
       const restTimers = {
         ...(prev.restTimers ?? {}),
-        [exerciseId]: { endAt, totalSeconds: restSeconds, exerciseName }
+        [exerciseId]: { startedAt, endAt, mode, totalSeconds: restSeconds, exerciseName }
       };
       return { ...prev, restTimers };
     });
@@ -835,6 +862,12 @@ export function Workout() {
   const getRestSecondsLeft = (exerciseId: string) => {
     const timer = session?.restTimers?.[exerciseId];
     if (!timer) return null;
+    const mode = timer.mode ?? (timer.totalSeconds <= 0 ? 'stopwatch' : 'countdown');
+    if (mode === 'stopwatch') {
+      const startedAt = new Date(timer.startedAt ?? timer.endAt ?? session?.createdAt ?? Date.now()).getTime();
+      return Math.max(0, Math.floor((Date.now() - startedAt) / 1000));
+    }
+    if (!timer.endAt) return null;
     const endAt = new Date(timer.endAt).getTime();
     return Math.max(0, Math.ceil((endAt - Date.now()) / 1000));
   };
@@ -902,10 +935,10 @@ export function Workout() {
                       value={exercise.notes ?? ''}
                       onChange={(event) => handleNotesChange(exerciseIndex, event.target.value)}
                     />
-                    <button className="rest" type="button" onClick={() => handleRestCycle(exerciseIndex)}>
-                      Descanso: {exercise.restSeconds ? formatDuration(exercise.restSeconds) : 'APAGADO'}
+                    <button className="rest" type="button" onClick={() => setRestTarget(exerciseIndex)}>
+                      Descanso: {getRestLabel(exercise.restSeconds)}
                       {restSecondsLeft
-                        ? ` · ${formatDuration(restSecondsLeft)}`
+                        ? ` · ${exercise.restSeconds === -1 ? '+' : ''}${formatDuration(restSecondsLeft)}`
                         : ''}
                     </button>
                     {suggestionSummary ? (
@@ -1300,6 +1333,104 @@ export function Workout() {
                 Distancia
               </button>
             </div>
+                </>
+              );
+            })()}
+          </div>
+        </div>
+      ) : null}
+
+      {restTarget !== null ? (
+        <div
+          className="modal-overlay bottom"
+          onClick={() => {
+            setRestTarget(null);
+          }}
+        >
+          <div className="modal-card" onClick={(event) => event.stopPropagation()}>
+            {(() => {
+              const targetExercise = session?.exercises[restTarget];
+              if (!targetExercise) return null;
+              const currentRest = targetExercise.restSeconds ?? 0;
+              const isStopwatch = currentRest === -1;
+              const isOff = currentRest === 0;
+              const timerValue = currentRest > 0 ? currentRest : 90;
+              return (
+                <>
+                  <div className="card-header">
+                    <h2>Descanso</h2>
+                    <button className="ghost-button" type="button" onClick={() => setRestTarget(null)}>
+                      Cerrar
+                    </button>
+                  </div>
+                  <p className="muted">
+                    {targetExercise.name} · modo actual:{' '}
+                    <strong>
+                      {isStopwatch ? 'Cronómetro' : isOff ? 'Apagado' : formatDuration(timerValue)}
+                    </strong>
+                  </p>
+                  <div className="rest-mode-toggle">
+                    <button
+                      type="button"
+                      className={!isStopwatch ? 'toggle active' : 'toggle'}
+                      onClick={() => updateRestForExercise(restTarget, timerValue)}
+                    >
+                      Temporizador
+                    </button>
+                    <button
+                      type="button"
+                      className={isStopwatch ? 'toggle active' : 'toggle'}
+                      onClick={() => updateRestForExercise(restTarget, -1)}
+                    >
+                      Cronómetro
+                    </button>
+                  </div>
+
+                  <div className="rest-adjust-row">
+                    <button
+                      className="ghost-button"
+                      type="button"
+                      onClick={() => handleRestAdjust(restTarget, -15)}
+                      disabled={isStopwatch}
+                    >
+                      -15s
+                    </button>
+                    <span>
+                      {isStopwatch ? 'Indefinido' : isOff ? 'Apagado' : formatDuration(timerValue)}
+                    </span>
+                    <button
+                      className="ghost-button"
+                      type="button"
+                      onClick={() => handleRestAdjust(restTarget, 15)}
+                      disabled={isStopwatch}
+                    >
+                      +15s
+                    </button>
+                  </div>
+
+                  <div className="rest-preset-grid">
+                    <button
+                      type="button"
+                      className={currentRest === 0 ? 'pill active' : 'pill'}
+                      onClick={() => updateRestForExercise(restTarget, 0)}
+                    >
+                      Apagado
+                    </button>
+                    {REST_PRESET_SECONDS.map((seconds) => (
+                      <button
+                        key={seconds}
+                        type="button"
+                        className={currentRest === seconds ? 'pill active' : 'pill'}
+                        onClick={() => updateRestForExercise(restTarget, seconds)}
+                      >
+                        {formatDuration(seconds)}
+                      </button>
+                    ))}
+                  </div>
+
+                  <p className="muted">
+                    En modo cronómetro, al completar una serie el descanso comienza a contar sin fin.
+                  </p>
                 </>
               );
             })()}

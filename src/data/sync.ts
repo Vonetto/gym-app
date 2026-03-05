@@ -4,10 +4,13 @@ import {
   type ExerciseGoalMode,
   type ExerciseMetric,
   type ExerciseRecord,
-  type ExerciseTranslationRecord
+  type ExerciseTranslationRecord,
+  type PlannedWorkoutOccurrenceRecord,
+  type PlannedWorkoutSeriesRecord
 } from './db';
 import { getSupabaseClient } from './supabase';
 import { getSyncState, updateSyncState } from './syncState';
+import { loadSettings, saveSettings } from './settings';
 
 const PAGE_SIZE = 500;
 
@@ -100,11 +103,52 @@ type CloudWorkoutRow = {
   deleted_at: string | null;
 };
 
+type CloudScheduleSeriesRow = {
+  user_id: string;
+  id: string;
+  routine_id: string;
+  kind: 'once' | 'weekly' | 'weekdays';
+  start_date: string;
+  weekdays: number[];
+  end_date: string | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+};
+
+type CloudScheduleOccurrenceRow = {
+  user_id: string;
+  id: string;
+  series_id: string;
+  occurrence_date: string;
+  status: 'pending' | 'completed' | 'omitted';
+  workout_id: string | null;
+  created_at: string;
+  updated_at: string;
+  deleted_at: string | null;
+};
+
+type CloudNotificationPreferencesRow = {
+  user_id: string;
+  notifications_enabled: boolean;
+  planned_enabled: boolean;
+  rest_enabled: boolean;
+  background_session_enabled: boolean;
+  planned_reminder_time: string;
+  planned_reminder_offset_minutes: number;
+  background_session_delay_minutes: number;
+  timezone: string;
+  updated_at: string;
+};
+
 interface RemoteSnapshot {
   customExercises: CloudCustomExerciseRow[];
   favorites: CloudFavoriteRow[];
   routines: CloudRoutineRow[];
   workouts: CloudWorkoutRow[];
+  scheduleSeries: CloudScheduleSeriesRow[];
+  scheduleOccurrences: CloudScheduleOccurrenceRow[];
+  notificationPreferences: CloudNotificationPreferencesRow | null;
 }
 
 export type InitialSyncResolution =
@@ -159,14 +203,26 @@ async function fetchAllRows<T>(table: string): Promise<T[]> {
 }
 
 async function fetchRemoteSnapshot(): Promise<RemoteSnapshot> {
-  const [customExercises, favorites, routines, workouts] = await Promise.all([
+  const [customExercises, favorites, routines, workouts, scheduleSeries, scheduleOccurrences, notificationPrefsRows] =
+    await Promise.all([
     fetchAllRows<CloudCustomExerciseRow>('user_custom_exercises'),
     fetchAllRows<CloudFavoriteRow>('user_favorites'),
     fetchAllRows<CloudRoutineRow>('user_routines'),
-    fetchAllRows<CloudWorkoutRow>('user_workouts')
+    fetchAllRows<CloudWorkoutRow>('user_workouts'),
+    fetchAllRows<CloudScheduleSeriesRow>('user_schedule_series'),
+    fetchAllRows<CloudScheduleOccurrenceRow>('user_schedule_occurrences'),
+    fetchAllRows<CloudNotificationPreferencesRow>('user_notification_preferences')
   ]);
 
-  return { customExercises, favorites, routines, workouts };
+  return {
+    customExercises,
+    favorites,
+    routines,
+    workouts,
+    scheduleSeries,
+    scheduleOccurrences,
+    notificationPreferences: notificationPrefsRows[0] ?? null
+  };
 }
 
 async function fetchHasRemoteData() {
@@ -175,19 +231,24 @@ async function fetchHasRemoteData() {
     snapshot.customExercises.some((row) => !row.deleted_at) ||
     snapshot.favorites.some((row) => !row.deleted_at) ||
     snapshot.routines.some((row) => !row.deleted_at) ||
-    snapshot.workouts.some((row) => !row.deleted_at)
+    snapshot.workouts.some((row) => !row.deleted_at) ||
+    snapshot.scheduleSeries.some((row) => !row.deleted_at) ||
+    snapshot.scheduleOccurrences.some((row) => !row.deleted_at)
   );
 }
 
 export async function countLocalSyncItems() {
-  const [customExercises, favorites, routines, workouts] = await Promise.all([
+  const [customExercises, favorites, routines, workouts, scheduleSeries, scheduleOccurrences] =
+    await Promise.all([
     db.exercises.filter((exercise) => exercise.isCustom && !exercise.deletedAt).count(),
     db.exerciseFavorites.filter((favorite) => !favorite.deletedAt).count(),
     db.routines.filter((routine) => !routine.deletedAt).count(),
-    db.workouts.filter((workout) => !workout.deletedAt).count()
+    db.workouts.filter((workout) => !workout.deletedAt).count(),
+    db.plannedWorkoutSeries.filter((series) => !series.deletedAt).count(),
+    db.plannedWorkoutOccurrences.filter((occurrence) => !occurrence.deletedAt).count()
   ]);
 
-  return customExercises + favorites + routines + workouts;
+  return customExercises + favorites + routines + workouts + scheduleSeries + scheduleOccurrences;
 }
 
 export async function hasRemoteSyncData() {
@@ -352,6 +413,84 @@ async function serializeWorkouts(userId: string, remoteMap: Map<string, CloudWor
     }));
 }
 
+async function serializeScheduleSeries(userId: string, remoteMap: Map<string, CloudScheduleSeriesRow>) {
+  const rows = await db.plannedWorkoutSeries.toArray();
+  return rows
+    .filter((row) =>
+      shouldPush(
+        row.updatedAt,
+        row.deletedAt,
+        remoteMap.get(row.id)?.updated_at,
+        remoteMap.get(row.id)?.deleted_at
+      )
+    )
+    .map((row) => ({
+      user_id: userId,
+      id: row.id,
+      routine_id: row.routineId,
+      kind: row.kind,
+      start_date: row.startDate,
+      weekdays: row.weekdays ?? [],
+      end_date: row.endDate ?? null,
+      created_at: row.createdAt,
+      updated_at: row.updatedAt,
+      deleted_at: row.deletedAt ?? null
+    }));
+}
+
+async function serializeScheduleOccurrences(
+  userId: string,
+  remoteMap: Map<string, CloudScheduleOccurrenceRow>
+) {
+  const rows = await db.plannedWorkoutOccurrences.toArray();
+  return rows
+    .filter((row) =>
+      shouldPush(
+        row.updatedAt,
+        row.deletedAt,
+        remoteMap.get(row.id)?.updated_at,
+        remoteMap.get(row.id)?.deleted_at
+      )
+    )
+    .map((row) => ({
+      user_id: userId,
+      id: row.id,
+      series_id: row.seriesId,
+      occurrence_date: row.occurrenceDate,
+      status: row.status,
+      workout_id: row.workoutId ?? null,
+      created_at: row.createdAt,
+      updated_at: row.updatedAt,
+      deleted_at: row.deletedAt ?? null
+    }));
+}
+
+async function serializeNotificationPreferences(
+  userId: string,
+  remoteRow: CloudNotificationPreferencesRow | null
+) {
+  const settings = await loadSettings();
+  const localUpdatedAt = settings.notificationSettingsUpdatedAt;
+  if (!shouldPush(localUpdatedAt, undefined, remoteRow?.updated_at, null)) {
+    return [];
+  }
+
+  return [
+    {
+      user_id: userId,
+      notifications_enabled: Boolean(settings.notificationsEnabled),
+      planned_enabled: Boolean(settings.plannedWorkoutNotificationsEnabled),
+      rest_enabled: Boolean(settings.restFinishedNotificationsEnabled),
+      background_session_enabled: Boolean(settings.backgroundSessionNotificationsEnabled),
+      planned_reminder_time: settings.plannedReminderTime ?? '19:00',
+      planned_reminder_offset_minutes: settings.plannedReminderOffsetMinutes ?? 0,
+      background_session_delay_minutes: settings.backgroundSessionReminderDelayMinutes ?? 10,
+      timezone: settings.notificationTimezone ?? 'UTC',
+      updated_at: localUpdatedAt ?? new Date().toISOString()
+    }
+  ];
+}
+
 async function upsertRows(table: string, rows: object[], conflict: string) {
   if (!rows.length) return 0;
   const supabase = getSupabaseClient();
@@ -379,7 +518,9 @@ async function clearSyncedLocalData() {
       db.routineVersions,
       db.workouts,
       db.workoutExercises,
-      db.workoutSets
+      db.workoutSets,
+      db.plannedWorkoutSeries,
+      db.plannedWorkoutOccurrences
     ],
     async () => {
       const customExercises = await db.exercises.filter((exercise) => exercise.isCustom).toArray();
@@ -402,6 +543,8 @@ async function clearSyncedLocalData() {
       await db.workoutSets.clear();
       await db.workoutExercises.clear();
       await db.workouts.clear();
+      await db.plannedWorkoutOccurrences.clear();
+      await db.plannedWorkoutSeries.clear();
     }
   );
 }
@@ -658,11 +801,81 @@ async function applyRemoteWorkouts(rows: CloudWorkoutRow[]) {
   }
 }
 
+async function applyRemoteScheduleSeries(rows: CloudScheduleSeriesRow[]) {
+  for (const row of rows) {
+    const local = await db.plannedWorkoutSeries.get(row.id);
+    if (local && !shouldApplyRemote(local.updatedAt, local.deletedAt, row.updated_at, row.deleted_at)) {
+      continue;
+    }
+
+    const record: PlannedWorkoutSeriesRecord = {
+      id: row.id,
+      routineId: row.routine_id,
+      kind: row.kind,
+      startDate: row.start_date,
+      weekdays: row.weekdays ?? undefined,
+      endDate: row.end_date ?? undefined,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      deletedAt: row.deleted_at ?? undefined
+    };
+
+    await db.plannedWorkoutSeries.put(record);
+  }
+}
+
+async function applyRemoteScheduleOccurrences(rows: CloudScheduleOccurrenceRow[]) {
+  for (const row of rows) {
+    const local = await db.plannedWorkoutOccurrences.get(row.id);
+    if (local && !shouldApplyRemote(local.updatedAt, local.deletedAt, row.updated_at, row.deleted_at)) {
+      continue;
+    }
+
+    const record: PlannedWorkoutOccurrenceRecord = {
+      id: row.id,
+      seriesId: row.series_id,
+      occurrenceDate: row.occurrence_date,
+      status: row.status,
+      workoutId: row.workout_id ?? undefined,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+      deletedAt: row.deleted_at ?? undefined
+    };
+
+    await db.plannedWorkoutOccurrences.put(record);
+  }
+}
+
+async function applyRemoteNotificationPreferences(row: CloudNotificationPreferencesRow | null) {
+  if (!row) return;
+
+  const settings = await loadSettings();
+  if (!shouldApplyRemote(settings.notificationSettingsUpdatedAt, undefined, row.updated_at, null)) {
+    return;
+  }
+
+  await saveSettings({
+    ...settings,
+    notificationsEnabled: row.notifications_enabled,
+    plannedWorkoutNotificationsEnabled: row.planned_enabled,
+    restFinishedNotificationsEnabled: row.rest_enabled,
+    backgroundSessionNotificationsEnabled: row.background_session_enabled,
+    plannedReminderTime: row.planned_reminder_time,
+    plannedReminderOffsetMinutes: row.planned_reminder_offset_minutes,
+    backgroundSessionReminderDelayMinutes: row.background_session_delay_minutes,
+    notificationTimezone: row.timezone,
+    notificationSettingsUpdatedAt: row.updated_at
+  });
+}
+
 async function applyRemoteSnapshot(snapshot: RemoteSnapshot) {
   await applyRemoteCustomExercises(snapshot.customExercises);
   await applyRemoteFavorites(snapshot.favorites);
   await applyRemoteRoutines(snapshot.routines);
   await applyRemoteWorkouts(snapshot.workouts);
+  await applyRemoteScheduleSeries(snapshot.scheduleSeries);
+  await applyRemoteScheduleOccurrences(snapshot.scheduleOccurrences);
+  await applyRemoteNotificationPreferences(snapshot.notificationPreferences);
 }
 
 export async function syncUserData(userId: string, mode: SyncMode = 'merge'): Promise<SyncSummary> {
@@ -691,7 +904,15 @@ export async function syncUserData(userId: string, mode: SyncMode = 'merge'): Pr
     if (mode === 'replace_local') {
       await clearSyncedLocalData();
     } else {
-      const [pushedCustomExercises, pushedFavorites, pushedRoutines, pushedWorkouts] =
+      const [
+        pushedCustomExercises,
+        pushedFavorites,
+        pushedRoutines,
+        pushedWorkouts,
+        pushedScheduleSeries,
+        pushedScheduleOccurrences,
+        pushedNotificationPreferences
+      ] =
         await Promise.all([
           upsertRows(
             'user_custom_exercises',
@@ -724,6 +945,27 @@ export async function syncUserData(userId: string, mode: SyncMode = 'merge'): Pr
               new Map(remoteBefore.workouts.map((row) => [row.id, row]))
             ),
             'user_id,id'
+          ),
+          upsertRows(
+            'user_schedule_series',
+            await serializeScheduleSeries(
+              userId,
+              new Map(remoteBefore.scheduleSeries.map((row) => [row.id, row]))
+            ),
+            'user_id,id'
+          ),
+          upsertRows(
+            'user_schedule_occurrences',
+            await serializeScheduleOccurrences(
+              userId,
+              new Map(remoteBefore.scheduleOccurrences.map((row) => [row.id, row]))
+            ),
+            'user_id,id'
+          ),
+          upsertRows(
+            'user_notification_preferences',
+            await serializeNotificationPreferences(userId, remoteBefore.notificationPreferences),
+            'user_id'
           )
         ]);
 
@@ -731,12 +973,22 @@ export async function syncUserData(userId: string, mode: SyncMode = 'merge'): Pr
       await applyRemoteSnapshot(remoteAfterPush);
 
       const summary: SyncSummary = {
-        pushed: pushedCustomExercises + pushedFavorites + pushedRoutines + pushedWorkouts,
+        pushed:
+          pushedCustomExercises +
+          pushedFavorites +
+          pushedRoutines +
+          pushedWorkouts +
+          pushedScheduleSeries +
+          pushedScheduleOccurrences +
+          pushedNotificationPreferences,
         pulled:
           remoteAfterPush.customExercises.length +
           remoteAfterPush.favorites.length +
           remoteAfterPush.routines.length +
-          remoteAfterPush.workouts.length,
+          remoteAfterPush.workouts.length +
+          remoteAfterPush.scheduleSeries.length +
+          remoteAfterPush.scheduleOccurrences.length +
+          (remoteAfterPush.notificationPreferences ? 1 : 0),
         mode
       };
 
@@ -777,7 +1029,10 @@ export async function syncUserData(userId: string, mode: SyncMode = 'merge'): Pr
         remoteAfterReplace.customExercises.length +
         remoteAfterReplace.favorites.length +
         remoteAfterReplace.routines.length +
-        remoteAfterReplace.workouts.length,
+        remoteAfterReplace.workouts.length +
+        remoteAfterReplace.scheduleSeries.length +
+        remoteAfterReplace.scheduleOccurrences.length +
+        (remoteAfterReplace.notificationPreferences ? 1 : 0),
       mode
     };
   } catch (error) {

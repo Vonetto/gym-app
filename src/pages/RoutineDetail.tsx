@@ -465,8 +465,8 @@ export function RoutineDetail() {
                       Descanso (seg)
                       <input
                         type="number"
-                        min={0}
-                        step={30}
+                        min={-1}
+                        step={15}
                         value={defaultValues.defaultRestSeconds ?? ''}
                         onChange={(event) =>
                           handleDefaultChange(
