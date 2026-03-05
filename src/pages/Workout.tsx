@@ -48,13 +48,18 @@ interface ExerciseOption {
   normalizedLabel: string;
 }
 
-const REST_PRESET_SECONDS = [30, 45, 60, 75, 90, 120, 150, 180, 240, 300];
-
 function formatDuration(seconds: number) {
   if (seconds < 60) return `${seconds}s`;
   const minutes = Math.floor(seconds / 60);
   const remainder = seconds % 60;
   return `${minutes}m ${remainder}s`;
+}
+
+function formatClockValue(seconds: number) {
+  const safeSeconds = Math.max(0, Math.floor(seconds));
+  const minutes = Math.floor(safeSeconds / 60);
+  const remainder = safeSeconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(remainder).padStart(2, '0')}`;
 }
 
 function getMetricTypeLabel(metricType: ExerciseMetric) {
@@ -1347,7 +1352,7 @@ export function Workout() {
             setRestTarget(null);
           }}
         >
-          <div className="modal-card" onClick={(event) => event.stopPropagation()}>
+          <div className="modal-card rest-clock-modal" onClick={(event) => event.stopPropagation()}>
             {(() => {
               const targetExercise = session?.exercises[restTarget];
               if (!targetExercise) return null;
@@ -1355,51 +1360,56 @@ export function Workout() {
               const isStopwatch = currentRest === -1;
               const isOff = currentRest === 0;
               const timerValue = currentRest > 0 ? currentRest : 90;
+              const restElapsed = getRestSecondsLeft(targetExercise.exerciseId) ?? 0;
+              const displayValue = isStopwatch ? restElapsed : timerValue;
               return (
                 <>
-                  <div className="card-header">
-                    <h2>Descanso</h2>
-                    <button className="ghost-button" type="button" onClick={() => setRestTarget(null)}>
-                      Cerrar
+                  <div className="rest-clock-header">
+                    <span className="rest-clock-icon" aria-hidden="true">
+                      ⏱
+                    </span>
+                    <h2>Reloj</h2>
+                    <button
+                      className="rest-close-button"
+                      type="button"
+                      onClick={() => setRestTarget(null)}
+                      aria-label="Cerrar reloj"
+                    >
+                      ✕
                     </button>
                   </div>
-                  <p className="muted">
-                    {targetExercise.name} · modo actual:{' '}
-                    <strong>
-                      {isStopwatch ? 'Cronómetro' : isOff ? 'Apagado' : formatDuration(timerValue)}
-                    </strong>
-                  </p>
-                  <div className="rest-mode-toggle">
+                  <div className="rest-mode-segment">
                     <button
                       type="button"
-                      className={!isStopwatch ? 'toggle active' : 'toggle'}
+                      className={!isStopwatch ? 'active' : ''}
                       onClick={() => updateRestForExercise(restTarget, timerValue)}
                     >
                       Temporizador
                     </button>
                     <button
                       type="button"
-                      className={isStopwatch ? 'toggle active' : 'toggle'}
+                      className={isStopwatch ? 'active' : ''}
                       onClick={() => updateRestForExercise(restTarget, -1)}
                     >
                       Cronómetro
                     </button>
                   </div>
 
-                  <div className="rest-adjust-row">
+                  <div className="rest-clock-ring">
+                    <span>{formatClockValue(displayValue)}</span>
+                  </div>
+
+                  <div className="rest-step-row">
                     <button
-                      className="ghost-button"
+                      className="rest-step-button"
                       type="button"
                       onClick={() => handleRestAdjust(restTarget, -15)}
                       disabled={isStopwatch}
                     >
                       -15s
                     </button>
-                    <span>
-                      {isStopwatch ? 'Indefinido' : isOff ? 'Apagado' : formatDuration(timerValue)}
-                    </span>
                     <button
-                      className="ghost-button"
+                      className="rest-step-button"
                       type="button"
                       onClick={() => handleRestAdjust(restTarget, 15)}
                       disabled={isStopwatch}
@@ -1408,29 +1418,29 @@ export function Workout() {
                     </button>
                   </div>
 
-                  <div className="rest-preset-grid">
-                    <button
-                      type="button"
-                      className={currentRest === 0 ? 'pill active' : 'pill'}
-                      onClick={() => updateRestForExercise(restTarget, 0)}
-                    >
-                      Apagado
-                    </button>
-                    {REST_PRESET_SECONDS.map((seconds) => (
-                      <button
-                        key={seconds}
-                        type="button"
-                        className={currentRest === seconds ? 'pill active' : 'pill'}
-                        onClick={() => updateRestForExercise(restTarget, seconds)}
-                      >
-                        {formatDuration(seconds)}
-                      </button>
-                    ))}
-                  </div>
-
-                  <p className="muted">
-                    En modo cronómetro, al completar una serie el descanso comienza a contar sin fin.
-                  </p>
+                  <button
+                    className="primary-button full rest-start-button"
+                    type="button"
+                    onClick={() => {
+                      const restToStart = isStopwatch ? -1 : timerValue;
+                      updateRestForExercise(restTarget, restToStart);
+                      void startRestTimer(
+                        targetExercise.exerciseId,
+                        targetExercise.name,
+                        restToStart
+                      );
+                      setRestTarget(null);
+                    }}
+                  >
+                    Empezar
+                  </button>
+                  <button
+                    className={isOff ? 'ghost-button full rest-off-button active' : 'ghost-button full rest-off-button'}
+                    type="button"
+                    onClick={() => updateRestForExercise(restTarget, 0)}
+                  >
+                    Apagar descanso automático
+                  </button>
                 </>
               );
             })()}
