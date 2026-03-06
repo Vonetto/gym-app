@@ -1,10 +1,10 @@
 # Project State: Gym Tracker PWA (Hevy-inspired)
 
 **Date:** 2026-03-05
-**Status:** Phase 15 cerrada; V1 consolidada y lista para definir siguiente fase.
+**Status:** Phase 16 en ejecución (slice 1 completado).
 
 ## Current Phase
-- Sin fase activa (pendiente definición de siguiente fase)
+- Phase 16: Normalización del Catálogo de Ejercicios (en ejecución)
 
 ## Progress Summary
 - Phase 1 completed: PWA shell, offline indicator, theme toggle, reset flow, local persistence.
@@ -42,6 +42,10 @@
 - Phase 15 ejecución (slice 1): stack de tests agregado (`vitest`, `@testing-library/react`, `fake-indexeddb`), nuevos scripts `test/test:watch/test:coverage`, suites core para `fullBackup`, `sync`, `notifications` y `workouts`; `npm run test` y `npm run build` pasan.
 - Phase 15 ejecución (slice 2): normalización legacy aplicada en docs (`ROADMAP` fases 4-7 como `Consolidated`, y `REQUIREMENTS` sin `Pending` falsos + tabla de equivalencias requirement -> fase real).
 - Phase 15 cerrada: QA manual completado, micro-fix UX móvil aplicado al tab bar, y cierre formal documentado en `15-SUMMARY.md` + `15-VERIFICATION.md`.
+- Phase 16 abierta/discutida: cierre de decisiones base para normalización de catálogo (canónico en español + aliases, fusión por nombre normalizado con variantes reales separadas, remap automático a IDs canónicos con log de conflictos y preservación de personalizados sin auto-fusión).
+- Phase 16 investigada: definido enfoque canonical-first con alias index, migración Dexie transaccional/idempotente y normalización obligatoria en fronteras de sync/backup para evitar reintroducción de IDs legacy.
+- Phase 16 planificada: definido `16-PLAN.md` con 8 bloques de ejecución (artefactos canónicos, resolver único, normalización de búsqueda/listado, migración Dexie one-shot, boundary remap en sync/backup, tests de regresión y cierre QA).
+- Phase 16 ejecución (slice 1): implementada capa `catalogNormalization` (canonical map + aliases + resolver), seed canónico, migración local idempotente con marker y remap transaccional en rutinas/workouts/favoritos/recientes/tips; además remap en fronteras de sync/backup/routine-backup y tests iniciales de canonicalización.
 
 ## Risks & Notes
 - La evidencia sigue siendo mucho mas fuerte para `weight_reps` que para `time`/`distance`; esos dos dominios deben seguir tratandose como reglas conservadoras de producto y no como precision cientifica.

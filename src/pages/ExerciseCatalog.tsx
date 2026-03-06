@@ -19,6 +19,7 @@ interface ExerciseSummary {
   id: string;
   label: string;
   muscles: string[];
+  secondaryMuscles: string[];
   equipment: string[];
   metricType: ExerciseMetric;
   isCustom: boolean;
@@ -52,6 +53,7 @@ export function ExerciseCatalog() {
           id: item.id,
           label,
           muscles: item.muscles,
+          secondaryMuscles: item.secondaryMuscles ?? [],
           equipment: item.equipment,
           metricType: item.metricType,
           isCustom: item.isCustom,
@@ -82,7 +84,10 @@ export function ExerciseCatalog() {
 
   const allMuscles = useMemo(() => {
     const set = new Set<string>();
-    exercises.forEach((exercise) => exercise.muscles.forEach((item) => set.add(item)));
+    exercises.forEach((exercise) => {
+      exercise.muscles.forEach((item) => set.add(item));
+      exercise.secondaryMuscles.forEach((item) => set.add(item));
+    });
     return Array.from(set).sort();
   }, [exercises]);
 

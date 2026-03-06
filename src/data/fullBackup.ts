@@ -15,8 +15,9 @@ import {
   type WorkoutSetRecord,
   type AdvancedSetType
 } from './db';
+import { resolveCanonicalExerciseId } from './catalogNormalization';
 import { defaultSettings } from './settings';
-import { normalizeName } from './exercises';
+import { normalizeName } from './normalizeText';
 
 export const FULL_BACKUP_TYPE = 'gym-app-full';
 export const FULL_BACKUP_SCHEMA_VERSION = 1;
@@ -313,11 +314,14 @@ export async function exportFullBackup(): Promise<FullBackupPayload> {
   routineExercises.forEach((entry) => {
     const bundle = routinesById.get(entry.routineId);
     if (!bundle) return;
+    const canonicalExerciseId = resolveCanonicalExerciseId(entry.exerciseId);
     const defaults = exerciseDefaults.find(
-      (item) => item.routineId === entry.routineId && item.exerciseId === entry.exerciseId
+      (item) =>
+        item.routineId === entry.routineId &&
+        resolveCanonicalExerciseId(item.exerciseId) === canonicalExerciseId
     );
     bundle.exercises.push({
-      exerciseId: entry.exerciseId,
+      exerciseId: canonicalExerciseId,
       order: entry.order,
       defaults: defaults
         ? {
@@ -351,7 +355,7 @@ export async function exportFullBackup(): Promise<FullBackupPayload> {
     const bundle = workoutsById.get(workoutExercise.workoutId);
     if (!bundle) return;
     const exerciseBundle = {
-      exerciseId: workoutExercise.exerciseId,
+      exerciseId: resolveCanonicalExerciseId(workoutExercise.exerciseId),
       name: workoutExercise.name,
       order: workoutExercise.order,
       notes: workoutExercise.notes,
@@ -401,8 +405,18 @@ export async function exportFullBackup(): Promise<FullBackupPayload> {
           translations: translationMap[exercise.id] ?? []
         }))
         .sort((a, b) => a.exercise.id.localeCompare(b.exercise.id)),
-      exerciseFavorites: [...exerciseFavorites].sort((a, b) => a.exerciseId.localeCompare(b.exerciseId)),
-      exerciseRecents: [...exerciseRecents].sort((a, b) => a.exerciseId.localeCompare(b.exerciseId)),
+      exerciseFavorites: [...exerciseFavorites]
+        .map((entry) => ({
+          ...entry,
+          exerciseId: resolveCanonicalExerciseId(entry.exerciseId)
+        }))
+        .sort((a, b) => a.exerciseId.localeCompare(b.exerciseId)),
+      exerciseRecents: [...exerciseRecents]
+        .map((entry) => ({
+          ...entry,
+          exerciseId: resolveCanonicalExerciseId(entry.exerciseId)
+        }))
+        .sort((a, b) => a.exerciseId.localeCompare(b.exerciseId)),
       routines: Array.from(routinesById.values())
         .map((bundle) => ({
           routine: bundle.routine,
@@ -485,7 +499,10 @@ function normalizeFullBackupData(data: Record<string, unknown>): FullBackupData 
     if (!isRecord(favorite) || typeof favorite.exerciseId !== 'string') {
       throw new FullBackupError('incomplete-backup');
     }
-    return favorite as ExerciseFavoriteRecord;
+    return {
+      ...(favorite as ExerciseFavoriteRecord),
+      exerciseId: resolveCanonicalExerciseId(favorite.exerciseId)
+    };
   });
 
   const exerciseRecents = ensureArray<ExerciseRecentRecord>(
@@ -495,7 +512,10 @@ function normalizeFullBackupData(data: Record<string, unknown>): FullBackupData 
     if (!isRecord(recent) || typeof recent.exerciseId !== 'string') {
       throw new FullBackupError('incomplete-backup');
     }
-    return recent as ExerciseRecentRecord;
+    return {
+      ...(recent as ExerciseRecentRecord),
+      exerciseId: resolveCanonicalExerciseId(recent.exerciseId)
+    };
   });
 
   const routines = ensureArray<RoutineBundle>(data.routines, 'incomplete-backup').map((bundle) => {
@@ -518,7 +538,7 @@ function normalizeFullBackupData(data: Record<string, unknown>): FullBackupData 
         throw new FullBackupError('incomplete-backup');
       }
       return {
-        exerciseId: entry.exerciseId,
+        exerciseId: resolveCanonicalExerciseId(entry.exerciseId),
         order: entry.order,
         defaults: isRecord(entry.defaults)
           ? (entry.defaults as RoutineExerciseDefaultsLite)
@@ -571,7 +591,7 @@ function normalizeFullBackupData(data: Record<string, unknown>): FullBackupData 
         };
       });
       return {
-        exerciseId: exercise.exerciseId,
+        exerciseId: resolveCanonicalExerciseId(exercise.exerciseId),
         name: exercise.name,
         order: exercise.order,
         notes: typeof exercise.notes === 'string' ? exercise.notes : undefined,
@@ -884,11 +904,21 @@ async function applyReplace(
   }
 
   if (payload.data.exerciseFavorites.length) {
-    await db.exerciseFavorites.bulkPut(payload.data.exerciseFavorites);
+    await db.exerciseFavorites.bulkPut(
+      payload.data.exerciseFavorites.map((entry) => ({
+        ...entry,
+        exerciseId: resolveCanonicalExerciseId(entry.exerciseId)
+      }))
+    );
     sections.favorites.imported += payload.data.exerciseFavorites.length;
   }
   if (payload.data.exerciseRecents.length) {
-    await db.exerciseRecents.bulkPut(payload.data.exerciseRecents);
+    await db.exerciseRecents.bulkPut(
+      payload.data.exerciseRecents.map((entry) => ({
+        ...entry,
+        exerciseId: resolveCanonicalExerciseId(entry.exerciseId)
+      }))
+    );
     sections.recents.imported += payload.data.exerciseRecents.length;
   }
 
@@ -930,13 +960,19 @@ async function applyReplace(
           exercises.map((entry) => ({
             id: `routine-exercise-${crypto.randomUUID()}`,
             routineId: routine.id,
-            exerciseId: entry.exerciseId,
+            exerciseId: resolveCanonicalExerciseId(entry.exerciseId),
             order: entry.order
           }))
         );
         const defaults = exercises
           .filter((entry) => entry.defaults)
-          .map((entry) => toRoutineDefaultRecord(routine.id, entry.exerciseId, entry.defaults!));
+          .map((entry) =>
+            toRoutineDefaultRecord(
+              routine.id,
+              resolveCanonicalExerciseId(entry.exerciseId),
+              entry.defaults!
+            )
+          );
         if (defaults.length) {
           await db.exerciseDefaults.bulkPut(defaults);
         }
@@ -959,7 +995,7 @@ async function applyReplace(
         await db.workoutExercises.put({
           id: workoutExerciseId,
           workoutId: workout.id,
-          exerciseId: exercise.exerciseId,
+          exerciseId: resolveCanonicalExerciseId(exercise.exerciseId),
           name: exercise.name,
           order: exercise.order,
           notes: exercise.notes
@@ -1097,15 +1133,22 @@ async function applyMerge(
   }
 
   for (const favorite of payload.data.exerciseFavorites) {
-    const existing = await db.exerciseFavorites.get(favorite.exerciseId);
+    const canonicalExerciseId = resolveCanonicalExerciseId(favorite.exerciseId);
+    const normalizedFavorite = { ...favorite, exerciseId: canonicalExerciseId };
+    const existing = await db.exerciseFavorites.get(canonicalExerciseId);
     const shouldApply =
       !existing ||
-      incomingWins(favorite.updatedAt, favorite.deletedAt, existing.updatedAt, existing.deletedAt);
+      incomingWins(
+        normalizedFavorite.updatedAt,
+        normalizedFavorite.deletedAt,
+        existing.updatedAt,
+        existing.deletedAt
+      );
     if (!shouldApply) {
       sections.favorites.skipped += 1;
       continue;
     }
-    await db.exerciseFavorites.put(favorite);
+    await db.exerciseFavorites.put(normalizedFavorite);
     if (existing) {
       sections.favorites.merged += 1;
     } else {
@@ -1114,13 +1157,15 @@ async function applyMerge(
   }
 
   for (const recent of payload.data.exerciseRecents) {
-    const existing = await db.exerciseRecents.get(recent.exerciseId);
-    const shouldApply = !existing || recent.lastUsedAt > existing.lastUsedAt;
+    const canonicalExerciseId = resolveCanonicalExerciseId(recent.exerciseId);
+    const normalizedRecent = { ...recent, exerciseId: canonicalExerciseId };
+    const existing = await db.exerciseRecents.get(canonicalExerciseId);
+    const shouldApply = !existing || normalizedRecent.lastUsedAt > existing.lastUsedAt;
     if (!shouldApply) {
       sections.recents.skipped += 1;
       continue;
     }
-    await db.exerciseRecents.put(recent);
+    await db.exerciseRecents.put(normalizedRecent);
     if (existing) {
       sections.recents.merged += 1;
     } else {
@@ -1193,13 +1238,19 @@ async function applyMerge(
           exercises.map((entry) => ({
             id: `routine-exercise-${crypto.randomUUID()}`,
             routineId: routine.id,
-            exerciseId: entry.exerciseId,
+            exerciseId: resolveCanonicalExerciseId(entry.exerciseId),
             order: entry.order
           }))
         );
         const defaults = exercises
           .filter((entry) => entry.defaults)
-          .map((entry) => toRoutineDefaultRecord(routine.id, entry.exerciseId, entry.defaults!));
+          .map((entry) =>
+            toRoutineDefaultRecord(
+              routine.id,
+              resolveCanonicalExerciseId(entry.exerciseId),
+              entry.defaults!
+            )
+          );
         if (defaults.length) {
           await db.exerciseDefaults.bulkPut(defaults);
         }
@@ -1253,7 +1304,7 @@ async function applyMerge(
         await db.workoutExercises.put({
           id: workoutExerciseId,
           workoutId: workout.id,
-          exerciseId: exercise.exerciseId,
+          exerciseId: resolveCanonicalExerciseId(exercise.exerciseId),
           name: exercise.name,
           order: exercise.order,
           notes: exercise.notes

@@ -39,6 +39,7 @@ export interface ExerciseRecord {
   baseName: string;
   normalizedName: string;
   muscles: string[];
+  secondaryMuscles?: string[];
   equipment: string[];
   metricType: ExerciseMetric;
   isCustom: boolean;

@@ -1,0 +1,8368 @@
+{
+  "generatedAt": "2026-03-06T13:46:24.832Z",
+  "source": "https://wger.de/api/v2/exerciseinfo/",
+  "count": 807,
+  "items": {
+    "9": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Kettlebell"
+      ],
+      "category": "Abs"
+    },
+    "12": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "20": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "31": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "41": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Abs"
+    },
+    "43": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "46": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "48": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell",
+        "Bench"
+      ],
+      "category": "Arms"
+    },
+    "50": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Pectoralis major"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Arms"
+    },
+    "51": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Obliquus externus abdominis"
+      ],
+      "equipment": [
+        "Barbell",
+        "Bench"
+      ],
+      "category": "Arms"
+    },
+    "56": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "equipment": [
+        "Gym mat"
+      ],
+      "category": "Abs"
+    },
+    "57": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Gastrocnemius",
+        "Pectoralis major",
+        "Rectus abdominis",
+        "Serratus anterior",
+        "Soleus",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus",
+        "Latissimus dorsi",
+        "Obliquus externus abdominis",
+        "Quadriceps femoris",
+        "Trapezius"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "71": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "73": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Barbell",
+        "Bench"
+      ],
+      "category": "Chest"
+    },
+    "75": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Bench",
+        "Dumbbell"
+      ],
+      "category": "Chest"
+    },
+    "76": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Pectoralis major"
+      ],
+      "equipment": [
+        "Barbell",
+        "Bench"
+      ],
+      "category": "Arms"
+    },
+    "79": {
+      "primaryMuscles": [
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "81": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench",
+        "Dumbbell"
+      ],
+      "category": "Back"
+    },
+    "82": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench",
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "83": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Back"
+    },
+    "84": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Back"
+    },
+    "91": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Brachialis"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Arms"
+    },
+    "92": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Brachialis"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "94": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Brachialis"
+      ],
+      "equipment": [
+        "SZ-Bar"
+      ],
+      "category": "Arms"
+    },
+    "95": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "112": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "124": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "129": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "132": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "135": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "137": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "139": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "142": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "145": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "146": {
+      "primaryMuscles": [
+        "Gastrocnemius",
+        "Soleus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Calves"
+    },
+    "148": {
+      "primaryMuscles": [
+        "Gastrocnemius"
+      ],
+      "secondaryMuscles": [
+        "Soleus"
+      ],
+      "equipment": [],
+      "category": "Calves"
+    },
+    "152": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Back"
+    },
+    "154": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Back"
+    },
+    "158": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "161": {
+      "primaryMuscles": [
+        "Latissimus dorsi",
+        "Pectoralis major",
+        "Serratus anterior"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Chest"
+    },
+    "165": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "167": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Serratus anterior"
+      ],
+      "equipment": [
+        "Gym mat"
+      ],
+      "category": "Abs"
+    },
+    "171": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Incline bench"
+      ],
+      "category": "Abs"
+    },
+    "172": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "173": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "174": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "177": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Brachialis",
+        "Gluteus maximus",
+        "Latissimus dorsi",
+        "Quadriceps femoris"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "178": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "182": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "184": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Back"
+    },
+    "185": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Chest"
+    },
+    "186": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Chest"
+    },
+    "188": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "189": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Latissimus dorsi",
+        "Rectus abdominis",
+        "Soleus"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Back"
+    },
+    "193": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench"
+      ],
+      "category": "Shoulders"
+    },
+    "194": {
+      "primaryMuscles": [
+        "Pectoralis major",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "197": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench"
+      ],
+      "category": "Arms"
+    },
+    "202": {
+      "primaryMuscles": [
+        "Brachialis"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "203": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Legs"
+    },
+    "204": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Brachialis"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "205": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Legs"
+    },
+    "206": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Legs"
+    },
+    "208": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "211": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Pectoralis major"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "222": {
+      "primaryMuscles": [
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "235": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "237": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "238": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Chest"
+    },
+    "239": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Chest"
+    },
+    "245": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench",
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "246": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench",
+        "SZ-Bar"
+      ],
+      "category": "Arms"
+    },
+    "254": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "256": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell",
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "257": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "258": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Brachialis"
+      ],
+      "equipment": [
+        "Barbell",
+        "SZ-Bar"
+      ],
+      "category": "Back"
+    },
+    "259": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Brachialis"
+      ],
+      "equipment": [
+        "Barbell",
+        "SZ-Bar"
+      ],
+      "category": "Back"
+    },
+    "260": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "265": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "268": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "272": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "275": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Brachialis"
+      ],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "279": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "282": {
+      "primaryMuscles": [
+        "Trapezius",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Shoulders"
+    },
+    "283": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Abs"
+    },
+    "284": {
+      "primaryMuscles": [
+        "Biceps brachii",
+        "Brachialis",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "285": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gastrocnemius",
+        "Quadriceps femoris",
+        "Soleus"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis",
+        "Serratus anterior"
+      ],
+      "equipment": [],
+      "category": "Cardio"
+    },
+    "289": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "291": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "292": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "294": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell",
+        "Bench"
+      ],
+      "category": "Legs"
+    },
+    "297": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Gym mat",
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "301": {
+      "primaryMuscles": [
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "308": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell",
+        "Incline bench"
+      ],
+      "category": "Chest"
+    },
+    "310": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "equipment": [
+        "Dumbbell",
+        "Incline bench"
+      ],
+      "category": "Back"
+    },
+    "312": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "313": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris"
+      ],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "314": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "319": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Cardio"
+    },
+    "320": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "323": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "331": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris"
+      ],
+      "equipment": [
+        "Kettlebell"
+      ],
+      "category": "Legs"
+    },
+    "341": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "346": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [
+        "Pectoralis major",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Shoulders"
+    },
+    "348": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "349": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "351": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "354": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "355": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "364": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "365": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "366": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "367": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "369": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "371": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gastrocnemius",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gastrocnemius",
+        "Gluteus maximus"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "373": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "374": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "375": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "376": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "377": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Serratus anterior"
+      ],
+      "equipment": [
+        "Gym mat"
+      ],
+      "category": "Abs"
+    },
+    "378": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Serratus anterior"
+      ],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "379": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "380": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "382": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "386": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "394": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Brachialis"
+      ],
+      "equipment": [],
+      "category": "Back"
+    },
+    "395": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Brachialis"
+      ],
+      "equipment": [],
+      "category": "Back"
+    },
+    "397": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "406": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "418": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "SZ-Bar"
+      ],
+      "category": "Shoulders"
+    },
+    "423": {
+      "primaryMuscles": [
+        "Biceps brachii",
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Back"
+    },
+    "427": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "439": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "441": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "445": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Barbell",
+        "Bench"
+      ],
+      "category": "Chest"
+    },
+    "448": {
+      "primaryMuscles": [
+        "Latissimus dorsi",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Back"
+    },
+    "454": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "456": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Brachialis"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "458": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Quadriceps femoris",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "465": {
+      "primaryMuscles": [
+        "Brachialis"
+      ],
+      "secondaryMuscles": [
+        "Brachialis"
+      ],
+      "equipment": [
+        "SZ-Bar"
+      ],
+      "category": "Arms"
+    },
+    "468": {
+      "primaryMuscles": [
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "475": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Trapezius"
+      ],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Back"
+    },
+    "477": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Trapezius"
+      ],
+      "equipment": [],
+      "category": "Back"
+    },
+    "478": {
+      "primaryMuscles": [
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "484": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii"
+      ],
+      "equipment": [],
+      "category": "Back"
+    },
+    "487": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "490": {
+      "primaryMuscles": [
+        "Latissimus dorsi",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Back"
+    },
+    "493": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "SZ-Bar"
+      ],
+      "category": "Arms"
+    },
+    "495": {
+      "primaryMuscles": [
+        "Biceps brachii",
+        "Brachialis"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii"
+      ],
+      "equipment": [
+        "Barbell",
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "498": {
+      "primaryMuscles": [
+        "Pectoralis major",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [
+        "Barbell",
+        "Bench"
+      ],
+      "category": "Chest"
+    },
+    "500": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "501": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "505": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "507": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "508": {
+      "primaryMuscles": [
+        "Latissimus dorsi",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "equipment": [
+        "Barbell",
+        "Dumbbell",
+        "Pull-up bar"
+      ],
+      "category": "Back"
+    },
+    "510": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "512": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "513": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Brachialis"
+      ],
+      "equipment": [],
+      "category": "Back"
+    },
+    "516": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "525": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Back"
+    },
+    "527": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Cardio"
+    },
+    "529": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Cardio"
+    },
+    "530": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Cardio"
+    },
+    "537": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Dumbbell",
+        "Incline bench"
+      ],
+      "category": "Chest"
+    },
+    "538": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Barbell",
+        "Incline bench"
+      ],
+      "category": "Chest"
+    },
+    "539": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Triceps brachii"
+      ],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "543": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "545": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "549": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench",
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "556": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Abs"
+    },
+    "562": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "566": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Shoulders"
+    },
+    "567": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "569": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "570": {
+      "primaryMuscles": [
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Shoulders"
+    },
+    "571": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Shoulders"
+    },
+    "572": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "575": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "576": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "Gym mat"
+      ],
+      "category": "Abs"
+    },
+    "577": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Abs"
+    },
+    "578": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "580": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "583": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Obliquus externus abdominis",
+        "Pectoralis major",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "584": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "590": {
+      "primaryMuscles": [
+        "Soleus"
+      ],
+      "secondaryMuscles": [
+        "Gastrocnemius"
+      ],
+      "equipment": [],
+      "category": "Calves"
+    },
+    "591": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "595": {
+      "primaryMuscles": [
+        "Gastrocnemius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Cardio"
+    },
+    "598": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Pectoralis major"
+      ],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "599": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Shoulders"
+    },
+    "604": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "607": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "614": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "615": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "616": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris",
+        "Rectus abdominis",
+        "Soleus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "621": {
+      "primaryMuscles": [
+        "Biceps brachii",
+        "Brachialis"
+      ],
+      "secondaryMuscles": [
+        "Brachialis"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "622": {
+      "primaryMuscles": [
+        "Gastrocnemius"
+      ],
+      "secondaryMuscles": [
+        "Soleus"
+      ],
+      "equipment": [],
+      "category": "Calves"
+    },
+    "623": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "624": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Cardio"
+    },
+    "627": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "628": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [],
+      "category": "Back"
+    },
+    "629": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [],
+      "category": "Back"
+    },
+    "630": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "632": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "636": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Gym mat"
+      ],
+      "category": "Back"
+    },
+    "650": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [
+        "Trapezius"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "655": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "659": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "660": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "661": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "672": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "674": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "675": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Gluteus maximus",
+        "Obliquus externus abdominis",
+        "Serratus anterior"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Gluteus maximus",
+        "Obliquus externus abdominis",
+        "Serratus anterior"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Abs"
+    },
+    "683": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Chest"
+    },
+    "684": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii"
+      ],
+      "equipment": [],
+      "category": "Back"
+    },
+    "687": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Chest"
+    },
+    "688": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Chest"
+    },
+    "691": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii"
+      ],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "693": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii"
+      ],
+      "equipment": [
+        "SZ-Bar"
+      ],
+      "category": "Shoulders"
+    },
+    "694": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "695": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "702": {
+      "primaryMuscles": [
+        "Gastrocnemius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Calves"
+    },
+    "711": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Shoulders"
+    },
+    "713": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Pectoralis major",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus",
+        "Rectus abdominis",
+        "Serratus anterior",
+        "Trapezius"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "716": {
+      "primaryMuscles": [
+        "Biceps brachii",
+        "Biceps femoris",
+        "Pectoralis major",
+        "Trapezius",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "718": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "722": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "723": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "801": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Chest"
+    },
+    "802": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "803": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "804": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "805": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "820": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "821": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "822": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "827": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "828": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Back"
+    },
+    "829": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "851": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "901": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "902": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "906": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "907": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Pectoralis major"
+      ],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "908": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Cardio"
+    },
+    "909": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus",
+        "Rectus abdominis"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "910": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "911": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "912": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "913": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "SZ-Bar"
+      ],
+      "category": "Arms"
+    },
+    "914": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "SZ-Bar"
+      ],
+      "category": "Arms"
+    },
+    "915": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "916": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Incline bench"
+      ],
+      "category": "Shoulders"
+    },
+    "917": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "SZ-Bar"
+      ],
+      "category": "Shoulders"
+    },
+    "918": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "919": {
+      "primaryMuscles": [
+        "Latissimus dorsi",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Back"
+    },
+    "920": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "921": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "922": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "923": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Back"
+    },
+    "924": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "925": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "926": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "927": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "957": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Gluteus maximus",
+        "Serratus anterior",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "958": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "959": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "960": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [
+        "Quadriceps femoris",
+        "Rectus abdominis",
+        "Trapezius"
+      ],
+      "equipment": [
+        "Kettlebell"
+      ],
+      "category": "Abs"
+    },
+    "961": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Cardio"
+    },
+    "962": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Rectus abdominis",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "974": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Kettlebell"
+      ],
+      "category": "Arms"
+    },
+    "975": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Kettlebell"
+      ],
+      "category": "Arms"
+    },
+    "976": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "977": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris",
+        "Soleus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "978": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Abs"
+    },
+    "979": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis",
+        "Quadriceps femoris"
+      ],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Abs"
+    },
+    "980": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Latissimus dorsi",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Abs"
+    },
+    "981": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench"
+      ],
+      "category": "Legs"
+    },
+    "983": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "984": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "985": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "986": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "987": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "988": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "989": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "990": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "991": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "992": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "993": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "994": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "995": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "996": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "997": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "998": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "999": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1000": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "1001": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "1002": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1003": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Kettlebell"
+      ],
+      "category": "Back"
+    },
+    "1004": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1005": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1006": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1007": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Shoulders"
+    },
+    "1008": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Shoulders"
+    },
+    "1009": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Shoulders"
+    },
+    "1010": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1011": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1012": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1013": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1014": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1015": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1016": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1017": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1018": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1019": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1020": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1021": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Calves"
+    },
+    "1022": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Brachialis",
+        "Latissimus dorsi",
+        "Obliquus externus abdominis",
+        "Rectus abdominis",
+        "Serratus anterior"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Kettlebell"
+      ],
+      "category": "Back"
+    },
+    "1027": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench"
+      ],
+      "category": "Back"
+    },
+    "1028": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1029": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1079": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Gym mat"
+      ],
+      "category": "Abs"
+    },
+    "1080": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "1081": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "1082": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1083": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1084": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1085": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Latissimus dorsi",
+        "Serratus anterior",
+        "Trapezius",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1086": {
+      "primaryMuscles": [
+        "Brachialis",
+        "Latissimus dorsi",
+        "Pectoralis major",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "1087": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Back"
+    },
+    "1088": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Legs"
+    },
+    "1089": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Swiss Ball"
+      ],
+      "category": "Abs"
+    },
+    "1090": {
+      "primaryMuscles": [
+        "Pectoralis major",
+        "Quadriceps femoris",
+        "Rectus abdominis",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1091": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Gluteus maximus",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "equipment": [
+        "Gym mat"
+      ],
+      "category": "Abs"
+    },
+    "1092": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Pectoralis major",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Biceps femoris",
+        "Gastrocnemius",
+        "Latissimus dorsi",
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "1093": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Biceps femoris",
+        "Brachialis",
+        "Gastrocnemius",
+        "Gluteus maximus",
+        "Latissimus dorsi",
+        "Obliquus externus abdominis",
+        "Quadriceps femoris",
+        "Rectus abdominis",
+        "Serratus anterior",
+        "Soleus",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "1094": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench"
+      ],
+      "category": "Chest"
+    },
+    "1095": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Bench"
+      ],
+      "category": "Chest"
+    },
+    "1096": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1098": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Back"
+    },
+    "1099": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "Kettlebell"
+      ],
+      "category": "Abs"
+    },
+    "1100": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Pectoralis major",
+        "Rectus abdominis",
+        "Trapezius"
+      ],
+      "equipment": [
+        "Swiss Ball"
+      ],
+      "category": "Legs"
+    },
+    "1101": {
+      "primaryMuscles": [
+        "Latissimus dorsi",
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii"
+      ],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Abs"
+    },
+    "1102": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1103": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Gluteus maximus",
+        "Latissimus dorsi"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1104": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gastrocnemius",
+        "Gluteus maximus",
+        "Latissimus dorsi",
+        "Obliquus externus abdominis",
+        "Quadriceps femoris",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "1105": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1106": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1109": {
+      "primaryMuscles": [
+        "Biceps brachii",
+        "Brachialis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1111": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Bench",
+        "Incline bench"
+      ],
+      "category": "Chest"
+    },
+    "1112": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Bench",
+        "Incline bench"
+      ],
+      "category": "Chest"
+    },
+    "1113": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Triceps brachii"
+      ],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1114": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1115": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Cardio"
+    },
+    "1116": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Legs"
+    },
+    "1117": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1119": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1120": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1124": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1125": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1126": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1127": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1131": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1132": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1136": {
+      "primaryMuscles": [
+        "Biceps brachii",
+        "Latissimus dorsi",
+        "Serratus anterior"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1137": {
+      "primaryMuscles": [
+        "Latissimus dorsi",
+        "Serratus anterior"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1138": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1141": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1143": {
+      "primaryMuscles": [
+        "Latissimus dorsi",
+        "Serratus anterior"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1185": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1186": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1187": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1188": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Abs"
+    },
+    "1190": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1192": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1193": {
+      "primaryMuscles": [
+        "Latissimus dorsi",
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell",
+        "Gym mat",
+        "Swiss Ball"
+      ],
+      "category": "Abs"
+    },
+    "1194": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Gluteus maximus",
+        "Obliquus externus abdominis",
+        "Rectus abdominis",
+        "Serratus anterior",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Pectoralis major",
+        "Triceps brachii"
+      ],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "1195": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gastrocnemius",
+        "Gluteus maximus"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1196": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gastrocnemius"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1198": {
+      "primaryMuscles": [
+        "Biceps brachii",
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Pectoralis major",
+        "Rectus abdominis",
+        "Trapezius"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "1200": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Calves"
+    },
+    "1201": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Gastrocnemius",
+        "Gluteus maximus"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1202": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1203": {
+      "primaryMuscles": [
+        "Gastrocnemius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Calves"
+    },
+    "1204": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Cardio"
+    },
+    "1205": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1206": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1207": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1208": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1209": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "1210": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1211": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell",
+        "Kettlebell"
+      ],
+      "category": "Legs"
+    },
+    "1214": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Back"
+    },
+    "1215": {
+      "primaryMuscles": [
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1216": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1217": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "1218": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Serratus anterior",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "1219": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Trapezius"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "1223": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "1224": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1225": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1226": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1227": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Brachialis",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1228": {
+      "primaryMuscles": [
+        "Pectoralis major",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1229": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Serratus anterior"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1230": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "1231": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "1232": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "1233": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1234": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Quadriceps femoris"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "1238": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Brachialis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1239": {
+      "primaryMuscles": [
+        "Gastrocnemius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1240": {
+      "primaryMuscles": [
+        "Soleus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1241": {
+      "primaryMuscles": [
+        "Soleus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1242": {
+      "primaryMuscles": [
+        "Gastrocnemius"
+      ],
+      "secondaryMuscles": [
+        "Soleus"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1243": {
+      "primaryMuscles": [
+        "Gastrocnemius",
+        "Soleus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1244": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Latissimus dorsi",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "Gym mat"
+      ],
+      "category": "Back"
+    },
+    "1245": {
+      "primaryMuscles": [
+        "Latissimus dorsi",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1246": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis",
+        "Serratus anterior"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1248": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1252": {
+      "primaryMuscles": [
+        "Biceps brachii",
+        "Latissimus dorsi",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Abs"
+    },
+    "1259": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis",
+        "Serratus anterior"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Pectoralis major"
+      ],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "1260": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1261": {
+      "primaryMuscles": [
+        "Brachialis"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii"
+      ],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1262": {
+      "primaryMuscles": [
+        "Biceps brachii",
+        "Brachialis"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Trapezius"
+      ],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1263": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps femoris",
+        "Gastrocnemius",
+        "Latissimus dorsi",
+        "Trapezius",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1266": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1269": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Pectoralis major"
+      ],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1270": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1271": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1272": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1273": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Back"
+    },
+    "1274": {
+      "primaryMuscles": [
+        "Gastrocnemius",
+        "Soleus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1275": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1276": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Chest"
+    },
+    "1277": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Chest"
+    },
+    "1278": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Triceps brachii"
+      ],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1280": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Latissimus dorsi"
+      ],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1282": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Trapezius"
+      ],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Back"
+    },
+    "1283": {
+      "primaryMuscles": [
+        "Biceps brachii",
+        "Latissimus dorsi",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench",
+        "Dumbbell"
+      ],
+      "category": "Back"
+    },
+    "1284": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [
+        "Pectoralis major"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Shoulders"
+    },
+    "1285": {
+      "primaryMuscles": [
+        "Gastrocnemius"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "1286": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1287": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1288": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1289": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Brachialis"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1290": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Brachialis"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Arms"
+    },
+    "1292": {
+      "primaryMuscles": [
+        "Biceps brachii",
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Abs"
+    },
+    "1293": {
+      "primaryMuscles": [
+        "Pectoralis major",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1294": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1295": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Chest"
+    },
+    "1296": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1297": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "SZ-Bar"
+      ],
+      "category": "Arms"
+    },
+    "1298": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1302": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Pectoralis major"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Arms"
+    },
+    "1303": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Trapezius"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Back"
+    },
+    "1304": {
+      "primaryMuscles": [
+        "Latissimus dorsi",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Back"
+    },
+    "1307": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis",
+        "Pectoralis major",
+        "Quadriceps femoris",
+        "Serratus anterior"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1312": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gastrocnemius",
+        "Gluteus maximus",
+        "Obliquus externus abdominis",
+        "Rectus abdominis",
+        "Soleus"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "1313": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1314": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus",
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "1315": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris",
+        "Soleus"
+      ],
+      "secondaryMuscles": [
+        "Gastrocnemius",
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1316": {
+      "primaryMuscles": [
+        "Gastrocnemius",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus",
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "1317": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Pectoralis major",
+        "Quadriceps femoris",
+        "Rectus abdominis",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Gastrocnemius",
+        "Latissimus dorsi"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "1318": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Gluteus maximus",
+        "Quadriceps femoris",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "1319": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1320": {
+      "primaryMuscles": [
+        "Biceps brachii",
+        "Brachialis",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Pectoralis major",
+        "Soleus",
+        "Trapezius"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "1321": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1322": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Kettlebell"
+      ],
+      "category": "Abs"
+    },
+    "1324": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus",
+        "Soleus"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1325": {
+      "primaryMuscles": [
+        "Gastrocnemius"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1333": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1336": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1337": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1338": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1348": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1350": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1353": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Chest"
+    },
+    "1360": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Brachialis",
+        "Quadriceps femoris",
+        "Trapezius",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Latissimus dorsi",
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "Kettlebell"
+      ],
+      "category": "Arms"
+    },
+    "1361": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Gastrocnemius",
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "Kettlebell"
+      ],
+      "category": "Legs"
+    },
+    "1363": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1365": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1366": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Legs"
+    },
+    "1370": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Legs"
+    },
+    "1372": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Pectoralis major"
+      ],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1373": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [
+        "Gastrocnemius"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "1374": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "1376": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gastrocnemius",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Cardio"
+    },
+    "1377": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1378": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "1380": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1381": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Latissimus dorsi"
+      ],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1384": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Pectoralis major",
+        "Triceps brachii"
+      ],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1387": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1388": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1389": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1390": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [
+        "Gastrocnemius"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1391": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gastrocnemius"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1392": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1393": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1394": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Gym mat"
+      ],
+      "category": "Back"
+    },
+    "1395": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1396": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1397": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1398": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1399": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [
+        "Biceps femoris"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1400": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1406": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Rectus abdominis",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis",
+        "Pectoralis major"
+      ],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "1407": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gastrocnemius",
+        "Rectus abdominis"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1408": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gastrocnemius",
+        "Rectus abdominis"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1409": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Gluteus maximus",
+        "Latissimus dorsi",
+        "Triceps brachii"
+      ],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "1410": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1411": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1412": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1414": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Gastrocnemius",
+        "Gluteus maximus"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1415": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Abs"
+    },
+    "1424": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Brachialis"
+      ],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1425": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1426": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1429": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1430": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1433": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Obliquus externus abdominis",
+        "Quadriceps femoris",
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1434": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Back"
+    },
+    "1435": {
+      "primaryMuscles": [
+        "Latissimus dorsi",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Back"
+    },
+    "1436": {
+      "primaryMuscles": [
+        "Pectoralis major",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Chest"
+    },
+    "1437": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "1438": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Latissimus dorsi",
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "1439": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1440": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1441": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1442": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Pectoralis major",
+        "Rectus abdominis",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1443": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1444": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Chest"
+    },
+    "1445": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1446": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Latissimus dorsi",
+        "Rectus abdominis",
+        "Trapezius",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1447": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Back"
+    },
+    "1448": {
+      "primaryMuscles": [
+        "Biceps brachii",
+        "Brachialis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench",
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1449": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus"
+      ],
+      "equipment": [],
+      "category": "Cardio"
+    },
+    "1450": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Pectoralis major"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1451": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Pectoralis major"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "1452": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1455": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1457": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Pectoralis major",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Serratus anterior"
+      ],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1458": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Latissimus dorsi",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1461": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Bench",
+        "Dumbbell"
+      ],
+      "category": "Chest"
+    },
+    "1462": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "1463": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1464": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Gastrocnemius",
+        "Gluteus maximus"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1465": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Incline bench"
+      ],
+      "category": "Arms"
+    },
+    "1466": {
+      "primaryMuscles": [
+        "Gastrocnemius",
+        "Soleus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1467": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Pectoralis major"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Arms"
+    },
+    "1468": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "SZ-Bar"
+      ],
+      "category": "Arms"
+    },
+    "1469": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1470": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1471": {
+      "primaryMuscles": [
+        "Latissimus dorsi",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1472": {
+      "primaryMuscles": [
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "1473": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [
+        "Trapezius"
+      ],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1474": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1475": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "1476": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1477": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1478": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1479": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1480": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell",
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1481": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "SZ-Bar"
+      ],
+      "category": "Arms"
+    },
+    "1482": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1483": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1484": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "SZ-Bar"
+      ],
+      "category": "Chest"
+    },
+    "1485": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "SZ-Bar"
+      ],
+      "category": "Arms"
+    },
+    "1486": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1487": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1488": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Back"
+    },
+    "1489": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Gastrocnemius",
+        "Quadriceps femoris"
+      ],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "1490": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell",
+        "Incline bench"
+      ],
+      "category": "Arms"
+    },
+    "1491": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Back"
+    },
+    "1492": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1493": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1494": {
+      "primaryMuscles": [
+        "Gastrocnemius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1496": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Chest"
+    },
+    "1497": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [
+        "Bench",
+        "Dumbbell"
+      ],
+      "category": "Chest"
+    },
+    "1498": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Pectoralis major"
+      ],
+      "equipment": [
+        "Bench",
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1499": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1500": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Chest"
+    },
+    "1501": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Back"
+    },
+    "1502": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1503": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Legs"
+    },
+    "1504": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1508": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Pectoralis major",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1509": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1510": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1511": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1512": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1513": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1514": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1515": {
+      "primaryMuscles": [
+        "Gastrocnemius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1516": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "1519": {
+      "primaryMuscles": [
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "SZ-Bar"
+      ],
+      "category": "Arms"
+    },
+    "1521": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1523": {
+      "primaryMuscles": [
+        "Gastrocnemius",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps femoris",
+        "Triceps brachii"
+      ],
+      "equipment": [],
+      "category": "Cardio"
+    },
+    "1524": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Latissimus dorsi",
+        "Obliquus externus abdominis",
+        "Quadriceps femoris",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Pectoralis major",
+        "Trapezius",
+        "Triceps brachii"
+      ],
+      "equipment": [],
+      "category": "Cardio"
+    },
+    "1525": {
+      "primaryMuscles": [
+        "Latissimus dorsi",
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Gluteus maximus"
+      ],
+      "equipment": [],
+      "category": "Cardio"
+    },
+    "1526": {
+      "primaryMuscles": [
+        "Gastrocnemius",
+        "Latissimus dorsi",
+        "Trapezius",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Quadriceps femoris",
+        "Rectus abdominis"
+      ],
+      "equipment": [],
+      "category": "Cardio"
+    },
+    "1527": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1528": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Quadriceps femoris"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1529": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Abs"
+    },
+    "1530": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench",
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1531": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "1535": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench",
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1536": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "1537": {
+      "primaryMuscles": [
+        "Biceps brachii",
+        "Latissimus dorsi",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Back"
+    },
+    "1542": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Back"
+    },
+    "1545": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Trapezius"
+      ],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1546": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Chest"
+    },
+    "1548": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gastrocnemius",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "1549": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gastrocnemius",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "1551": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Rectus abdominis",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "1554": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Rectus abdominis",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "1556": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Gluteus maximus",
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Latissimus dorsi",
+        "Obliquus externus abdominis",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1567": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1572": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Gluteus maximus"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1573": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis",
+        "Serratus anterior"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1574": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Cardio"
+    },
+    "1575": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1576": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gastrocnemius",
+        "Rectus abdominis"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1577": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Latissimus dorsi",
+        "Pectoralis major"
+      ],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1578": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [
+        "Gastrocnemius",
+        "Quadriceps femoris",
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "1579": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "1580": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1581": {
+      "primaryMuscles": [
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell",
+        "Bench",
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1582": {
+      "primaryMuscles": [
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell",
+        "Bench",
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1583": {
+      "primaryMuscles": [
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell",
+        "Bench"
+      ],
+      "category": "Back"
+    },
+    "1584": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gastrocnemius",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Obliquus externus abdominis",
+        "Rectus abdominis",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "1589": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1590": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Trapezius",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Latissimus dorsi",
+        "Serratus anterior"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1591": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "1592": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "1593": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "1594": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "1602": {
+      "primaryMuscles": [
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1603": {
+      "primaryMuscles": [
+        "Gastrocnemius"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris"
+      ],
+      "equipment": [
+        "Resistance band"
+      ],
+      "category": "Calves"
+    },
+    "1604": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gastrocnemius",
+        "Obliquus externus abdominis"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "1605": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis",
+        "Serratus anterior",
+        "Trapezius"
+      ],
+      "equipment": [
+        "Bench"
+      ],
+      "category": "Legs"
+    },
+    "1606": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Latissimus dorsi",
+        "Serratus anterior",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "1607": {
+      "primaryMuscles": [
+        "Biceps brachii",
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Trapezius"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1608": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "1612": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Kettlebell"
+      ],
+      "category": "Legs"
+    },
+    "1613": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Resistance band"
+      ],
+      "category": "Legs"
+    },
+    "1614": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench"
+      ],
+      "category": "Legs"
+    },
+    "1615": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "1616": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Legs"
+    },
+    "1617": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench"
+      ],
+      "category": "Abs"
+    },
+    "1618": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "1620": {
+      "primaryMuscles": [
+        "Gastrocnemius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Calves"
+    },
+    "1621": {
+      "primaryMuscles": [
+        "Latissimus dorsi",
+        "Serratus anterior"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench"
+      ],
+      "category": "Back"
+    },
+    "1627": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "1630": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Gluteus maximus",
+        "Pectoralis major",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Biceps femoris",
+        "Latissimus dorsi",
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "Bench",
+        "Dumbbell",
+        "Kettlebell",
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "1634": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Incline bench"
+      ],
+      "category": "Back"
+    },
+    "1635": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Incline bench"
+      ],
+      "category": "Back"
+    },
+    "1636": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Incline bench"
+      ],
+      "category": "Back"
+    },
+    "1637": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Incline bench"
+      ],
+      "category": "Back"
+    },
+    "1638": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1639": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Trapezius"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Back"
+    },
+    "1640": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Legs"
+    },
+    "1641": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell",
+        "Kettlebell"
+      ],
+      "category": "Legs"
+    },
+    "1642": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Legs"
+    },
+    "1643": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell",
+        "Incline bench"
+      ],
+      "category": "Chest"
+    },
+    "1644": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell",
+        "Incline bench"
+      ],
+      "category": "Chest"
+    },
+    "1645": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1648": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Abs"
+    },
+    "1649": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1650": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Abs"
+    },
+    "1651": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Soleus"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Legs"
+    },
+    "1652": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Legs"
+    },
+    "1653": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1654": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Gym mat"
+      ],
+      "category": "Shoulders"
+    },
+    "1655": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Gym mat"
+      ],
+      "category": "Chest"
+    },
+    "1656": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1657": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1658": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1659": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1660": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1661": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1662": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1665": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1666": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1668": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Resistance band"
+      ],
+      "category": "Arms"
+    },
+    "1669": {
+      "primaryMuscles": [
+        "Gastrocnemius",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Rectus abdominis",
+        "Trapezius"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Cardio"
+    },
+    "1670": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1672": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1673": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Legs"
+    },
+    "1674": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Chest"
+    },
+    "1675": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Rectus abdominis",
+        "Serratus anterior",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "1676": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Chest"
+    },
+    "1679": {
+      "primaryMuscles": [
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "1680": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench"
+      ],
+      "category": "Legs"
+    },
+    "1683": {
+      "primaryMuscles": [
+        "Biceps brachii",
+        "Brachialis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1684": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Legs"
+    },
+    "1686": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Biceps brachii",
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1687": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Gluteus maximus",
+        "Quadriceps femoris",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Gastrocnemius",
+        "Trapezius"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Abs"
+    },
+    "1688": {
+      "primaryMuscles": [
+        "Biceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "1689": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1690": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1691": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1692": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Incline bench"
+      ],
+      "category": "Chest"
+    },
+    "1693": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Chest"
+    },
+    "1694": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench"
+      ],
+      "category": "Chest"
+    },
+    "1695": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1696": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1697": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1698": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Back"
+    },
+    "1699": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Back"
+    },
+    "1700": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Back"
+    },
+    "1701": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Back"
+    },
+    "1702": {
+      "primaryMuscles": [
+        "Latissimus dorsi",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii",
+        "Brachialis"
+      ],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1703": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench",
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1704": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [
+        "Brachialis",
+        "Pectoralis major",
+        "Quadriceps femoris",
+        "Trapezius",
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Bench"
+      ],
+      "category": "Abs"
+    },
+    "1706": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Legs"
+    },
+    "1707": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Incline bench"
+      ],
+      "category": "Back"
+    },
+    "1709": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Resistance band"
+      ],
+      "category": "Shoulders"
+    },
+    "1710": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Trapezius"
+      ],
+      "equipment": [
+        "Bench"
+      ],
+      "category": "Shoulders"
+    },
+    "1711": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [
+        "Trapezius"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Shoulders"
+    },
+    "1712": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Shoulders"
+    },
+    "1713": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "1714": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Latissimus dorsi",
+        "Pectoralis major",
+        "Trapezius"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1715": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Brachialis"
+      ],
+      "secondaryMuscles": [
+        "Trapezius"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1716": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench"
+      ],
+      "category": "Chest"
+    },
+    "1717": {
+      "primaryMuscles": [
+        "Biceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "SZ-Bar"
+      ],
+      "category": "Arms"
+    },
+    "1718": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Serratus anterior",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Back"
+    },
+    "1719": {
+      "primaryMuscles": [
+        "Brachialis",
+        "Obliquus externus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Back"
+    },
+    "1723": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1724": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1725": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Trapezius"
+      ],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1726": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1727": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1728": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "1729": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "1730": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1731": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "1732": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Trapezius"
+      ],
+      "equipment": [
+        "Resistance band"
+      ],
+      "category": "Back"
+    },
+    "1733": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1734": {
+      "primaryMuscles": [
+        "Gastrocnemius",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Kettlebell"
+      ],
+      "category": "Legs"
+    },
+    "1735": {
+      "primaryMuscles": [
+        "Gastrocnemius",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Incline bench"
+      ],
+      "category": "Legs"
+    },
+    "1736": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Legs"
+    },
+    "1737": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1738": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii"
+      ],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Arms"
+    },
+    "1739": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1740": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1741": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Arms"
+    },
+    "1742": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Pull-up bar",
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1743": {
+      "primaryMuscles": [
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Pull-up bar",
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1744": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "1745": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "1746": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Chest"
+    },
+    "1747": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1748": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1749": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1750": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris"
+      ],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Legs"
+    },
+    "1751": {
+      "primaryMuscles": [
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Gastrocnemius",
+        "Quadriceps femoris",
+        "Soleus"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1752": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "1753": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "1754": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1755": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "1757": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1762": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1763": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1764": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1765": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Biceps brachii"
+      ],
+      "equipment": [
+        "Pull-up bar"
+      ],
+      "category": "Back"
+    },
+    "1766": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1767": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1768": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1769": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1770": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1771": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [
+        "Biceps brachii"
+      ],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1772": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1773": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Triceps brachii"
+      ],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1774": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Shoulders"
+    },
+    "1775": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "1776": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Dumbbell"
+      ],
+      "category": "Abs"
+    },
+    "1777": {
+      "primaryMuscles": [
+        "Pectoralis major"
+      ],
+      "secondaryMuscles": [
+        "Triceps brachii"
+      ],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Chest"
+    },
+    "1778": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1779": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Abs"
+    },
+    "1780": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1792": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1793": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1794": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "1795": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "1796": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1797": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1798": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1799": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Chest"
+    },
+    "1800": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1801": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Gastrocnemius",
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "1802": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [],
+      "category": "Abs"
+    },
+    "1803": {
+      "primaryMuscles": [
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris"
+      ],
+      "equipment": [],
+      "category": "Legs"
+    },
+    "1804": {
+      "primaryMuscles": [
+        "Gastrocnemius",
+        "Soleus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Legs"
+    },
+    "1805": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    },
+    "1806": {
+      "primaryMuscles": [
+        "Latissimus dorsi"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Brachialis",
+        "Serratus anterior",
+        "Trapezius"
+      ],
+      "equipment": [],
+      "category": "Back"
+    },
+    "1807": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [
+        "Trapezius"
+      ],
+      "equipment": [],
+      "category": "Shoulders"
+    },
+    "1808": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Pectoralis major",
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Latissimus dorsi",
+        "Obliquus externus abdominis",
+        "Rectus abdominis"
+      ],
+      "equipment": [],
+      "category": "Arms"
+    },
+    "1809": {
+      "primaryMuscles": [
+        "Biceps femoris",
+        "Gluteus maximus"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Bench"
+      ],
+      "category": "Legs"
+    },
+    "1810": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1822": {
+      "primaryMuscles": [],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Back"
+    },
+    "1823": {
+      "primaryMuscles": [
+        "Gluteus maximus",
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1824": {
+      "primaryMuscles": [
+        "Triceps brachii"
+      ],
+      "secondaryMuscles": [
+        "Anterior deltoid",
+        "Pectoralis major"
+      ],
+      "equipment": [
+        "Bench",
+        "Dumbbell"
+      ],
+      "category": "Arms"
+    },
+    "1825": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [
+        "Trapezius"
+      ],
+      "equipment": [
+        "Bench",
+        "Dumbbell"
+      ],
+      "category": "Shoulders"
+    },
+    "1826": {
+      "primaryMuscles": [
+        "Anterior deltoid"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Resistance band"
+      ],
+      "category": "Shoulders"
+    },
+    "1827": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "Gym mat",
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1828": {
+      "primaryMuscles": [
+        "Rectus abdominis"
+      ],
+      "secondaryMuscles": [],
+      "equipment": [
+        "none (bodyweight exercise)"
+      ],
+      "category": "Abs"
+    },
+    "1829": {
+      "primaryMuscles": [
+        "Anterior deltoid",
+        "Gluteus maximus",
+        "Quadriceps femoris"
+      ],
+      "secondaryMuscles": [
+        "Biceps femoris",
+        "Rectus abdominis"
+      ],
+      "equipment": [
+        "Barbell"
+      ],
+      "category": "Legs"
+    }
+  }
+}

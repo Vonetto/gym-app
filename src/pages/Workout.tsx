@@ -157,7 +157,7 @@ export function Workout() {
             id: exercise.id,
             label,
             metricType: exercise.metricType,
-            muscles: exercise.muscles,
+            muscles: [...exercise.muscles, ...(exercise.secondaryMuscles ?? [])],
             equipment: exercise.equipment,
             normalizedLabel: normalizeName(label)
           };

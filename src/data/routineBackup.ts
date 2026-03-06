@@ -1,15 +1,7 @@
 import { db } from './db';
+import { resolveCanonicalExerciseId } from './catalogNormalization';
 import { getLastWorkoutForRoutine, getWorkoutExercises, getWorkoutSets } from './workouts';
-
-const diacriticRegex = /\p{Diacritic}/gu;
-
-function normalizeName(value: string) {
-  return value
-    .trim()
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(diacriticRegex, '');
-}
+import { normalizeName } from './normalizeText';
 
 export interface RoutineBackupPayload {
   version: 1 | 2 | 3 | 4;
@@ -37,6 +29,7 @@ export interface RoutineBackupPayload {
     id: string;
     baseName: string;
     muscles: string[];
+    secondaryMuscles?: string[];
     equipment: string[];
     metricType: string;
     isCustom: boolean;
@@ -56,7 +49,7 @@ export async function exportRoutineBackup(routineId: string): Promise<RoutineBac
   const defaults = await db.exerciseDefaults.where('routineId').equals(routineId).toArray();
   const defaultsByExercise = new Map(
     defaults.map((item) => [
-      item.exerciseId,
+      resolveCanonicalExerciseId(item.exerciseId),
       {
         defaultSets: item.defaultSets,
         metricTypeOverride: item.metricTypeOverride,
@@ -85,7 +78,7 @@ export async function exportRoutineBackup(routineId: string): Promise<RoutineBac
     for (const workoutExercise of workoutExercises) {
       const sets = await getWorkoutSets(workoutExercise.id);
       lastSetsByExercise.set(
-        workoutExercise.exerciseId,
+        resolveCanonicalExerciseId(workoutExercise.exerciseId),
         sets.map((set) => ({ setType: set.setType, weight: set.weight, reps: set.reps }))
       );
     }
@@ -109,8 +102,9 @@ export async function exportRoutineBackup(routineId: string): Promise<RoutineBac
       name: routine.name,
       tags: tags.map((tag) => tag.tag),
       exercises: routineExercises.map((entry) => {
-        const baseDefaults = defaultsByExercise.get(entry.exerciseId);
-        const lastSets = lastSetsByExercise.get(entry.exerciseId) ?? [];
+        const canonicalExerciseId = resolveCanonicalExerciseId(entry.exerciseId);
+        const baseDefaults = defaultsByExercise.get(canonicalExerciseId);
+        const lastSets = lastSetsByExercise.get(canonicalExerciseId) ?? [];
         const lastSet = lastSets.length ? lastSets[lastSets.length - 1] : undefined;
 
         const mergedDefaults = {
@@ -123,7 +117,7 @@ export async function exportRoutineBackup(routineId: string): Promise<RoutineBac
         };
 
         return {
-          exerciseId: entry.exerciseId,
+          exerciseId: canonicalExerciseId,
           order: entry.order,
           defaults: Object.values(mergedDefaults).some((value) => value !== undefined)
             ? mergedDefaults
@@ -135,6 +129,7 @@ export async function exportRoutineBackup(routineId: string): Promise<RoutineBac
       id: exercise.id,
       baseName: exercise.baseName,
       muscles: exercise.muscles,
+      secondaryMuscles: exercise.secondaryMuscles ?? [],
       equipment: exercise.equipment,
       metricType: exercise.metricType,
       isCustom: true,
@@ -177,6 +172,7 @@ export async function importRoutineBackup(payload: RoutineBackupPayload) {
         baseName: exercise.baseName,
         normalizedName: normalizeName(exercise.baseName),
         muscles: exercise.muscles,
+        secondaryMuscles: exercise.secondaryMuscles ?? [],
         equipment: exercise.equipment,
         metricType: exercise.metricType as any,
         isCustom: true,
@@ -224,7 +220,9 @@ export async function importRoutineBackup(payload: RoutineBackupPayload) {
           payload.routine.exercises.map((entry) => ({
             id: `routine-exercise-${crypto.randomUUID()}`,
             routineId,
-            exerciseId: customExerciseMap.get(entry.exerciseId) ?? entry.exerciseId,
+            exerciseId: resolveCanonicalExerciseId(
+              customExerciseMap.get(entry.exerciseId) ?? entry.exerciseId
+            ),
             order: entry.order
           }))
         );
@@ -234,7 +232,9 @@ export async function importRoutineBackup(payload: RoutineBackupPayload) {
             .map((entry) => ({
               id: `default-${crypto.randomUUID()}`,
               routineId,
-              exerciseId: customExerciseMap.get(entry.exerciseId) ?? entry.exerciseId,
+              exerciseId: resolveCanonicalExerciseId(
+                customExerciseMap.get(entry.exerciseId) ?? entry.exerciseId
+              ),
               ...entry.defaults
             }))
         );

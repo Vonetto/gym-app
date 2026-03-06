@@ -57,11 +57,31 @@ export const buildSlugVolumes = (muscleVolumes: Record<string, number>) => {
   return totals;
 };
 
-export const getMuscleWeights = (muscles: string[]): Array<[string, number]> => {
-  if (muscles.length <= 1) return muscles.map((muscle) => [muscle, 1]);
-  const primaryWeight = 0.7;
-  const secondaryWeight = (1 - primaryWeight) / (muscles.length - 1);
-  return muscles.map((muscle, index) => [muscle, index === 0 ? primaryWeight : secondaryWeight]);
+export const getMuscleWeights = (
+  primaryMuscles: string[],
+  secondaryMuscles: string[] = []
+): Array<[string, number]> => {
+  const primary = [...new Set(primaryMuscles.filter(Boolean))];
+  const secondary = [...new Set(secondaryMuscles.filter(Boolean))].filter(
+    (muscle) => !primary.includes(muscle)
+  );
+
+  if (!primary.length && !secondary.length) return [];
+  if (!secondary.length) {
+    const share = 1 / primary.length;
+    return primary.map((muscle) => [muscle, share]);
+  }
+  if (!primary.length) {
+    const share = 1 / secondary.length;
+    return secondary.map((muscle) => [muscle, share]);
+  }
+
+  const primaryShare = 0.75 / primary.length;
+  const secondaryShare = 0.25 / secondary.length;
+  return [
+    ...primary.map((muscle) => [muscle, primaryShare] as [string, number]),
+    ...secondary.map((muscle) => [muscle, secondaryShare] as [string, number])
+  ];
 };
 
 export const MUSCLE_DECAY_HALF_LIFE_DAYS = 7;

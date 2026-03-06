@@ -156,7 +156,15 @@ export function Home() {
       since.setDate(since.getDate() - 90);
       const muscleWorkouts = await listWorkoutsSince(since.toISOString());
       const exercises = await listExercises();
-      const exerciseMuscles = new Map(exercises.map((exercise) => [exercise.id, exercise.muscles]));
+      const exerciseMuscles = new Map(
+        exercises.map((exercise) => [
+          exercise.id,
+          {
+            primary: exercise.muscles,
+            secondary: exercise.secondaryMuscles ?? []
+          }
+        ])
+      );
       const muscleTotals: Record<string, number> = {};
       const now = Date.now();
       for (const workout of muscleWorkouts) {
@@ -166,8 +174,11 @@ export function Home() {
         const decay = Math.exp((-Math.log(2) * daysSince) / MUSCLE_DECAY_HALF_LIFE_DAYS);
         for (const exercise of workoutExercises) {
           const sets = await getWorkoutSets(exercise.id);
-          const muscles = exerciseMuscles.get(exercise.exerciseId) ?? [];
-          const weightedMuscles = getMuscleWeights(muscles);
+          const muscleProfile = exerciseMuscles.get(exercise.exerciseId) ?? {
+            primary: [],
+            secondary: []
+          };
+          const weightedMuscles = getMuscleWeights(muscleProfile.primary, muscleProfile.secondary);
           for (const set of sets) {
             if (!countsForVolume(set.setType)) continue;
             const weight = set.weight ?? 0;

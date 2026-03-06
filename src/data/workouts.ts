@@ -1,4 +1,5 @@
 import { ActiveWorkoutSession } from './activeSession';
+import { resolveCanonicalExerciseId } from './catalogNormalization';
 import { db, WorkoutExerciseRecord, WorkoutRecord, WorkoutSetRecord } from './db';
 import { countsForProgression, normalizeSetType } from './setTypes';
 
@@ -43,7 +44,7 @@ export async function saveWorkout(session: WorkoutSessionPayload) {
     exerciseRecords.push({
       id: workoutExerciseId,
       workoutId: session.id,
-      exerciseId: exercise.exerciseId,
+      exerciseId: resolveCanonicalExerciseId(exercise.exerciseId),
       name: exercise.name,
       order: exerciseIndex,
       notes: exercise.notes
@@ -123,9 +124,10 @@ export async function getWorkoutSets(workoutExerciseId: string) {
 }
 
 export async function getLatestExerciseSets(exerciseId: string) {
+  const canonicalExerciseId = resolveCanonicalExerciseId(exerciseId);
   const workoutExercise = await db.workoutExercises
     .where('exerciseId')
-    .equals(exerciseId)
+    .equals(canonicalExerciseId)
     .reverse()
     .first();
   if (!workoutExercise) return [];
@@ -133,9 +135,10 @@ export async function getLatestExerciseSets(exerciseId: string) {
 }
 
 export async function listExerciseHistory(exerciseId: string) {
+  const canonicalExerciseId = resolveCanonicalExerciseId(exerciseId);
   const workoutExercises = await db.workoutExercises
     .where('exerciseId')
-    .equals(exerciseId)
+    .equals(canonicalExerciseId)
     .toArray();
   if (!workoutExercises.length) return [];
   const workoutIds = Array.from(new Set(workoutExercises.map((exercise) => exercise.workoutId)));
@@ -164,7 +167,11 @@ export async function listExerciseHistory(exerciseId: string) {
 }
 
 export async function listCompletedExerciseSessions(exerciseId: string, limit = 3) {
-  const workoutExercises = await db.workoutExercises.where('exerciseId').equals(exerciseId).toArray();
+  const canonicalExerciseId = resolveCanonicalExerciseId(exerciseId);
+  const workoutExercises = await db.workoutExercises
+    .where('exerciseId')
+    .equals(canonicalExerciseId)
+    .toArray();
   if (!workoutExercises.length) return [] as CompletedExerciseSession[];
 
   const grouped = workoutExercises.reduce<Map<string, WorkoutExerciseRecord[]>>((acc, exercise) => {

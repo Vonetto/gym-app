@@ -230,6 +230,21 @@
 
 ---
 
+## Phase 16: Normalización del Catálogo de Ejercicios
+**Goal:** Limpiar y unificar el catálogo para eliminar duplicados, normalizar nombres y dejar una base consistente para búsqueda, sync y recomendaciones.
+**Status:** In progress (2026-03-05)
+
+**Requirements**
+- (to be mapped in plan)
+
+**Success Criteria (observable)**
+1. El catálogo usa nombres canónicos en español y mantiene aliases para búsqueda multilenguaje.
+2. Duplicados evidentes se fusionan por nombre normalizado sin perder variantes reales (equipo/tipo de métrica).
+3. Rutinas, historial y planificación existentes se remapean automáticamente a IDs canónicos con log de conflictos.
+4. Ejercicios personalizados no se fusionan automáticamente con el catálogo base.
+
+---
+
 ## Coverage Check
 - Total v1 requirements: 44
 - Mapped to phases: 44

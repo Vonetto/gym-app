@@ -8,6 +8,7 @@ import {
   type PlannedWorkoutOccurrenceRecord,
   type PlannedWorkoutSeriesRecord
 } from './db';
+import { resolveCanonicalExerciseId } from './catalogNormalization';
 import { getSupabaseClient } from './supabase';
 import { getSyncState, updateSyncState } from './syncState';
 import { loadSettings, saveSettings } from './settings';
@@ -295,7 +296,23 @@ async function serializeCustomExercises(userId: string, remoteMap: Map<string, C
 
 async function serializeFavorites(userId: string, remoteMap: Map<string, CloudFavoriteRow>) {
   const favorites = await db.exerciseFavorites.toArray();
-  return favorites
+  const mergedByCanonicalId = new Map<string, typeof favorites[number]>();
+  favorites.forEach((favorite) => {
+    const canonicalId = resolveCanonicalExerciseId(favorite.exerciseId);
+    const current = mergedByCanonicalId.get(canonicalId);
+    if (
+      !current ||
+      latestTs(favorite.updatedAt, favorite.deletedAt) >
+        latestTs(current.updatedAt, current.deletedAt)
+    ) {
+      mergedByCanonicalId.set(canonicalId, {
+        ...favorite,
+        exerciseId: canonicalId
+      });
+    }
+  });
+
+  return [...mergedByCanonicalId.values()]
     .filter((favorite) =>
       shouldPush(
         favorite.updatedAt,
@@ -339,26 +356,43 @@ async function serializeRoutines(userId: string, remoteMap: Map<string, CloudRou
       name: routine.name,
       order_index: routine.order,
       tags: tags.filter((tag) => tag.routineId === routine.id).map((tag) => tag.tag),
-      exercises: exercises
-        .filter((exercise) => exercise.routineId === routine.id)
-        .sort((a, b) => a.order - b.order)
-        .map((exercise) => ({
-          exerciseId: exercise.exerciseId,
-          order: exercise.order,
-          defaults: defaults
-            .filter((item) => item.routineId === routine.id && item.exerciseId === exercise.exerciseId)
-            .map((item) => ({
-              metricTypeOverride: item.metricTypeOverride,
-              defaultSetTypes: item.defaultSetTypes,
-              defaultSets: item.defaultSets,
-              defaultReps: item.defaultReps,
-              defaultWeight: item.defaultWeight,
-              defaultDuration: item.defaultDuration,
-              defaultDistance: item.defaultDistance,
-              defaultRestSeconds: item.defaultRestSeconds,
-              goalMode: item.goalMode
-            }))[0]
-        })),
+      exercises: (() => {
+        const normalizedExercises = exercises
+          .filter((exercise) => exercise.routineId === routine.id)
+          .sort((a, b) => a.order - b.order)
+          .map((exercise) => ({
+            ...exercise,
+            exerciseId: resolveCanonicalExerciseId(exercise.exerciseId)
+          }));
+        const seenExerciseIds = new Set<string>();
+        return normalizedExercises
+          .filter((exercise) => {
+            if (seenExerciseIds.has(exercise.exerciseId)) return false;
+            seenExerciseIds.add(exercise.exerciseId);
+            return true;
+          })
+          .map((exercise, index) => ({
+            exerciseId: exercise.exerciseId,
+            order: index,
+            defaults: defaults
+              .filter(
+                (item) =>
+                  item.routineId === routine.id &&
+                  resolveCanonicalExerciseId(item.exerciseId) === exercise.exerciseId
+              )
+              .map((item) => ({
+                metricTypeOverride: item.metricTypeOverride,
+                defaultSetTypes: item.defaultSetTypes,
+                defaultSets: item.defaultSets,
+                defaultReps: item.defaultReps,
+                defaultWeight: item.defaultWeight,
+                defaultDuration: item.defaultDuration,
+                defaultDistance: item.defaultDistance,
+                defaultRestSeconds: item.defaultRestSeconds,
+                goalMode: item.goalMode
+              }))[0]
+          }));
+      })(),
       created_at: routine.createdAt,
       updated_at: routine.updatedAt,
       deleted_at: routine.deletedAt ?? null
@@ -397,7 +431,7 @@ async function serializeWorkouts(userId: string, remoteMap: Map<string, CloudWor
         .filter((exercise) => exercise.workoutId === workout.id)
         .sort((a, b) => a.order - b.order)
         .map((exercise) => ({
-          exerciseId: exercise.exerciseId,
+          exerciseId: resolveCanonicalExerciseId(exercise.exerciseId),
           name: exercise.name,
           order: exercise.order,
           notes: exercise.notes,
@@ -656,13 +690,17 @@ async function applyRemoteCustomExercises(rows: CloudCustomExerciseRow[]) {
 
 async function applyRemoteFavorites(rows: CloudFavoriteRow[]) {
   for (const row of rows) {
-    const local = await db.exerciseFavorites.get(row.exercise_id);
-    if (local && !shouldApplyRemote(local.updatedAt, local.deletedAt, row.updated_at, row.deleted_at)) {
+    const canonicalExerciseId = resolveCanonicalExerciseId(row.exercise_id);
+    const local = await db.exerciseFavorites.get(canonicalExerciseId);
+    if (
+      local &&
+      !shouldApplyRemote(local.updatedAt, local.deletedAt, row.updated_at, row.deleted_at)
+    ) {
       continue;
     }
 
     await db.exerciseFavorites.put({
-      exerciseId: row.exercise_id,
+      exerciseId: canonicalExerciseId,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
       deletedAt: row.deleted_at ?? undefined
@@ -709,15 +747,27 @@ async function applyRemoteRoutines(rows: CloudRoutineRow[]) {
         }
 
         if (row.exercises?.length) {
-          const routineExercises = row.exercises.map((exercise) => ({
+          const normalizedExercises = [...row.exercises]
+            .map((exercise) => ({
+              ...exercise,
+              exerciseId: resolveCanonicalExerciseId(exercise.exerciseId)
+            }))
+            .sort((a, b) => a.order - b.order);
+          const seenExerciseIds = new Set<string>();
+          const dedupedExercises = normalizedExercises.filter((exercise) => {
+            if (seenExerciseIds.has(exercise.exerciseId)) return false;
+            seenExerciseIds.add(exercise.exerciseId);
+            return true;
+          });
+          const routineExercises = dedupedExercises.map((exercise, index) => ({
             id: `routine-exercise-${crypto.randomUUID()}`,
             routineId: row.id,
             exerciseId: exercise.exerciseId,
-            order: exercise.order
+            order: index
           }));
           await db.routineExercises.bulkAdd(routineExercises);
 
-          const defaults = row.exercises
+          const defaults = dedupedExercises
             .filter((exercise) => exercise.defaults)
             .map((exercise) => ({
               id: `default-${crypto.randomUUID()}`,
@@ -780,7 +830,7 @@ async function applyRemoteWorkouts(rows: CloudWorkoutRow[]) {
           await db.workoutExercises.add({
             id: workoutExerciseId,
             workoutId: row.id,
-            exerciseId: exercise.exerciseId,
+            exerciseId: resolveCanonicalExerciseId(exercise.exerciseId),
             name: exercise.name,
             order: exercise.order,
             notes: exercise.notes

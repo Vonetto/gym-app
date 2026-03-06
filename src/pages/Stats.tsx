@@ -95,7 +95,13 @@ export function Stats() {
       const sorted = workouts.sort((a, b) => b.endedAt.localeCompare(a.endedAt));
       const exercises = await listExercises();
       const exerciseMuscles = new Map(
-        exercises.map((exercise) => [exercise.id, exercise.muscles])
+        exercises.map((exercise) => [
+          exercise.id,
+          {
+            primary: exercise.muscles,
+            secondary: exercise.secondaryMuscles ?? []
+          }
+        ])
       );
       const prMap = new Map<string, PrEntry>();
       const summaries: WorkoutSummary[] = [];
@@ -118,8 +124,11 @@ export function Stats() {
         for (const exercise of workoutExercises) {
           const sets = await getWorkoutSets(exercise.id);
           workoutSets += sets.length;
-          const muscles = exerciseMuscles.get(exercise.exerciseId) ?? [];
-          const weightedMuscles = getMuscleWeights(muscles);
+          const muscleProfile = exerciseMuscles.get(exercise.exerciseId) ?? {
+            primary: [],
+            secondary: []
+          };
+          const weightedMuscles = getMuscleWeights(muscleProfile.primary, muscleProfile.secondary);
           for (const set of sets) {
             if (!countsForVolume(set.setType)) continue;
             const weight = set.weight ?? 0;

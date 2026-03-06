@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { getExerciseById, getExerciseDisplayName } from '../data/exercises';
+import { getExerciseAliasNames } from '../data/catalogNormalization';
 import type { AdvancedSetType } from '../data/db';
 import { listExerciseHistory } from '../data/workouts';
 import { useSettings } from '../data/SettingsProvider';
@@ -88,7 +89,8 @@ export function ExerciseDetail() {
       setTipsStatus('loading');
       const names = [
         exercise.baseName,
-        getExerciseDisplayName(exercise, settings.language)
+        getExerciseDisplayName(exercise, settings.language),
+        ...getExerciseAliasNames(exercise.id).slice(0, 6)
       ];
       const result = await getWrkoutTips(exerciseId, names, settings.wrkoutApiKey);
       if (!active) return;
@@ -210,6 +212,9 @@ export function ExerciseDetail() {
           <p className="muted">
             {(exercise?.muscles[0] ?? 'Sin músculo')} · {(exercise?.equipment[0] ?? 'Sin equipo')}
           </p>
+          {exercise?.secondaryMuscles?.length ? (
+            <p className="muted">Secundarios: {exercise.secondaryMuscles.slice(0, 3).join(', ')}</p>
+          ) : null}
         </div>
         <Link className="ghost-button" to="/catalog">
           Volver

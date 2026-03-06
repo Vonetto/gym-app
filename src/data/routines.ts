@@ -6,6 +6,7 @@ import {
   RoutineRecord,
   RoutineVersionRecord
 } from './db';
+import { resolveCanonicalExerciseId } from './catalogNormalization';
 import { normalizeSetTypeArray } from './setTypes';
 
 export interface RoutineSnapshot {
@@ -132,6 +133,11 @@ export async function overwriteRoutineExercises(
     updatedAt: now
   };
 
+  const normalizedExercises = exercises.map((exercise) => ({
+    ...exercise,
+    exerciseId: resolveCanonicalExerciseId(exercise.exerciseId)
+  }));
+
   await db.transaction(
     'rw',
     [db.routines, db.routineTags, db.routineExercises, db.exerciseDefaults, db.routineVersions],
@@ -139,16 +145,16 @@ export async function overwriteRoutineExercises(
       await db.routines.update(routineId, nextRoutine);
       await db.routineExercises.where('routineId').equals(routineId).delete();
       await db.exerciseDefaults.where('routineId').equals(routineId).delete();
-      if (exercises.length) {
+      if (normalizedExercises.length) {
         await db.routineExercises.bulkAdd(
-          exercises.map((exercise) => ({
+          normalizedExercises.map((exercise) => ({
             id: `routine-exercise-${crypto.randomUUID()}`,
             routineId,
             exerciseId: exercise.exerciseId,
             order: exercise.order
           }))
         );
-        const defaults = exercises
+        const defaults = normalizedExercises
           .filter((exercise) => exercise.defaults)
           .map((exercise) => ({
             id: `default-${crypto.randomUUID()}`,
@@ -172,7 +178,7 @@ export async function overwriteRoutineExercises(
         routineId,
         createdAt: now,
         name: routine.name,
-        snapshot: buildRoutineSnapshot(nextRoutine, tags.map((tag) => tag.tag), exercises)
+        snapshot: buildRoutineSnapshot(nextRoutine, tags.map((tag) => tag.tag), normalizedExercises)
       });
     }
   );
@@ -321,10 +327,11 @@ export async function reorderRoutine(routineId: string, direction: 'up' | 'down'
 }
 
 export async function addRoutineExercise(routineId: string, exerciseId: string) {
+  const canonicalExerciseId = resolveCanonicalExerciseId(exerciseId);
   const routine = await db.routines.get(routineId);
   if (!routine || routine.deletedAt) return;
   const existing = await db.routineExercises
-    .where({ routineId, exerciseId })
+    .where({ routineId, exerciseId: canonicalExerciseId })
     .first();
   if (existing) return;
   const last = await db.routineExercises.where('routineId').equals(routineId).last();
@@ -333,7 +340,7 @@ export async function addRoutineExercise(routineId: string, exerciseId: string) 
     await db.routineExercises.add({
       id: `routine-exercise-${crypto.randomUUID()}`,
       routineId,
-      exerciseId,
+      exerciseId: canonicalExerciseId,
       order
     });
     await db.routines.update(routineId, {
@@ -343,14 +350,15 @@ export async function addRoutineExercise(routineId: string, exerciseId: string) 
 }
 
 export async function removeRoutineExercise(routineId: string, exerciseId: string) {
+  const canonicalExerciseId = resolveCanonicalExerciseId(exerciseId);
   const routine = await db.routines.get(routineId);
   if (!routine || routine.deletedAt) return;
-  const entry = await db.routineExercises.where({ routineId, exerciseId }).first();
+  const entry = await db.routineExercises.where({ routineId, exerciseId: canonicalExerciseId }).first();
   if (!entry) return;
   const now = new Date().toISOString();
   await db.transaction('rw', db.routineExercises, db.exerciseDefaults, db.routines, async () => {
     await db.routineExercises.delete(entry.id);
-    await db.exerciseDefaults.where({ routineId, exerciseId }).delete();
+    await db.exerciseDefaults.where({ routineId, exerciseId: canonicalExerciseId }).delete();
     await db.routines.update(routineId, {
       updatedAt: now
     });
@@ -362,10 +370,11 @@ export async function reorderRoutineExercise(
   exerciseId: string,
   direction: 'up' | 'down'
 ) {
+  const canonicalExerciseId = resolveCanonicalExerciseId(exerciseId);
   const routine = await db.routines.get(routineId);
   if (!routine || routine.deletedAt) return;
   const exercises = await db.routineExercises.where('routineId').equals(routineId).sortBy('order');
-  const index = exercises.findIndex((item) => item.exerciseId === exerciseId);
+  const index = exercises.findIndex((item) => item.exerciseId === canonicalExerciseId);
   if (index === -1) return;
   const swapIndex = direction === 'up' ? index - 1 : index + 1;
   if (swapIndex < 0 || swapIndex >= exercises.length) return;
@@ -405,14 +414,15 @@ export async function updateExerciseDefaults({
   defaultRestSeconds?: number;
   goalMode?: ExerciseGoalMode;
 }) {
+  const canonicalExerciseId = resolveCanonicalExerciseId(exerciseId);
   const routine = await db.routines.get(routineId);
   if (!routine || routine.deletedAt) return;
-  const existing = await db.exerciseDefaults.where({ routineId, exerciseId }).first();
+  const existing = await db.exerciseDefaults.where({ routineId, exerciseId: canonicalExerciseId }).first();
   const now = new Date().toISOString();
   const payload = {
     id: existing?.id ?? `default-${crypto.randomUUID()}`,
     routineId,
-    exerciseId,
+    exerciseId: canonicalExerciseId,
     metricTypeOverride,
     defaultSetTypes:
       defaultSetTypes || defaultSets
