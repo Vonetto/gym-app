@@ -14,6 +14,10 @@ import { Measures } from './pages/Measures';
 import { Calendar } from './pages/Calendar';
 import { ExerciseDetail } from './pages/ExerciseDetail';
 import { AccountModal } from './components/AccountModal';
+import { CatalogAdmin } from './pages/CatalogAdmin';
+import { AiCoach } from './pages/AiCoach';
+import { Social } from './pages/Social';
+import { SocialProfilePage } from './pages/SocialProfile';
 
 export function App() {
   const { ready } = useSettings();
@@ -40,13 +44,17 @@ export function App() {
         <Route path="/routines" element={<Navigate to="/" replace />} />
         <Route path="/routines/:routineId" element={<RoutineDetail />} />
         <Route path="/catalog" element={<ExerciseCatalog />} />
+        <Route path="/social" element={<Social />} />
+        <Route path="/social/:username" element={<SocialProfilePage />} />
         <Route path="/workout" element={<Workout />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/stats" element={<Stats />} />
         <Route path="/measures" element={<Measures />} />
         <Route path="/calendar" element={<Calendar />} />
         <Route path="/exercises/:exerciseId" element={<ExerciseDetail />} />
+        <Route path="/coach" element={<AiCoach />} />
         <Route path="/settings" element={<Settings />} />
+        <Route path="/internal/catalog-admin" element={<CatalogAdmin />} />
       </Routes>
     </Layout>
   );

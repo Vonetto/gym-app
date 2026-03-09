@@ -24,6 +24,19 @@ import {
   requestNotificationPermission
 } from '../data/notifications';
 import { subscribeDeviceToPush, unsubscribeDeviceFromPush } from '../data/notifications';
+import {
+  DEFAULT_SOCIAL_PRIVACY,
+  getMyPrivacySettings,
+  getMySocialProfile,
+  type ProfileVisibility,
+  removeMyAvatar,
+  type ScopedVisibility,
+  type SocialPrivacySettings,
+  type SocialProfile,
+  updateMyPrivacySettings,
+  updateMySocialProfile,
+  uploadMyAvatar
+} from '../data/social';
 
 function getFullBackupErrorMessage(error: unknown) {
   if (!(error instanceof Error)) return 'No se pudo procesar el backup.';
@@ -47,10 +60,17 @@ function getFullBackupErrorMessage(error: unknown) {
   }
 }
 
+function formatVisibilityLabel(value: ScopedVisibility | ProfileVisibility) {
+  if (value === 'private') return 'Solo yo';
+  if (value === 'friends') return 'Solo amigos';
+  return 'Usuarios logueados';
+}
+
 type SettingsSection =
   | 'home'
   | 'appearance'
   | 'notifications'
+  | 'social'
   | 'data'
   | 'integrations'
   | 'maintenance'
@@ -67,6 +87,10 @@ const SETTINGS_SECTION_META: Record<
   notifications: {
     title: 'Notificaciones',
     description: 'Permisos, avisos y push del dispositivo.'
+  },
+  social: {
+    title: 'Social',
+    description: 'Perfil social, avatar y privacidad de lo que compartes.'
   },
   data: {
     title: 'Datos',
@@ -117,6 +141,12 @@ export function Settings() {
   const [routines, setRoutines] = useState<Array<{ id: string; name: string }>>([]);
   const [routineId, setRoutineId] = useState('');
   const [wrkoutKey, setWrkoutKey] = useState(settings.wrkoutApiKey ?? '');
+  const [socialProfile, setSocialProfile] = useState<SocialProfile | null>(null);
+  const [socialPrivacy, setSocialPrivacy] = useState<SocialPrivacySettings>(DEFAULT_SOCIAL_PRIVACY);
+  const [socialLoading, setSocialLoading] = useState(false);
+  const [socialSaving, setSocialSaving] = useState(false);
+  const [socialAvatarBusy, setSocialAvatarBusy] = useState(false);
+  const [socialError, setSocialError] = useState<string | null>(null);
   const [notificationCapability, setNotificationCapability] = useState(() =>
     getNotificationCapability()
   );
@@ -178,6 +208,103 @@ export function Settings() {
 
   const handleWrkoutSave = async () => {
     await updateWrkoutApiKey(wrkoutKey.trim());
+  };
+
+  const loadSocialSettings = async () => {
+    if (!user || status !== 'authenticated') {
+      setSocialProfile(null);
+      setSocialPrivacy(DEFAULT_SOCIAL_PRIVACY);
+      return;
+    }
+
+    setSocialLoading(true);
+    setSocialError(null);
+    try {
+      const [profile, privacy] = await Promise.all([
+        getMySocialProfile(user.id),
+        getMyPrivacySettings(user.id)
+      ]);
+      setSocialProfile(profile);
+      setSocialPrivacy(privacy);
+    } catch {
+      setSocialError('No se pudo cargar tu configuración social.');
+    } finally {
+      setSocialLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeSection !== 'social') return;
+    void loadSocialSettings();
+  }, [activeSection, status, user]);
+
+  const handleSaveSocialProfile = async () => {
+    if (!user || !socialProfile) return;
+    setSocialSaving(true);
+    setSocialError(null);
+    try {
+      const nextProfile = await updateMySocialProfile(user.id, {
+        username: socialProfile.username,
+        displayName: socialProfile.displayName,
+        bio: socialProfile.bio
+      });
+      setSocialProfile(nextProfile);
+    } catch (error) {
+      if (error instanceof Error && error.message.includes('duplicate')) {
+        setSocialError('Ese username ya existe. Prueba otro.');
+      } else {
+        setSocialError('No se pudo guardar el perfil social.');
+      }
+    } finally {
+      setSocialSaving(false);
+    }
+  };
+
+  const handleSaveSocialPrivacy = async () => {
+    if (!user) return;
+    setSocialSaving(true);
+    setSocialError(null);
+    try {
+      const nextPrivacy = await updateMyPrivacySettings(user.id, socialPrivacy);
+      setSocialPrivacy(nextPrivacy);
+    } catch {
+      setSocialError('No se pudo guardar la privacidad social.');
+    } finally {
+      setSocialSaving(false);
+    }
+  };
+
+  const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user || !socialProfile) return;
+
+    setSocialAvatarBusy(true);
+    setSocialError(null);
+    try {
+      const avatarPath = await uploadMyAvatar(user.id, file, socialProfile.avatarPath);
+      const nextProfile = await updateMySocialProfile(user.id, { avatarPath });
+      setSocialProfile(nextProfile);
+    } catch {
+      setSocialError('No se pudo subir el avatar.');
+    } finally {
+      setSocialAvatarBusy(false);
+      event.target.value = '';
+    }
+  };
+
+  const handleAvatarRemove = async () => {
+    if (!user || !socialProfile) return;
+
+    setSocialAvatarBusy(true);
+    setSocialError(null);
+    try {
+      const nextProfile = await removeMyAvatar(user.id, socialProfile.avatarPath);
+      setSocialProfile(nextProfile);
+    } catch {
+      setSocialError('No se pudo eliminar el avatar.');
+    } finally {
+      setSocialAvatarBusy(false);
+    }
   };
 
   const handleNotificationPermission = async () => {
@@ -503,6 +630,7 @@ export function Settings() {
     }> = [
       { id: 'appearance', title: 'Apariencia', description: 'Tema y rango de estadísticas.' },
       { id: 'notifications', title: 'Notificaciones', description: 'Permisos, avisos y push.' },
+      { id: 'social', title: 'Social', description: 'Perfil público y privacidad.' },
       { id: 'data', title: 'Datos', description: 'Backup total y rutinas JSON.' },
       { id: 'maintenance', title: 'Mantenimiento', description: 'Actualizar app y reset local.' },
       { id: 'integrations', title: 'Integraciones', description: 'Llaves y servicios externos.' },
@@ -812,6 +940,268 @@ export function Settings() {
               </div>
             </>
           ) : null}
+        </div>
+      ) : null}
+
+      {activeSection === 'social' ? (
+        <div className="card">
+          <h2>Social</h2>
+          {!user || status !== 'authenticated' ? (
+            <div className="actions-stack">
+              <p className="muted">
+                Debes iniciar sesión para editar tu perfil público y la privacidad social.
+              </p>
+              <button className="primary-button" type="button" onClick={() => navigate('/profile')}>
+                Ir a Cuenta
+              </button>
+            </div>
+          ) : socialLoading ? (
+            <p className="muted">Cargando configuración social...</p>
+          ) : (
+            <div className="stack">
+              <div className="social-summary-card">
+                <p className="metric-label">Privacidad activa</p>
+                <ul className="social-privacy-list">
+                  <li>Perfil: {formatVisibilityLabel(socialPrivacy.profileVisibility)}</li>
+                  <li>Rutinas: {formatVisibilityLabel(socialPrivacy.routinesVisibility)}</li>
+                  <li>Historial: {formatVisibilityLabel(socialPrivacy.recentHistoryVisibility)}</li>
+                  <li>PRs: {formatVisibilityLabel(socialPrivacy.prVisibility)}</li>
+                </ul>
+              </div>
+
+              <div className="field">
+                <span className="label">Avatar</span>
+                <div className="social-avatar-row">
+                  {socialProfile?.avatarUrl ? (
+                    <img
+                      src={socialProfile.avatarUrl}
+                      alt={socialProfile.displayName}
+                      className="social-avatar social-avatar-large"
+                    />
+                  ) : (
+                    <div className="social-avatar social-avatar-large social-avatar-fallback">
+                      {(socialProfile?.displayName ?? 'U').charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                  <div className="actions-stack">
+                    <label className="ghost-button social-upload-label" htmlFor="social-avatar-input">
+                      {socialAvatarBusy ? 'Subiendo...' : 'Subir avatar'}
+                    </label>
+                    <input
+                      id="social-avatar-input"
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      onChange={handleAvatarChange}
+                      disabled={socialAvatarBusy}
+                    />
+                    {socialProfile?.avatarPath ? (
+                      <button
+                        className="ghost-button"
+                        type="button"
+                        onClick={handleAvatarRemove}
+                        disabled={socialAvatarBusy}
+                      >
+                        Quitar avatar
+                      </button>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
+
+              <div className="field">
+                <label className="label" htmlFor="social-username">
+                  Username
+                </label>
+                <input
+                  id="social-username"
+                  type="text"
+                  value={socialProfile?.username ?? ''}
+                  onChange={(event) =>
+                    setSocialProfile((current) =>
+                      current
+                        ? {
+                            ...current,
+                            username: event.target.value
+                          }
+                        : current
+                    )
+                  }
+                  placeholder="tu-username"
+                />
+                <p className="muted">Se usa para tu perfil y futuras URLs sociales.</p>
+              </div>
+
+              <div className="field">
+                <label className="label" htmlFor="social-display-name">
+                  Nombre visible
+                </label>
+                <input
+                  id="social-display-name"
+                  type="text"
+                  value={socialProfile?.displayName ?? ''}
+                  onChange={(event) =>
+                    setSocialProfile((current) =>
+                      current
+                        ? {
+                            ...current,
+                            displayName: event.target.value
+                          }
+                        : current
+                    )
+                  }
+                  placeholder="Tu nombre visible"
+                />
+              </div>
+
+              <div className="field">
+                <label className="label" htmlFor="social-bio">
+                  Bio
+                </label>
+                <textarea
+                  id="social-bio"
+                  value={socialProfile?.bio ?? ''}
+                  onChange={(event) =>
+                    setSocialProfile((current) =>
+                      current
+                        ? {
+                            ...current,
+                            bio: event.target.value
+                          }
+                        : current
+                    )
+                  }
+                  rows={3}
+                  placeholder="Qué entrenas, objetivos o contexto."
+                />
+              </div>
+
+              <div className="actions">
+                <button
+                  className="primary-button"
+                  type="button"
+                  onClick={handleSaveSocialProfile}
+                  disabled={socialSaving || !socialProfile}
+                >
+                  {socialSaving ? 'Guardando...' : 'Guardar perfil social'}
+                </button>
+              </div>
+
+              <div className="field">
+                <span className="label">Visibilidad del perfil</span>
+                <div className="toggle-group">
+                  {(['authenticated', 'friends'] as ProfileVisibility[]).map((value) => (
+                    <button
+                      key={value}
+                      type="button"
+                      className={
+                        socialPrivacy.profileVisibility === value ? 'toggle active' : 'toggle'
+                      }
+                      onClick={() =>
+                        setSocialPrivacy((current) => ({
+                          ...current,
+                          profileVisibility: value
+                        }))
+                      }
+                    >
+                      {formatVisibilityLabel(value)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {(
+                [
+                  ['routinesVisibility', 'Rutinas públicas'],
+                  ['recentHistoryVisibility', 'Historial reciente'],
+                  ['prVisibility', 'PRs destacados'],
+                  ['statsVisibility', 'Estadísticas generales']
+                ] as const
+              ).map(([key, label]) => (
+                <div className="field" key={key}>
+                  <span className="label">{label}</span>
+                  <div className="toggle-group">
+                    {(['authenticated', 'friends', 'private'] as ScopedVisibility[]).map(
+                      (value) => (
+                        <button
+                          key={value}
+                          type="button"
+                          className={
+                            socialPrivacy[key] === value ? 'toggle active' : 'toggle'
+                          }
+                          onClick={() =>
+                            setSocialPrivacy((current) => ({
+                              ...current,
+                              [key]: value
+                            }))
+                          }
+                        >
+                          {formatVisibilityLabel(value)}
+                        </button>
+                      )
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              <div className="field">
+                <span className="label">Relaciones</span>
+                <div className="notification-option-list">
+                  <div className="notification-option-row">
+                    <div className="notification-option-copy">
+                      <p className="list-title">Permitir follow</p>
+                      <p className="muted">Otros usuarios podrán seguirte libremente.</p>
+                    </div>
+                    <button
+                      type="button"
+                      className={socialPrivacy.allowFollow ? 'toggle active' : 'ghost-button'}
+                      onClick={() =>
+                        setSocialPrivacy((current) => ({
+                          ...current,
+                          allowFollow: !current.allowFollow
+                        }))
+                      }
+                    >
+                      {socialPrivacy.allowFollow ? 'Activo' : 'Bloqueado'}
+                    </button>
+                  </div>
+                  <div className="notification-option-row">
+                    <div className="notification-option-copy">
+                      <p className="list-title">Solicitudes de amistad</p>
+                      <p className="muted">Controla si otros usuarios pueden enviarte requests.</p>
+                    </div>
+                    <button
+                      type="button"
+                      className={
+                        socialPrivacy.allowFriendRequests ? 'toggle active' : 'ghost-button'
+                      }
+                      onClick={() =>
+                        setSocialPrivacy((current) => ({
+                          ...current,
+                          allowFriendRequests: !current.allowFriendRequests
+                        }))
+                      }
+                    >
+                      {socialPrivacy.allowFriendRequests ? 'Activo' : 'Bloqueado'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="actions">
+                <button
+                  className="primary-button"
+                  type="button"
+                  onClick={handleSaveSocialPrivacy}
+                  disabled={socialSaving}
+                >
+                  {socialSaving ? 'Guardando...' : 'Guardar privacidad'}
+                </button>
+              </div>
+
+              {socialError ? <p className="warning">{socialError}</p> : null}
+            </div>
+          )}
         </div>
       ) : null}
 

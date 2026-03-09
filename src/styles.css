@@ -66,10 +66,11 @@ a {
 .tab-bar {
   position: fixed;
   inset: auto 0 0 0;
-  display: flex;
-  justify-content: space-around;
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.35rem;
   padding: 0.7rem 1rem calc(0.9rem + env(safe-area-inset-bottom));
   background: rgba(17, 17, 17, 0.95);
   border-top: 1px solid var(--border);
@@ -79,10 +80,16 @@ a {
 }
 
 .tab-bar a {
+  width: 100%;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
   color: var(--text-muted);
   font-size: 0.85rem;
-  padding: 0.35rem 0.8rem;
+  padding: 0.35rem 0.5rem;
   border-radius: 999px;
+  text-align: center;
+  min-width: 0;
 }
 
 .tab-bar a.active {
@@ -1931,6 +1938,36 @@ input::placeholder {
   align-items: stretch;
 }
 
+.admin-catalog-layout {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(280px, 360px) 1fr;
+}
+
+.admin-list {
+  max-height: 70vh;
+  overflow-y: auto;
+  margin-top: 0.75rem;
+}
+
+.admin-exercise-row {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-muted);
+  color: var(--text);
+  padding: 0.55rem 0.75rem;
+  display: grid;
+  gap: 0.1rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.admin-exercise-row.active {
+  border-color: #2d8cff;
+  background: rgba(45, 140, 255, 0.18);
+}
+
 .list-title {
   font-weight: 600;
 }
@@ -2067,6 +2104,377 @@ input::placeholder {
   font-weight: 600;
 }
 
+.ai-chat-card {
+  max-width: 760px;
+}
+
+.ai-chat-header {
+  align-items: flex-start;
+}
+
+.ai-chat-header h1 {
+  margin: 0;
+}
+
+.ai-quota-text {
+  margin: 0.25rem 0 0.85rem;
+}
+
+.ai-chat-messages {
+  display: grid;
+  gap: 0.7rem;
+  max-height: 58vh;
+  overflow-y: auto;
+  padding-right: 0.2rem;
+}
+
+.ai-message {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0.75rem 0.85rem;
+  background: var(--surface-muted);
+  display: grid;
+  gap: 0.45rem;
+}
+
+.ai-message.user {
+  border-color: rgba(120, 242, 106, 0.5);
+  background: rgba(120, 242, 106, 0.08);
+}
+
+.ai-message header {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
+.social-hero-card {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.social-hero-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.social-tab-switch {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.social-inline-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(180px, 240px);
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.social-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.social-summary-card {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1rem;
+  background: var(--surface-muted);
+  display: grid;
+  gap: 0.75rem;
+}
+
+.social-profile-head {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.social-display-name {
+  margin-bottom: 0.2rem;
+}
+
+.social-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.social-avatar-large {
+  width: 4.25rem;
+  height: 4.25rem;
+}
+
+.social-avatar-fallback {
+  display: grid;
+  place-items: center;
+  background: var(--surface);
+  font-weight: 700;
+}
+
+.social-bio-preview {
+  margin: 0;
+}
+
+.social-privacy-list {
+  display: grid;
+  gap: 0.45rem;
+  padding-left: 1rem;
+  margin: 0;
+  color: var(--text-muted);
+}
+
+.social-avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.social-upload-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.social-routine-list {
+  margin-top: 0.75rem;
+}
+
+.social-routine-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface-muted);
+  padding: 0.9rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.social-routine-card h3 {
+  margin: 0;
+}
+
+.social-routine-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.social-user-card {
+  gap: 0.85rem;
+}
+
+.social-profile-list {
+  margin-top: 0.1rem;
+}
+
+.social-post-list {
+  gap: 0.75rem;
+}
+
+.social-post-card {
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0.9rem;
+  background: var(--surface-muted);
+  display: grid;
+  gap: 0.75rem;
+}
+
+.social-post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.social-user-link {
+  all: unset;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.social-user-link span {
+  display: grid;
+  gap: 0.05rem;
+}
+
+.social-post-body {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.social-post-title {
+  margin: 0;
+  font-weight: 700;
+}
+
+.social-post-caption {
+  margin: 0;
+}
+
+.social-post-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+  font-size: 0.84rem;
+  color: var(--text-muted);
+}
+
+.social-post-exercises {
+  margin: 0;
+}
+
+.social-post-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.social-routine-compact-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.social-routine-compact-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.65rem 0.75rem;
+  background: var(--surface);
+}
+
+.social-comments-list {
+  display: grid;
+  gap: 0.65rem;
+  max-height: 40vh;
+  overflow-y: auto;
+}
+
+.social-comment-item {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-muted);
+  padding: 0.7rem 0.75rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.social-comment-item p {
+  margin: 0;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.tag-pill {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface);
+  padding: 0.2rem 0.55rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+@media (max-width: 640px) {
+  .social-hero-header,
+  .social-avatar-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .social-tab-switch {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .social-inline-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .social-routine-head {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .social-post-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.ai-message p {
+  margin: 0;
+}
+
+.ai-assistant-payload ul,
+.ai-evidence-list ul {
+  margin: 0.35rem 0 0;
+  padding-left: 1rem;
+  display: grid;
+  gap: 0.25rem;
+}
+
+.ai-assistant-payload li {
+  margin: 0;
+}
+
+.ai-evidence-list a {
+  color: #2d8cff;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ai-chat-form {
+  margin-top: 0.95rem;
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: 1fr auto;
+}
+
+.ai-chat-form .primary-button {
+  min-width: 120px;
+}
+
+.workout-ai-sticky {
+  position: fixed;
+  right: 1rem;
+  bottom: calc(96px + env(safe-area-inset-bottom));
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  border: 1px solid rgba(45, 140, 255, 0.5);
+  background: rgba(45, 140, 255, 0.2);
+  color: #8ec2ff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  z-index: 62;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+}
+
+.workout-ai-sticky:active {
+  transform: scale(0.98);
+}
+
 button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
@@ -2105,10 +2513,29 @@ button:disabled {
     align-items: flex-start;
   }
 
+  .admin-catalog-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-list {
+    max-height: 320px;
+  }
+
   .notification-master,
   .notification-option-row {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .ai-chat-form {
+    grid-template-columns: 1fr;
+  }
+
+  .workout-ai-sticky {
+    width: 50px;
+    height: 50px;
+    right: 0.85rem;
+    bottom: calc(98px + env(safe-area-inset-bottom));
   }
 
   .notification-option-row .ghost-button,
