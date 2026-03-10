@@ -4,10 +4,13 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState
 } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
+import { clearActiveSession } from './activeSession';
 import { getSupabaseClient, isSupabaseConfigured } from './supabase';
+import { ensureSocialProfile } from './social';
 
 type AuthStatus = 'loading' | 'anonymous' | 'authenticated' | 'pending_confirmation' | 'unavailable';
 
@@ -32,7 +35,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [pendingEmail, setPendingEmail] = useState<string | undefined>(undefined);
+  const pendingEmailRef = useRef<string | undefined>(undefined);
+  const lastUserIdRef = useRef<string | null>(null);
   const configured = isSupabaseConfigured();
+
+  useEffect(() => {
+    pendingEmailRef.current = pendingEmail;
+  }, [pendingEmail]);
+
+  const applySessionState = (nextSession: Session | null) => {
+    const nextUser = nextSession?.user ?? null;
+    const nextUserId = nextUser?.id ?? null;
+
+    if (lastUserIdRef.current && nextUserId && lastUserIdRef.current !== nextUserId) {
+      clearActiveSession();
+    }
+
+    setSession(nextSession);
+    setUser(nextUser);
+    setStatus(nextSession ? 'authenticated' : pendingEmailRef.current ? 'pending_confirmation' : 'anonymous');
+
+    if (nextSession) {
+      pendingEmailRef.current = undefined;
+      setPendingEmail(undefined);
+    }
+
+    lastUserIdRef.current = nextUserId;
+  };
 
   useEffect(() => {
     const supabase = getSupabaseClient();
@@ -51,9 +80,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (!active) return;
 
-      setSession(currentSession);
-      setUser(currentSession?.user ?? null);
-      setStatus(currentSession ? 'authenticated' : 'anonymous');
+      applySessionState(currentSession);
       setReady(true);
     };
 
@@ -63,19 +90,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       data: { subscription }
     } = supabase.auth.onAuthStateChange((_event, nextSession) => {
       if (!active) return;
-      setSession(nextSession);
-      setUser(nextSession?.user ?? null);
-      setStatus(nextSession ? 'authenticated' : pendingEmail ? 'pending_confirmation' : 'anonymous');
-      if (nextSession) {
-        setPendingEmail(undefined);
-      }
+      applySessionState(nextSession);
     });
 
     return () => {
       active = false;
       subscription.unsubscribe();
     };
-  }, [pendingEmail]);
+  }, []);
+
+  useEffect(() => {
+    if (status !== 'authenticated' || !user) {
+      return;
+    }
+
+    let active = true;
+
+    const bootstrapSocialProfile = async () => {
+      try {
+        await ensureSocialProfile(user);
+      } catch (error) {
+        if (active) {
+          console.error('social-profile-bootstrap-failed', error);
+        }
+      }
+    };
+
+    void bootstrapSocialProfile();
+
+    return () => {
+      active = false;
+    };
+  }, [status, user]);
 
   const refreshSession = async () => {
     const supabase = getSupabaseClient();
@@ -83,9 +129,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const {
       data: { session: currentSession }
     } = await supabase.auth.getSession();
-    setSession(currentSession);
-    setUser(currentSession?.user ?? null);
-    setStatus(currentSession ? 'authenticated' : pendingEmail ? 'pending_confirmation' : 'anonymous');
+    applySessionState(currentSession);
   };
 
   const signUp = async (email: string, password: string) => {
@@ -96,19 +140,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data, error } = await supabase.auth.signUp({
       email,
-      password
+      password,
+      options: {
+        emailRedirectTo:
+          typeof window === 'undefined' ? undefined : `${window.location.origin}/`
+      }
     });
 
     if (error) throw error;
 
     if (data.session) {
+      pendingEmailRef.current = undefined;
       setPendingEmail(undefined);
-      setSession(data.session);
-      setUser(data.session.user);
-      setStatus('authenticated');
+      clearActiveSession();
+      applySessionState(data.session);
       return 'signed_in' as const;
     }
 
+    pendingEmailRef.current = email;
     setPendingEmail(email);
     setStatus('pending_confirmation');
     return 'confirmation_required' as const;
@@ -127,10 +176,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (error) throw error;
 
+    pendingEmailRef.current = undefined;
     setPendingEmail(undefined);
-    setSession(data.session);
-    setUser(data.user);
-    setStatus('authenticated');
+    clearActiveSession();
+    applySessionState(data.session);
   };
 
   const signOut = async () => {
@@ -138,10 +187,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!supabase) return;
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
+    clearActiveSession();
+    pendingEmailRef.current = undefined;
     setPendingEmail(undefined);
-    setSession(null);
-    setUser(null);
-    setStatus('anonymous');
+    applySessionState(null);
   };
 
   const value = useMemo<AuthContextValue>(
