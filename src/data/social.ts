@@ -19,8 +19,15 @@ export interface SocialProfile {
   updatedAt: string;
 }
 
+export interface SocialRelationshipCounts {
+  followers: number;
+  following: number;
+  friends: number;
+}
+
 export interface SocialDirectoryProfile extends SocialProfile {
   isFollowing: boolean;
+  relationshipCounts: SocialRelationshipCounts;
 }
 
 export type SocialFriendStatus = 'none' | 'incoming_pending' | 'outgoing_pending' | 'friends';
@@ -85,6 +92,7 @@ export interface SocialWorkoutPost {
   createdAt: string;
   updatedAt: string;
   publishedAt: string;
+  hiddenAt?: string;
   authorUserId: string;
   authorUsername: string;
   authorDisplayName: string;
@@ -92,6 +100,8 @@ export interface SocialWorkoutPost {
   likeCount: number;
   commentCount: number;
   likedByMe: boolean;
+  imagePaths: string[];
+  imageUrls: string[];
 }
 
 export interface SocialPostComment {
@@ -102,6 +112,15 @@ export interface SocialPostComment {
   displayName: string;
   avatarUrl?: string;
   content: string;
+  createdAt: string;
+}
+
+export interface SocialFriendRequest {
+  id: string;
+  requesterUserId: string;
+  requesterUsername: string;
+  requesterDisplayName: string;
+  requesterAvatarUrl?: string;
   createdAt: string;
 }
 
@@ -165,7 +184,9 @@ type SocialWorkoutPostRow = {
   created_at: string;
   updated_at: string;
   published_at: string;
+  hidden_at: string | null;
   deleted_at: string | null;
+  image_paths: unknown;
 };
 
 type SocialPostLikeRow = {
@@ -233,6 +254,21 @@ function sanitizeTags(value: unknown): string[] {
   return value
     .map((item) => (typeof item === 'string' ? item.trim() : ''))
     .filter((item) => item.length > 0);
+}
+
+function parseImagePaths(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((item) => (typeof item === 'string' ? item.trim() : ''))
+    .filter((item) => item.length > 0);
+}
+
+function emptyRelationshipCounts(): SocialRelationshipCounts {
+  return {
+    followers: 0,
+    following: 0,
+    friends: 0
+  };
 }
 
 function parseWorkoutSummary(value: unknown): SocialWorkoutPostSummary {
@@ -452,6 +488,28 @@ async function getSignedAvatarUrlSafe(path?: string | null) {
   }
 }
 
+async function getSignedPostImageUrls(paths: string[]) {
+  if (!paths.length) return [] as string[];
+  const supabase = ensureSupabase();
+  if (!supabase) return [] as string[];
+
+  const signedUrls = await Promise.all(
+    paths.map(async (path) => {
+      try {
+        const { data, error } = await supabase.storage
+          .from('social-post-media')
+          .createSignedUrl(path, 3600);
+        if (error || !data?.signedUrl) return undefined;
+        return data.signedUrl;
+      } catch {
+        return undefined;
+      }
+    })
+  );
+
+  return signedUrls.filter((url): url is string => Boolean(url));
+}
+
 export async function ensureSocialProfile(user: User) {
   const supabase = ensureSupabase();
   if (!supabase) return null;
@@ -576,6 +634,188 @@ export async function listFollowingUserIds(userId: string) {
   }
 
   return new Set((data ?? []).map((row) => row.target_user_id as string));
+}
+
+async function listProfileRowsByIds(userIds: string[]) {
+  const supabase = ensureSupabase();
+  if (!supabase || !userIds.length) return [] as ProfileRow[];
+
+  const { data, error } = await (supabase as any)
+    .from('profiles')
+    .select('user_id, username, display_name, bio, avatar_path, created_at, updated_at')
+    .in('user_id', userIds)
+    .is('deleted_at', null);
+
+  if (error) {
+    throw error;
+  }
+
+  return (data ?? []) as ProfileRow[];
+}
+
+async function listRelationshipCountsByUsers(userIds: string[]) {
+  const supabase = ensureSupabase();
+  if (!supabase || !userIds.length) return new Map<string, SocialRelationshipCounts>();
+
+  const uniqueUserIds = Array.from(new Set(userIds));
+  const countsMap = new Map<string, SocialRelationshipCounts>();
+  uniqueUserIds.forEach((userId) => countsMap.set(userId, emptyRelationshipCounts()));
+
+  const [{ data: followerRows, error: followerError }, { data: followingRows, error: followingError }] =
+    await Promise.all([
+      (supabase as any)
+        .from('user_follows')
+        .select('follower_user_id, target_user_id')
+        .in('target_user_id', uniqueUserIds)
+        .is('deleted_at', null),
+      (supabase as any)
+        .from('user_follows')
+        .select('follower_user_id, target_user_id')
+        .in('follower_user_id', uniqueUserIds)
+        .is('deleted_at', null)
+    ]);
+
+  if (followerError) throw followerError;
+  if (followingError) throw followingError;
+
+  ((followerRows ?? []) as UserFollowRow[]).forEach((row) => {
+    const current = countsMap.get(row.target_user_id);
+    if (current) {
+      current.followers += 1;
+    }
+  });
+
+  ((followingRows ?? []) as UserFollowRow[]).forEach((row) => {
+    const current = countsMap.get(row.follower_user_id);
+    if (current) {
+      current.following += 1;
+    }
+  });
+
+  const [friendshipA, friendshipB] = await Promise.all([
+    (supabase as any)
+      .from('user_friendships')
+      .select('id, requester_user_id, addressee_user_id, status, created_at, updated_at, responded_at, deleted_at')
+      .in('requester_user_id', uniqueUserIds)
+      .eq('status', 'accepted')
+      .is('deleted_at', null),
+    (supabase as any)
+      .from('user_friendships')
+      .select('id, requester_user_id, addressee_user_id, status, created_at, updated_at, responded_at, deleted_at')
+      .in('addressee_user_id', uniqueUserIds)
+      .eq('status', 'accepted')
+      .is('deleted_at', null)
+  ]);
+
+  if (friendshipA.error) throw friendshipA.error;
+  if (friendshipB.error) throw friendshipB.error;
+
+  const uniqueAccepted = new Map<string, UserFriendshipRow>();
+  ([...(friendshipA.data ?? []), ...(friendshipB.data ?? [])] as UserFriendshipRow[]).forEach((row) => {
+    uniqueAccepted.set(row.id, row);
+  });
+
+  uniqueAccepted.forEach((row) => {
+    const requester = countsMap.get(row.requester_user_id);
+    if (requester) requester.friends += 1;
+    const addressee = countsMap.get(row.addressee_user_id);
+    if (addressee) addressee.friends += 1;
+  });
+
+  return countsMap;
+}
+
+export async function getSocialRelationshipCounts(targetUserId: string) {
+  const map = await listRelationshipCountsByUsers([targetUserId]);
+  return map.get(targetUserId) ?? emptyRelationshipCounts();
+}
+
+export async function listSocialRelationMembers(
+  relation: 'followers' | 'following' | 'friends',
+  targetUserId: string
+) {
+  const supabase = ensureSupabase();
+  if (!supabase) return [] as SocialProfile[];
+
+  let userIds: string[] = [];
+  if (relation === 'followers') {
+    const { data, error } = await (supabase as any)
+      .from('user_follows')
+      .select('follower_user_id')
+      .eq('target_user_id', targetUserId)
+      .is('deleted_at', null);
+    if (error) throw error;
+    userIds = (data ?? []).map((row: { follower_user_id: string }) => row.follower_user_id);
+  } else if (relation === 'following') {
+    const { data, error } = await (supabase as any)
+      .from('user_follows')
+      .select('target_user_id')
+      .eq('follower_user_id', targetUserId)
+      .is('deleted_at', null);
+    if (error) throw error;
+    userIds = (data ?? []).map((row: { target_user_id: string }) => row.target_user_id);
+  } else {
+    const { data, error } = await (supabase as any)
+      .from('user_friendships')
+      .select('id, requester_user_id, addressee_user_id, status, created_at, updated_at, responded_at, deleted_at')
+      .or(`requester_user_id.eq.${targetUserId},addressee_user_id.eq.${targetUserId}`)
+      .eq('status', 'accepted')
+      .is('deleted_at', null);
+    if (error) throw error;
+    userIds = ((data ?? []) as UserFriendshipRow[]).map((row) =>
+      row.requester_user_id === targetUserId ? row.addressee_user_id : row.requester_user_id
+    );
+  }
+
+  const profileRows = await listProfileRowsByIds(userIds);
+  const hydrated = await Promise.all(
+    profileRows.map(async (row) => ({
+      ...toProfile(row, await getSignedAvatarUrlSafe(row.avatar_path))
+    }))
+  );
+  return hydrated.sort((a, b) => a.displayName.localeCompare(b.displayName, 'es'));
+}
+
+export async function listIncomingFriendRequests(currentUserId: string) {
+  const supabase = ensureSupabase();
+  if (!supabase) return [] as SocialFriendRequest[];
+
+  const { data, error } = await (supabase as any)
+    .from('user_friendships')
+    .select('id, requester_user_id, addressee_user_id, status, created_at, updated_at, responded_at, deleted_at')
+    .eq('addressee_user_id', currentUserId)
+    .eq('status', 'pending')
+    .is('deleted_at', null)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    throw error;
+  }
+
+  const rows = (data ?? []) as UserFriendshipRow[];
+  if (!rows.length) return [] as SocialFriendRequest[];
+
+  const requesterIds = rows.map((row) => row.requester_user_id);
+  const profileRows = await listProfileRowsByIds(requesterIds);
+  const profileMap = new Map<string, SocialProfile>();
+  await Promise.all(
+    profileRows.map(async (row) => {
+      const avatarUrl = await getSignedAvatarUrlSafe(row.avatar_path);
+      profileMap.set(row.user_id, toProfile(row, avatarUrl));
+    })
+  );
+
+  return rows.map((row) => {
+    const profile = profileMap.get(row.requester_user_id);
+    return {
+      id: row.id,
+      requesterUserId: row.requester_user_id,
+      requesterUsername: profile?.username ?? 'usuario',
+      requesterDisplayName: profile?.displayName ?? 'Usuario',
+      requesterAvatarUrl: profile?.avatarUrl,
+      createdAt: row.created_at
+    } satisfies SocialFriendRequest;
+  });
 }
 
 function toFriendStatus(row: UserFriendshipRow, currentUserId: string): SocialFriendStatus {
@@ -753,12 +993,14 @@ export async function listSocialProfiles(currentUserId: string, search = '') {
 
   const followingIds = await listFollowingUserIds(currentUserId);
   const rows = (data ?? []) as ProfileRow[];
+  const countsMap = await listRelationshipCountsByUsers(rows.map((row) => row.user_id));
   const profiles = await Promise.all(
     rows.map(async (row) => {
       const avatarUrl = await getSignedAvatarUrlSafe(row.avatar_path);
       return {
         ...toProfile(row, avatarUrl),
-        isFollowing: followingIds.has(row.user_id)
+        isFollowing: followingIds.has(row.user_id),
+        relationshipCounts: countsMap.get(row.user_id) ?? emptyRelationshipCounts()
       };
     })
   );
@@ -1106,30 +1348,82 @@ async function hydrateSocialPosts(
     commentCountByPost.set(row.post_id, (commentCountByPost.get(row.post_id) ?? 0) + 1);
   });
 
-  return rows.map((row) => {
-    const profile = profileMap.get(row.owner_user_id);
-    return {
-      id: row.id,
-      ownerUserId: row.owner_user_id,
-      workoutId: row.workout_id ?? undefined,
-      routineId: row.routine_id ?? undefined,
-      routineName: row.routine_name ?? undefined,
-      caption: row.caption ?? undefined,
-      visibility: row.visibility,
-      tags: sanitizeTags(row.tags),
-      summary: parseWorkoutSummary(row.summary),
-      createdAt: row.created_at,
-      updatedAt: row.updated_at,
-      publishedAt: row.published_at,
-      authorUserId: row.owner_user_id,
-      authorUsername: profile?.username ?? 'usuario',
-      authorDisplayName: profile?.displayName ?? 'Usuario',
-      authorAvatarUrl: profile?.avatarUrl,
-      likeCount: likeCountByPost.get(row.id) ?? 0,
-      commentCount: commentCountByPost.get(row.id) ?? 0,
-      likedByMe: likedByMe.has(row.id)
-    } satisfies SocialWorkoutPost;
-  });
+  return Promise.all(
+    rows.map(async (row) => {
+      const profile = profileMap.get(row.owner_user_id);
+      const imagePaths = parseImagePaths(row.image_paths);
+      const imageUrls = await getSignedPostImageUrls(imagePaths);
+      return {
+        id: row.id,
+        ownerUserId: row.owner_user_id,
+        workoutId: row.workout_id ?? undefined,
+        routineId: row.routine_id ?? undefined,
+        routineName: row.routine_name ?? undefined,
+        caption: row.caption ?? undefined,
+        visibility: row.visibility,
+        tags: sanitizeTags(row.tags),
+        summary: parseWorkoutSummary(row.summary),
+        createdAt: row.created_at,
+        updatedAt: row.updated_at,
+        publishedAt: row.published_at,
+        hiddenAt: row.hidden_at ?? undefined,
+        authorUserId: row.owner_user_id,
+        authorUsername: profile?.username ?? 'usuario',
+        authorDisplayName: profile?.displayName ?? 'Usuario',
+        authorAvatarUrl: profile?.avatarUrl,
+        likeCount: likeCountByPost.get(row.id) ?? 0,
+        commentCount: commentCountByPost.get(row.id) ?? 0,
+        likedByMe: likedByMe.has(row.id),
+        imagePaths,
+        imageUrls
+      } satisfies SocialWorkoutPost;
+    })
+  );
+}
+
+async function replaceSocialPostImages(
+  userId: string,
+  postId: string,
+  newFiles: File[],
+  previousPaths: string[]
+) {
+  const supabase = ensureSupabase();
+  if (!supabase) {
+    throw new Error('supabase-unavailable');
+  }
+
+  if (!newFiles.length) {
+    if (previousPaths.length) {
+      await supabase.storage.from('social-post-media').remove(previousPaths);
+    }
+    return [] as string[];
+  }
+
+  const uploadedPaths: string[] = [];
+  try {
+    for (let index = 0; index < newFiles.length; index += 1) {
+      const file = newFiles[index];
+      const extension = file.name.includes('.') ? file.name.split('.').pop() : 'jpg';
+      const nextPath = `${postId}/${userId}-${Date.now()}-${index}.${extension}`;
+      const { error } = await supabase.storage.from('social-post-media').upload(nextPath, file, {
+        upsert: false,
+        cacheControl: '3600'
+      });
+      if (error) throw error;
+      uploadedPaths.push(nextPath);
+    }
+  } catch (error) {
+    if (uploadedPaths.length) {
+      await supabase.storage.from('social-post-media').remove(uploadedPaths);
+    }
+    throw error;
+  }
+
+  if (previousPaths.length) {
+    await supabase.storage.from('social-post-media').remove(previousPaths);
+  }
+
+  return uploadedPaths;
 }
 
 export async function publishWorkoutPostToSocial(
@@ -1138,6 +1432,7 @@ export async function publishWorkoutPostToSocial(
   options?: {
     caption?: string;
     visibility?: SocialPostVisibility;
+    imageFiles?: File[];
   }
 ) {
   const supabase = ensureSupabase();
@@ -1164,13 +1459,14 @@ export async function publishWorkoutPostToSocial(
     visibility: options?.visibility ?? 'authenticated',
     tags,
     summary,
+    image_paths: [] as string[],
     updated_at: now,
     published_at: now
   };
 
   const { data: existing, error: existingError } = await (supabase as any)
     .from('social_workout_posts')
-    .select('id')
+    .select('id, image_paths')
     .eq('owner_user_id', userId)
     .eq('workout_id', workout.id)
     .is('deleted_at', null)
@@ -1182,10 +1478,18 @@ export async function publishWorkoutPostToSocial(
     throw existingError;
   }
 
+  let imagePaths = parseImagePaths(existing?.image_paths);
+  if (existing?.id && options?.imageFiles !== undefined) {
+    imagePaths = await replaceSocialPostImages(userId, existing.id as string, options.imageFiles, imagePaths);
+  }
+
   if (existing?.id) {
     const { error: updateError } = await (supabase as any)
       .from('social_workout_posts')
-      .update(payload)
+      .update({
+        ...payload,
+        image_paths: imagePaths
+      })
       .eq('id', existing.id)
       .eq('owner_user_id', userId)
       .is('deleted_at', null);
@@ -1200,12 +1504,29 @@ export async function publishWorkoutPostToSocial(
   const { error: insertError } = await (supabase as any).from('social_workout_posts').insert({
     id: postId,
     ...payload,
+    image_paths: [],
     created_at: now,
     deleted_at: null
   });
 
   if (insertError) {
     throw insertError;
+  }
+
+  if (options?.imageFiles !== undefined) {
+    const nextImagePaths = await replaceSocialPostImages(userId, postId, options.imageFiles, []);
+    const { error: updateError } = await (supabase as any)
+      .from('social_workout_posts')
+      .update({
+        image_paths: nextImagePaths,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', postId)
+      .eq('owner_user_id', userId)
+      .is('deleted_at', null);
+    if (updateError) {
+      throw updateError;
+    }
   }
 
   return postId;
@@ -1218,6 +1539,7 @@ export async function listSocialWorkoutPosts(
     search?: string;
     ownerUserId?: string;
     limit?: number;
+    includeHidden?: boolean;
   }
 ) {
   const supabase = ensureSupabase();
@@ -1230,7 +1552,7 @@ export async function listSocialWorkoutPosts(
   let query: any = (supabase as any)
     .from('social_workout_posts')
     .select(
-      'id, owner_user_id, workout_id, routine_id, routine_name, caption, visibility, tags, summary, created_at, updated_at, published_at, deleted_at'
+      'id, owner_user_id, workout_id, routine_id, routine_name, caption, visibility, tags, summary, image_paths, created_at, updated_at, published_at, hidden_at, deleted_at'
     )
     .is('deleted_at', null)
     .order('published_at', { ascending: false })
@@ -1238,6 +1560,9 @@ export async function listSocialWorkoutPosts(
 
   if (options?.ownerUserId) {
     query = query.eq('owner_user_id', options.ownerUserId);
+    if (!(options.ownerUserId === currentUserId && options.includeHidden)) {
+      query = query.is('hidden_at', null);
+    }
   } else if (mode === 'following' || mode === 'friends') {
     const ids =
       mode === 'following'
@@ -1245,6 +1570,10 @@ export async function listSocialWorkoutPosts(
         : Array.from(await listFriendUserIds(currentUserId));
     if (!ids.length) return [] as SocialWorkoutPost[];
     query = query.in('owner_user_id', ids);
+  }
+
+  if (!options?.ownerUserId) {
+    query = query.is('hidden_at', null);
   }
 
   if (search) {
@@ -1321,6 +1650,68 @@ export async function toggleLikeOnSocialPost(userId: string, postId: string) {
     throw unlikeError;
   }
   return false;
+}
+
+export async function setSocialPostHidden(userId: string, postId: string, hidden: boolean) {
+  const supabase = ensureSupabase();
+  if (!supabase) {
+    throw new Error('supabase-unavailable');
+  }
+
+  const now = new Date().toISOString();
+  const { error } = await (supabase as any)
+    .from('social_workout_posts')
+    .update({
+      hidden_at: hidden ? now : null,
+      updated_at: now
+    })
+    .eq('id', postId)
+    .eq('owner_user_id', userId)
+    .is('deleted_at', null);
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function deleteSocialPost(userId: string, postId: string) {
+  const supabase = ensureSupabase();
+  if (!supabase) {
+    throw new Error('supabase-unavailable');
+  }
+
+  const { data: postData, error: fetchError } = await (supabase as any)
+    .from('social_workout_posts')
+    .select('image_paths')
+    .eq('id', postId)
+    .eq('owner_user_id', userId)
+    .is('deleted_at', null)
+    .maybeSingle();
+
+  if (fetchError) {
+    throw fetchError;
+  }
+
+  const imagePaths = parseImagePaths(postData?.image_paths);
+  if (imagePaths.length) {
+    await supabase.storage.from('social-post-media').remove(imagePaths);
+  }
+
+  const now = new Date().toISOString();
+  const { error } = await (supabase as any)
+    .from('social_workout_posts')
+    .update({
+      deleted_at: now,
+      hidden_at: null,
+      updated_at: now
+    })
+    .eq('id', postId)
+    .eq('owner_user_id', userId)
+    .is('deleted_at', null);
+
+  if (error) {
+    throw error;
+  }
 }
 
 export async function listSocialPostComments(postId: string) {

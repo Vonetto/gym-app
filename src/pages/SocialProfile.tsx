@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { SocialAvatar } from '../components/SocialAvatar';
+import { SocialPostCard } from '../components/SocialPostCard';
 import { useAuth } from '../data/AuthProvider';
 import { useSync } from '../data/SyncProvider';
 import {
   addSocialPostComment,
   copySocialRoutineToLocal,
   followSocialProfile,
+  getSocialRelationshipCounts,
   getSocialProfileByUsername,
   listFriendConnections,
   listFollowingUserIds,
+  listSocialRelationMembers,
   listSocialPostComments,
   listSocialRoutinesByOwner,
   listSocialWorkoutPosts,
@@ -19,39 +23,10 @@ import {
   type SocialFriendConnection,
   type SocialPostComment,
   type SocialProfile,
+  type SocialRelationshipCounts,
   type SocialRoutine,
   type SocialWorkoutPost
 } from '../data/social';
-
-function SocialAvatar({
-  avatarUrl,
-  label,
-  large = false
-}: {
-  avatarUrl?: string;
-  label: string;
-  large?: boolean;
-}) {
-  if (avatarUrl) {
-    return (
-      <img
-        src={avatarUrl}
-        alt={label}
-        className={large ? 'social-avatar social-avatar-large' : 'social-avatar'}
-      />
-    );
-  }
-
-  return (
-    <div
-      className={
-        large ? 'social-avatar social-avatar-large social-avatar-fallback' : 'social-avatar social-avatar-fallback'
-      }
-    >
-      {label.charAt(0).toUpperCase()}
-    </div>
-  );
-}
 
 export function SocialProfilePage() {
   const { username = '' } = useParams();
@@ -64,6 +39,11 @@ export function SocialProfilePage() {
   const [profile, setProfile] = useState<SocialProfile | null>(null);
   const [posts, setPosts] = useState<SocialWorkoutPost[]>([]);
   const [routines, setRoutines] = useState<SocialRoutine[]>([]);
+  const [relationshipCounts, setRelationshipCounts] = useState<SocialRelationshipCounts>({
+    followers: 0,
+    following: 0,
+    friends: 0
+  });
   const [following, setFollowing] = useState(false);
   const [friendConnection, setFriendConnection] = useState<SocialFriendConnection | null>(null);
   const [loading, setLoading] = useState(true);
@@ -76,6 +56,11 @@ export function SocialProfilePage() {
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [commentBusy, setCommentBusy] = useState(false);
+  const [relationModal, setRelationModal] = useState<{
+    title: string;
+    loading: boolean;
+    items: SocialProfile[];
+  } | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -100,11 +85,12 @@ export function SocialProfilePage() {
           return;
         }
 
-        const [nextPosts, nextRoutines, followingIds, friendships] = await Promise.all([
+        const [nextPosts, nextRoutines, followingIds, friendships, counts] = await Promise.all([
           listSocialWorkoutPosts(userId, { ownerUserId: targetProfile.userId, limit: 60 }),
           listSocialRoutinesByOwner(targetProfile.userId, 30),
           listFollowingUserIds(userId),
-          listFriendConnections(userId)
+          listFriendConnections(userId),
+          getSocialRelationshipCounts(targetProfile.userId)
         ]);
 
         if (!active) return;
@@ -115,6 +101,7 @@ export function SocialProfilePage() {
         setFriendConnection(
           friendships.find((item) => item.userId === targetProfile.userId) ?? null
         );
+        setRelationshipCounts(counts);
       } catch {
         if (!active) return;
         setError('No se pudo cargar el perfil social.');
@@ -144,6 +131,7 @@ export function SocialProfilePage() {
         await followSocialProfile(userId, profile.userId);
         setFollowing(true);
       }
+      setRelationshipCounts(await getSocialRelationshipCounts(profile.userId));
     } catch {
       setError('No se pudo actualizar el follow.');
     } finally {
@@ -163,6 +151,7 @@ export function SocialProfilePage() {
     try {
       await sendFriendRequest(userId, profile.userId);
       await refreshFriendConnection();
+      setRelationshipCounts(await getSocialRelationshipCounts(profile.userId));
     } catch {
       setError('No se pudo enviar la solicitud de amistad.');
     } finally {
@@ -176,6 +165,9 @@ export function SocialProfilePage() {
     try {
       await respondFriendRequest(userId, friendConnection.id, decision);
       await refreshFriendConnection();
+      if (profile) {
+        setRelationshipCounts(await getSocialRelationshipCounts(profile.userId));
+      }
     } catch {
       setError('No se pudo responder la solicitud.');
     } finally {
@@ -245,6 +237,35 @@ export function SocialProfilePage() {
     }
   };
 
+  const openRelations = async (relation: 'followers' | 'following' | 'friends') => {
+    if (!profile) return;
+    const titleMap = {
+      followers: 'Seguidores',
+      following: 'Siguiendo',
+      friends: 'Amigos'
+    } as const;
+    setRelationModal({
+      title: titleMap[relation],
+      loading: true,
+      items: []
+    });
+    try {
+      const members = await listSocialRelationMembers(relation, profile.userId);
+      setRelationModal({
+        title: titleMap[relation],
+        loading: false,
+        items: members
+      });
+    } catch {
+      setRelationModal({
+        title: titleMap[relation],
+        loading: false,
+        items: []
+      });
+      setError('No se pudieron cargar las relaciones.');
+    }
+  };
+
   if (!userId) {
     return (
       <section className="stack wide">
@@ -288,10 +309,33 @@ export function SocialProfilePage() {
                 <div>
                   <p className="metric-value social-display-name">{profile.displayName}</p>
                   <p className="muted">@{profile.username}</p>
+                  <div className="social-counter-row ig-style">
+                    <button
+                      type="button"
+                      className="ghost-button social-counter-pill"
+                      onClick={() => void openRelations('followers')}
+                    >
+                      <strong>{relationshipCounts.followers}</strong> seguidores
+                    </button>
+                    <button
+                      type="button"
+                      className="ghost-button social-counter-pill"
+                      onClick={() => void openRelations('following')}
+                    >
+                      <strong>{relationshipCounts.following}</strong> siguiendo
+                    </button>
+                    <button
+                      type="button"
+                      className="ghost-button social-counter-pill"
+                      onClick={() => void openRelations('friends')}
+                    >
+                      <strong>{relationshipCounts.friends}</strong> amigos
+                    </button>
+                  </div>
                 </div>
               </div>
               <p className="muted social-bio-preview">{profile.bio || 'Sin bio por ahora.'}</p>
-              <div className="actions">
+              <div className="actions social-actions-grid">
                 {profile.userId === userId ? (
                   <Link className="ghost-button" to="/settings">
                     Editar en Ajustes
@@ -354,34 +398,13 @@ export function SocialProfilePage() {
               {!posts.length ? <p className="muted">Sin publicaciones todavía.</p> : null}
               <div className="stack social-post-list">
                 {posts.map((post) => (
-                  <article key={post.id} className="social-post-card">
-                    <div className="social-post-body">
-                      <p className="social-post-title">{post.routineName ?? 'Entrenamiento'}</p>
-                      {post.caption ? <p className="social-post-caption">{post.caption}</p> : null}
-                      <div className="social-post-metrics">
-                        <span>{post.summary.durationMinutes} min</span>
-                        <span>{post.summary.setCount} sets</span>
-                        <span>{post.summary.totalReps} reps</span>
-                        <span>{post.summary.totalVolume} kg</span>
-                      </div>
-                    </div>
-                    <footer className="social-post-actions">
-                      <button
-                        type="button"
-                        className={post.likedByMe ? 'toggle active' : 'ghost-button'}
-                        onClick={() => void handleToggleLike(post)}
-                      >
-                        Me gusta · {post.likeCount}
-                      </button>
-                      <button
-                        type="button"
-                        className="ghost-button"
-                        onClick={() => void openComments(post)}
-                      >
-                        Comentarios · {post.commentCount}
-                      </button>
-                    </footer>
-                  </article>
+                  <SocialPostCard
+                    key={post.id}
+                    post={post}
+                    onLike={handleToggleLike}
+                    onComment={openComments}
+                    onProfile={(item) => navigate(`/social/${item.authorUsername}`)}
+                  />
                 ))}
               </div>
             </article>
@@ -464,6 +487,48 @@ export function SocialProfilePage() {
                   disabled={commentBusy || !newComment.trim()}
                 >
                   {commentBusy ? 'Enviando...' : 'Comentar'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {relationModal ? (
+        <div className="modal-overlay center" onClick={() => setRelationModal(null)}>
+          <div className="modal-card" onClick={(event) => event.stopPropagation()}>
+            <div className="stack">
+              <h2>{relationModal.title}</h2>
+              {relationModal.loading ? <p className="muted">Cargando...</p> : null}
+              {!relationModal.loading && !relationModal.items.length ? (
+                <p className="muted">No hay perfiles para mostrar.</p>
+              ) : null}
+              {!relationModal.loading && relationModal.items.length ? (
+                <div className="social-comments-list">
+                  {relationModal.items.map((item) => (
+                    <button
+                      key={item.userId}
+                      type="button"
+                      className="social-comment-item social-relation-item"
+                      onClick={() => {
+                        setRelationModal(null);
+                        navigate(`/social/${item.username}`);
+                      }}
+                    >
+                      <div className="social-profile-head">
+                        <SocialAvatar avatarUrl={item.avatarUrl} label={item.displayName} />
+                        <div>
+                          <p className="metric-value social-display-name">{item.displayName}</p>
+                          <p className="muted">@{item.username}</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+              <div className="actions">
+                <button type="button" className="ghost-button" onClick={() => setRelationModal(null)}>
+                  Cerrar
                 </button>
               </div>
             </div>

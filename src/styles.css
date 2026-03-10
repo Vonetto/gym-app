@@ -289,6 +289,13 @@ input::placeholder {
 .ghost-button,
 .danger-button,
 .toggle {
+  -webkit-appearance: none;
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  line-height: 1.05;
   border-radius: 999px;
   padding: 0.55rem 1.1rem;
   font-weight: 600;
@@ -2168,11 +2175,44 @@ input::placeholder {
   gap: 0.55rem;
 }
 
+.social-tab-switch .toggle {
+  width: 100%;
+  height: 2.35rem;
+  min-height: 2.35rem;
+  max-height: 2.35rem;
+}
+
 .social-inline-controls {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(180px, 240px);
   gap: 0.75rem;
   align-items: center;
+}
+
+.social-inline-controls .toggle-group {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.social-inline-controls .toggle-group .toggle {
+  width: 100%;
+  min-height: 2.2rem;
+}
+
+.social-feed-mode-switch .toggle {
+  min-height: 1.95rem;
+  padding: 0.38rem 0.6rem;
+  font-size: 0.85rem;
+  color: #8ca2be;
+  border-color: rgba(99, 130, 171, 0.35);
+  background: rgba(42, 56, 73, 0.38);
+}
+
+.social-feed-mode-switch .toggle.active {
+  background: rgba(45, 140, 255, 0.2);
+  border-color: rgba(45, 140, 255, 0.55);
+  color: #8ec2ff;
 }
 
 .social-grid {
@@ -2192,8 +2232,13 @@ input::placeholder {
 
 .social-profile-head {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 0.85rem;
+}
+
+.social-profile-head > div {
+  display: grid;
+  gap: 0.25rem;
 }
 
 .social-display-name {
@@ -2222,6 +2267,44 @@ input::placeholder {
 
 .social-bio-preview {
   margin: 0;
+}
+
+.social-counter-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+}
+
+.social-counter-row.ig-style {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.6rem;
+}
+
+.social-counter-row .ghost-button {
+  min-height: 2.05rem;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8rem;
+}
+
+.social-counter-pill {
+  border: none;
+  background: transparent;
+  color: var(--text);
+  padding: 0.1rem 0;
+  min-height: unset;
+  font-size: 0.95rem;
+  text-align: left;
+}
+
+.social-counter-pill strong {
+  font-size: 1.02rem;
+  margin-right: 0.25rem;
+}
+
+.social-counter-text {
+  margin: 0;
+  font-size: 0.86rem;
 }
 
 .social-privacy-list {
@@ -2272,6 +2355,20 @@ input::placeholder {
   gap: 0.85rem;
 }
 
+.social-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 0.6rem;
+}
+
+.social-actions-grid > button,
+.social-actions-grid > a,
+.social-actions-grid > .pill {
+  width: 100%;
+  justify-content: center;
+  text-align: center;
+}
+
 .social-profile-list {
   margin-top: 0.1rem;
 }
@@ -2287,6 +2384,11 @@ input::placeholder {
   background: var(--surface-muted);
   display: grid;
   gap: 0.75rem;
+}
+
+.social-post-card.is-hidden {
+  border-color: rgba(140, 162, 190, 0.35);
+  background: rgba(27, 31, 37, 0.75);
 }
 
 .social-post-header {
@@ -2309,6 +2411,17 @@ input::placeholder {
   gap: 0.05rem;
 }
 
+.social-user-static {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.social-user-static span {
+  display: grid;
+  gap: 0.05rem;
+}
+
 .social-post-body {
   display: grid;
   gap: 0.45rem;
@@ -2321,6 +2434,36 @@ input::placeholder {
 
 .social-post-caption {
   margin: 0;
+}
+
+.social-post-summary-line {
+  margin: 0;
+}
+
+.social-post-expand-button {
+  border: none;
+  background: transparent;
+  color: #7ebaff;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0;
+  width: fit-content;
+}
+
+.social-post-gallery {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.social-post-gallery img {
+  width: 100%;
+  max-height: 190px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--surface);
 }
 
 .social-post-metrics {
@@ -2375,6 +2518,25 @@ input::placeholder {
   gap: 0.45rem;
 }
 
+.social-relation-item {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.social-relation-item .social-profile-head {
+  width: 100%;
+}
+
+.social-request-list {
+  gap: 0.65rem;
+}
+
+.social-request-card {
+  padding: 0.8rem;
+  gap: 0.55rem;
+}
+
 .social-comment-item p {
   margin: 0;
 }
@@ -2409,9 +2571,22 @@ input::placeholder {
     grid-template-columns: 1fr;
   }
 
+  .social-actions-grid {
+    grid-template-columns: 1fr;
+  }
+
   .social-routine-head {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .social-counter-row {
+    grid-template-columns: 1fr;
+  }
+
+  .social-counter-row.ig-style {
+    display: flex;
+    gap: 0.35rem 0.6rem;
   }
 
   .social-post-metrics {

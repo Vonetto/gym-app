@@ -1,12 +1,18 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { SocialAvatar } from '../components/SocialAvatar';
+import { SocialPostCard } from '../components/SocialPostCard';
 import { useAuth } from '../data/AuthProvider';
 import { useSync } from '../data/SyncProvider';
 import { listRecentWorkouts } from '../data/workouts';
 import {
   addSocialPostComment,
+  deleteSocialPost,
   followSocialProfile,
+  getSocialRelationshipCounts,
   getMySocialProfile,
+  listIncomingFriendRequests,
+  listSocialRelationMembers,
   listFriendConnections,
   listFollowingUserIds,
   respondFriendRequest,
@@ -16,14 +22,17 @@ import {
   listSocialRoutinesByOwner,
   listSocialWorkoutPosts,
   publishWorkoutPostToSocial,
+  setSocialPostHidden,
   toggleLikeOnSocialPost,
   unfollowSocialProfile,
   type SocialDirectoryProfile,
   type SocialFriendConnection,
   type SocialPostComment,
   type SocialProfile,
+  type SocialFriendRequest,
   type SocialRoutine,
-  type SocialWorkoutPost
+  type SocialWorkoutPost,
+  type SocialRelationshipCounts
 } from '../data/social';
 
 type SocialTab = 'feed' | 'discover' | 'me';
@@ -33,97 +42,6 @@ interface LocalWorkoutOption {
   id: string;
   routineName: string;
   endedAt: string;
-}
-
-function SocialAvatar({
-  avatarUrl,
-  label,
-  large = false
-}: {
-  avatarUrl?: string;
-  label: string;
-  large?: boolean;
-}) {
-  if (avatarUrl) {
-    return (
-      <img
-        src={avatarUrl}
-        alt={label}
-        className={large ? 'social-avatar social-avatar-large' : 'social-avatar'}
-      />
-    );
-  }
-
-  return (
-    <div
-      className={
-        large ? 'social-avatar social-avatar-large social-avatar-fallback' : 'social-avatar social-avatar-fallback'
-      }
-    >
-      {label.charAt(0).toUpperCase()}
-    </div>
-  );
-}
-
-function PostCard({
-  post,
-  onLike,
-  onComment,
-  onProfile
-}: {
-  post: SocialWorkoutPost;
-  onLike: (post: SocialWorkoutPost) => void;
-  onComment: (post: SocialWorkoutPost) => void;
-  onProfile: (post: SocialWorkoutPost) => void;
-}) {
-  return (
-    <article className="social-post-card">
-      <header className="social-post-header">
-        <button type="button" className="social-user-link" onClick={() => onProfile(post)}>
-          <SocialAvatar avatarUrl={post.authorAvatarUrl} label={post.authorDisplayName} />
-          <span>
-            <strong>{post.authorDisplayName}</strong>
-            <span className="muted">@{post.authorUsername}</span>
-          </span>
-        </button>
-        <time className="muted">
-          {new Date(post.publishedAt).toLocaleDateString('es-CL', {
-            day: '2-digit',
-            month: 'short'
-          })}
-        </time>
-      </header>
-
-      <div className="social-post-body">
-        <p className="social-post-title">{post.routineName ?? 'Entrenamiento'}</p>
-        {post.caption ? <p className="social-post-caption">{post.caption}</p> : null}
-        <div className="social-post-metrics">
-          <span>{post.summary.durationMinutes} min</span>
-          <span>{post.summary.setCount} sets</span>
-          <span>{post.summary.totalReps} reps</span>
-          <span>{post.summary.totalVolume} kg</span>
-        </div>
-        {post.summary.topExercises.length ? (
-          <p className="muted social-post-exercises">
-            {post.summary.topExercises.join(' · ')}
-          </p>
-        ) : null}
-      </div>
-
-      <footer className="social-post-actions">
-        <button
-          type="button"
-          className={post.likedByMe ? 'toggle active' : 'ghost-button'}
-          onClick={() => onLike(post)}
-        >
-          Me gusta · {post.likeCount}
-        </button>
-        <button type="button" className="ghost-button" onClick={() => onComment(post)}>
-          Comentarios · {post.commentCount}
-        </button>
-      </footer>
-    </article>
-  );
 }
 
 export function Social() {
@@ -150,6 +68,12 @@ export function Social() {
   const [myPosts, setMyPosts] = useState<SocialWorkoutPost[]>([]);
   const [myRoutines, setMyRoutines] = useState<SocialRoutine[]>([]);
   const [myWorkouts, setMyWorkouts] = useState<LocalWorkoutOption[]>([]);
+  const [myRelationshipCounts, setMyRelationshipCounts] = useState<SocialRelationshipCounts>({
+    followers: 0,
+    following: 0,
+    friends: 0
+  });
+  const [incomingFriendRequests, setIncomingFriendRequests] = useState<SocialFriendRequest[]>([]);
   const [followingUserIds, setFollowingUserIds] = useState<Set<string>>(new Set());
   const [friendConnections, setFriendConnections] = useState<Map<string, SocialFriendConnection>>(
     new Map()
@@ -157,12 +81,19 @@ export function Social() {
 
   const [selectedWorkoutId, setSelectedWorkoutId] = useState('');
   const [newPostCaption, setNewPostCaption] = useState('');
+  const [newPostImages, setNewPostImages] = useState<File[]>([]);
 
   const [commentsPost, setCommentsPost] = useState<SocialWorkoutPost | null>(null);
   const [comments, setComments] = useState<SocialPostComment[]>([]);
   const [commentsLoading, setCommentsLoading] = useState(false);
   const [newComment, setNewComment] = useState('');
   const [commentBusy, setCommentBusy] = useState(false);
+  const [postActionBusyId, setPostActionBusyId] = useState<string | null>(null);
+  const [relationModal, setRelationModal] = useState<{
+    title: string;
+    loading: boolean;
+    items: SocialProfile[];
+  } | null>(null);
 
   const loadFeed = async () => {
     if (!userId) return;
@@ -204,15 +135,18 @@ export function Social() {
     if (!userId) return;
     setLoadingMine(true);
     try {
-      const [profile, posts, routines, workouts] = await Promise.all([
+      const [profile, posts, routines, workouts, requests, relationshipCounts] = await Promise.all([
         getMySocialProfile(userId),
-        listSocialWorkoutPosts(userId, { ownerUserId: userId, limit: 60 }),
+        listSocialWorkoutPosts(userId, { ownerUserId: userId, limit: 60, includeHidden: true }),
         listSocialRoutinesByOwner(userId, 30),
-        listRecentWorkouts(20)
+        listRecentWorkouts(20),
+        listIncomingFriendRequests(userId),
+        getSocialRelationshipCounts(userId)
       ]);
       setMyProfile(profile);
       setMyPosts(posts);
       setMyRoutines(routines);
+      setIncomingFriendRequests(requests);
       const workoutOptions = workouts.map((workout) => ({
         id: workout.id,
         routineName: workout.routineName ?? 'Entrenamiento',
@@ -220,6 +154,7 @@ export function Social() {
       }));
       setMyWorkouts(workoutOptions);
       setSelectedWorkoutId((current) => current || workoutOptions[0]?.id || '');
+      setMyRelationshipCounts(relationshipCounts);
     } catch {
       setError('No se pudo cargar tu perfil social.');
     } finally {
@@ -315,15 +250,45 @@ export function Social() {
     try {
       await publishWorkoutPostToSocial(userId, selectedWorkoutId, {
         caption: newPostCaption.trim(),
-        visibility: 'authenticated'
+        visibility: 'authenticated',
+        imageFiles: newPostImages.length ? newPostImages : undefined
       });
       setNewPostCaption('');
+      setNewPostImages([]);
       await Promise.all([loadMine(), loadFeed()]);
       setActiveTab('feed');
     } catch {
       setError('No se pudo publicar el entrenamiento.');
     } finally {
       setPublishing(false);
+    }
+  };
+
+  const handleTogglePostHidden = async (post: SocialWorkoutPost) => {
+    if (!userId) return;
+    setPostActionBusyId(post.id);
+    try {
+      await setSocialPostHidden(userId, post.id, !post.hiddenAt);
+      await Promise.all([loadMine(), loadFeed()]);
+    } catch {
+      setError('No se pudo actualizar la visibilidad de la publicación.');
+    } finally {
+      setPostActionBusyId(null);
+    }
+  };
+
+  const handleDeletePost = async (post: SocialWorkoutPost) => {
+    if (!userId) return;
+    const confirmed = window.confirm('¿Eliminar publicación? Esta acción no se puede deshacer.');
+    if (!confirmed) return;
+    setPostActionBusyId(post.id);
+    try {
+      await deleteSocialPost(userId, post.id);
+      await Promise.all([loadMine(), loadFeed()]);
+    } catch {
+      setError('No se pudo eliminar la publicación.');
+    } finally {
+      setPostActionBusyId(null);
     }
   };
 
@@ -403,6 +368,56 @@ export function Social() {
     }
   };
 
+  const handleRespondIncomingRequest = async (
+    request: SocialFriendRequest,
+    decision: 'accepted' | 'rejected'
+  ) => {
+    if (!userId) return;
+    setFollowBusyUserId(request.requesterUserId);
+    try {
+      await respondFriendRequest(userId, request.id, decision);
+      await Promise.all([loadMine(), loadDiscover()]);
+      if (feedMode === 'friends') {
+        void loadFeed();
+      }
+    } catch {
+      setError('No se pudo responder la solicitud.');
+    } finally {
+      setFollowBusyUserId(null);
+    }
+  };
+
+  const openRelations = async (
+    relation: 'followers' | 'following' | 'friends',
+    targetUserId: string
+  ) => {
+    const titleMap = {
+      followers: 'Seguidores',
+      following: 'Siguiendo',
+      friends: 'Amigos'
+    } as const;
+    setRelationModal({
+      title: titleMap[relation],
+      loading: true,
+      items: []
+    });
+    try {
+      const members = await listSocialRelationMembers(relation, targetUserId);
+      setRelationModal({
+        title: titleMap[relation],
+        loading: false,
+        items: members
+      });
+    } catch {
+      setRelationModal({
+        title: titleMap[relation],
+        loading: false,
+        items: []
+      });
+      setError('No se pudieron cargar las relaciones.');
+    }
+  };
+
   if (!userId) {
     return (
       <section className="stack wide">
@@ -466,7 +481,7 @@ export function Social() {
         {activeTab === 'feed' ? (
           <div className="stack">
             <div className="social-inline-controls">
-              <div className="toggle-group">
+              <div className="toggle-group social-feed-mode-switch">
                 <button
                   type="button"
                   className={feedMode === 'for_you' ? 'toggle active' : 'toggle'}
@@ -510,7 +525,7 @@ export function Social() {
             {!loadingFeed ? (
               <div className="stack social-post-list">
                 {feedPosts.map((post) => (
-                  <PostCard
+                  <SocialPostCard
                     key={post.id}
                     post={post}
                     onLike={handleToggleLike}
@@ -562,7 +577,12 @@ export function Social() {
                       <p className="muted social-bio-preview">
                         {profile.bio || 'Sin bio por ahora.'}
                       </p>
-                      <div className="actions">
+                      <p className="muted social-counter-text">
+                        {profile.relationshipCounts.followers} seguidores ·{' '}
+                        {profile.relationshipCounts.following} siguiendo ·{' '}
+                        {profile.relationshipCounts.friends} amigos
+                      </p>
+                      <div className="actions social-actions-grid">
                         <button
                           className="ghost-button"
                           type="button"
@@ -648,6 +668,29 @@ export function Social() {
                     <div>
                       <p className="metric-value social-display-name">{myProfile.displayName}</p>
                       <p className="muted">@{myProfile.username}</p>
+                      <div className="social-counter-row ig-style">
+                        <button
+                          type="button"
+                          className="ghost-button social-counter-pill"
+                          onClick={() => void openRelations('followers', myProfile.userId)}
+                        >
+                          <strong>{myRelationshipCounts.followers}</strong> seguidores
+                        </button>
+                        <button
+                          type="button"
+                          className="ghost-button social-counter-pill"
+                          onClick={() => void openRelations('following', myProfile.userId)}
+                        >
+                          <strong>{myRelationshipCounts.following}</strong> siguiendo
+                        </button>
+                        <button
+                          type="button"
+                          className="ghost-button social-counter-pill"
+                          onClick={() => void openRelations('friends', myProfile.userId)}
+                        >
+                          <strong>{myRelationshipCounts.friends}</strong> amigos
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <p className="muted social-bio-preview">
@@ -698,6 +741,23 @@ export function Social() {
                           placeholder="Ej: Sesión sólida de push."
                         />
                       </div>
+                      <div className="field">
+                        <label className="label" htmlFor="social-workout-images">
+                          Fotos (opcional)
+                        </label>
+                        <input
+                          id="social-workout-images"
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={(event) =>
+                            setNewPostImages(Array.from(event.target.files ?? []).slice(0, 4))
+                          }
+                        />
+                        {newPostImages.length ? (
+                          <p className="muted">{newPostImages.length} foto(s) seleccionadas.</p>
+                        ) : null}
+                      </div>
                       <button
                         type="button"
                         className="primary-button"
@@ -711,18 +771,75 @@ export function Social() {
                 </article>
 
                 <article className="social-summary-card">
+                  <p className="metric-label">Solicitudes de amistad</p>
+                  {!incomingFriendRequests.length ? (
+                    <p className="muted">No tienes solicitudes pendientes.</p>
+                  ) : (
+                    <div className="stack social-request-list">
+                      {incomingFriendRequests.map((request) => (
+                        <article key={request.id} className="social-summary-card social-request-card">
+                          <div className="social-profile-head">
+                            <SocialAvatar
+                              avatarUrl={request.requesterAvatarUrl}
+                              label={request.requesterDisplayName}
+                            />
+                            <div>
+                              <p className="metric-value social-display-name">
+                                {request.requesterDisplayName}
+                              </p>
+                              <p className="muted">@{request.requesterUsername}</p>
+                            </div>
+                          </div>
+                          <p className="muted">
+                            Recibida el{' '}
+                            {new Date(request.createdAt).toLocaleDateString('es-CL')}
+                          </p>
+                          <div className="actions social-actions-grid">
+                            <button
+                              type="button"
+                              className="primary-button"
+                              disabled={followBusyUserId === request.requesterUserId}
+                              onClick={() =>
+                                void handleRespondIncomingRequest(request, 'accepted')
+                              }
+                            >
+                              Aceptar
+                            </button>
+                            <button
+                              type="button"
+                              className="ghost-button"
+                              disabled={followBusyUserId === request.requesterUserId}
+                              onClick={() =>
+                                void handleRespondIncomingRequest(request, 'rejected')
+                              }
+                            >
+                              Rechazar
+                            </button>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </article>
+
+                <article className="social-summary-card">
                   <p className="metric-label">Mis publicaciones</p>
                   {!myPosts.length ? (
                     <p className="muted">Aún no publicas entrenamientos.</p>
                   ) : (
                     <div className="stack social-post-list">
                       {myPosts.map((post) => (
-                        <PostCard
+                        <SocialPostCard
                           key={post.id}
                           post={post}
                           onLike={handleToggleLike}
                           onComment={openComments}
                           onProfile={(item) => navigate(`/social/${item.authorUsername}`)}
+                          ownerActions={{
+                            busy: postActionBusyId === post.id,
+                            onToggleHidden: handleTogglePostHidden,
+                            onDelete: handleDeletePost
+                          }}
                         />
                       ))}
                     </div>
@@ -805,6 +922,48 @@ export function Social() {
                   disabled={commentBusy || !newComment.trim()}
                 >
                   {commentBusy ? 'Enviando...' : 'Comentar'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {relationModal ? (
+        <div className="modal-overlay center" onClick={() => setRelationModal(null)}>
+          <div className="modal-card" onClick={(event) => event.stopPropagation()}>
+            <div className="stack">
+              <h2>{relationModal.title}</h2>
+              {relationModal.loading ? <p className="muted">Cargando...</p> : null}
+              {!relationModal.loading && !relationModal.items.length ? (
+                <p className="muted">No hay perfiles para mostrar.</p>
+              ) : null}
+              {!relationModal.loading && relationModal.items.length ? (
+                <div className="social-comments-list">
+                  {relationModal.items.map((item) => (
+                    <button
+                      key={item.userId}
+                      type="button"
+                      className="social-comment-item social-relation-item"
+                      onClick={() => {
+                        setRelationModal(null);
+                        navigate(`/social/${item.username}`);
+                      }}
+                    >
+                      <div className="social-profile-head">
+                        <SocialAvatar avatarUrl={item.avatarUrl} label={item.displayName} />
+                        <div>
+                          <p className="metric-value social-display-name">{item.displayName}</p>
+                          <p className="muted">@{item.username}</p>
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+              <div className="actions">
+                <button type="button" className="ghost-button" onClick={() => setRelationModal(null)}>
+                  Cerrar
                 </button>
               </div>
             </div>
