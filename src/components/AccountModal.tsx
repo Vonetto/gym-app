@@ -18,6 +18,7 @@ export function AccountModal() {
   const [view, setView] = useState<AccountView>('landing');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmationEmail, setConfirmationEmail] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const syncButtonLabel = getSyncButtonLabel(sync.status);
@@ -28,6 +29,7 @@ export function AccountModal() {
     if (!open) return;
     if (sync.migrationPrompt || auth.status === 'authenticated') {
       setView('account');
+      setConfirmationEmail(null);
       return;
     }
     setView(sync.onboardingOpen ? 'landing' : 'sign_in');
@@ -47,6 +49,7 @@ export function AccountModal() {
     if (sync.onboardingOpen) return;
     sync.closeAccountDialog();
     setError(null);
+    setConfirmationEmail(null);
   };
 
   const handleSubmit = async () => {
@@ -56,10 +59,12 @@ export function AccountModal() {
       if (view === 'sign_up') {
         const result = await auth.signUp(email.trim(), password);
         if (result === 'confirmation_required') {
+          setConfirmationEmail(email.trim());
           return;
         }
       } else {
         await auth.signIn(email.trim(), password);
+        setConfirmationEmail(null);
       }
       sync.openAccountDialog();
     } catch (submissionError) {
@@ -89,7 +94,9 @@ export function AccountModal() {
         {sync.migrationPrompt ? (
           <div className="modal-section">
             <p className="muted">
-              Hay datos locales y datos en la nube para esta cuenta. Elige cómo continuar.
+              {sync.migrationPrompt.remoteHasData
+                ? 'Hay datos locales y datos en la nube para esta cuenta. Elige cómo continuar.'
+                : 'Hay datos locales en este dispositivo. Elige si quieres subirlos a esta cuenta o empezar limpio.'}
             </p>
             <div className="summary">
               <p className="metric-label">Datos locales detectados</p>
@@ -97,10 +104,10 @@ export function AccountModal() {
             </div>
             <div className="actions">
               <button className="primary-button" type="button" onClick={() => sync.resolveMigration('merge')}>
-                Fusionar
+                {sync.migrationPrompt.remoteHasData ? 'Fusionar' : 'Subir datos locales'}
               </button>
               <button className="ghost-button" type="button" onClick={() => sync.resolveMigration('replace_local')}>
-                Usar nube
+                {sync.migrationPrompt.remoteHasData ? 'Usar nube' : 'Empezar limpio'}
               </button>
             </div>
           </div>
@@ -142,6 +149,7 @@ export function AccountModal() {
         {!sync.migrationPrompt &&
         auth.status !== 'authenticated' &&
         auth.status !== 'pending_confirmation' &&
+        !confirmationEmail &&
         view === 'landing' ? (
           <div className="modal-section">
             <p className="muted">
@@ -165,6 +173,7 @@ export function AccountModal() {
         {!sync.migrationPrompt &&
         auth.status !== 'authenticated' &&
         auth.status !== 'pending_confirmation' &&
+        !confirmationEmail &&
         (view === 'sign_in' || view === 'sign_up') ? (
           <div className="modal-section">
             <div className="field">
@@ -218,11 +227,11 @@ export function AccountModal() {
           </div>
         ) : null}
 
-        {auth.status === 'pending_confirmation' ? (
+        {auth.status === 'pending_confirmation' || confirmationEmail ? (
           <div className="modal-section">
             <div className="summary">
               <p className="metric-label">Confirmación pendiente</p>
-              <p className="metric-value">{auth.pendingEmail ?? email}</p>
+              <p className="metric-value">{confirmationEmail ?? auth.pendingEmail ?? email}</p>
             </div>
             <p className="muted">
               Te enviamos un correo de confirmación. Abre tu email, confirma la cuenta y luego
@@ -230,7 +239,14 @@ export function AccountModal() {
             </p>
             <p className="muted">Si no lo encuentras, revisa spam o correo no deseado.</p>
             <div className="actions">
-              <button className="ghost-button" type="button" onClick={() => setView('sign_in')}>
+              <button
+                className="ghost-button"
+                type="button"
+                onClick={() => {
+                  setConfirmationEmail(null);
+                  setView('sign_in');
+                }}
+              >
                 Volver a iniciar sesión
               </button>
               {!sync.onboardingOpen ? (

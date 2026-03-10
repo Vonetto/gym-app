@@ -155,7 +155,7 @@ interface RemoteSnapshot {
 export type InitialSyncResolution =
   | { kind: 'ready' }
   | { kind: 'auto'; mode: 'push_local' | 'replace_local' }
-  | { kind: 'prompt'; localCount: number };
+  | { kind: 'prompt'; localCount: number; remoteHasData: boolean };
 
 export interface SyncSummary {
   pushed: number;
@@ -182,7 +182,7 @@ export const syncConflictHelpers = {
   shouldApplyRemote
 };
 
-async function fetchAllRows<T>(table: string): Promise<T[]> {
+async function fetchAllRows<T>(table: string, userId: string): Promise<T[]> {
   const supabase = getSupabaseClient();
   if (!supabase) {
     throw new Error('supabase-unavailable');
@@ -195,6 +195,7 @@ async function fetchAllRows<T>(table: string): Promise<T[]> {
     const { data, error } = await supabase
       .from(table)
       .select('*')
+      .eq('user_id', userId)
       .order('updated_at', { ascending: true })
       .range(from, from + PAGE_SIZE - 1);
 
@@ -210,16 +211,16 @@ async function fetchAllRows<T>(table: string): Promise<T[]> {
   return rows;
 }
 
-async function fetchRemoteSnapshot(): Promise<RemoteSnapshot> {
+async function fetchRemoteSnapshot(userId: string): Promise<RemoteSnapshot> {
   const [customExercises, favorites, routines, workouts, scheduleSeries, scheduleOccurrences, notificationPrefsRows] =
     await Promise.all([
-    fetchAllRows<CloudCustomExerciseRow>('user_custom_exercises'),
-    fetchAllRows<CloudFavoriteRow>('user_favorites'),
-    fetchAllRows<CloudRoutineRow>('user_routines'),
-    fetchAllRows<CloudWorkoutRow>('user_workouts'),
-    fetchAllRows<CloudScheduleSeriesRow>('user_schedule_series'),
-    fetchAllRows<CloudScheduleOccurrenceRow>('user_schedule_occurrences'),
-    fetchAllRows<CloudNotificationPreferencesRow>('user_notification_preferences')
+    fetchAllRows<CloudCustomExerciseRow>('user_custom_exercises', userId),
+    fetchAllRows<CloudFavoriteRow>('user_favorites', userId),
+    fetchAllRows<CloudRoutineRow>('user_routines', userId),
+    fetchAllRows<CloudWorkoutRow>('user_workouts', userId),
+    fetchAllRows<CloudScheduleSeriesRow>('user_schedule_series', userId),
+    fetchAllRows<CloudScheduleOccurrenceRow>('user_schedule_occurrences', userId),
+    fetchAllRows<CloudNotificationPreferencesRow>('user_notification_preferences', userId)
   ]);
 
   return {
@@ -233,8 +234,8 @@ async function fetchRemoteSnapshot(): Promise<RemoteSnapshot> {
   };
 }
 
-async function fetchHasRemoteData() {
-  const snapshot = await fetchRemoteSnapshot();
+async function fetchHasRemoteData(userId: string) {
+  const snapshot = await fetchRemoteSnapshot(userId);
   return (
     snapshot.customExercises.some((row) => !row.deleted_at) ||
     snapshot.favorites.some((row) => !row.deleted_at) ||
@@ -259,8 +260,8 @@ export async function countLocalSyncItems() {
   return customExercises + favorites + routines + workouts + scheduleSeries + scheduleOccurrences;
 }
 
-export async function hasRemoteSyncData() {
-  return fetchHasRemoteData();
+export async function hasRemoteSyncData(userId: string) {
+  return fetchHasRemoteData(userId);
 }
 
 async function serializeCustomExercises(userId: string, remoteMap: Map<string, CloudCustomExerciseRow>) {
@@ -956,7 +957,7 @@ export async function syncUserData(userId: string, mode: SyncMode = 'merge'): Pr
   });
 
   try {
-    const remoteBefore = await fetchRemoteSnapshot();
+    const remoteBefore = await fetchRemoteSnapshot(userId);
 
     if (mode === 'replace_local') {
       await clearSyncedLocalData();
@@ -1026,7 +1027,7 @@ export async function syncUserData(userId: string, mode: SyncMode = 'merge'): Pr
           )
         ]);
 
-      const remoteAfterPush = await fetchRemoteSnapshot();
+      const remoteAfterPush = await fetchRemoteSnapshot(userId);
       await applyRemoteSnapshot(remoteAfterPush);
 
       const summary: SyncSummary = {
@@ -1064,7 +1065,7 @@ export async function syncUserData(userId: string, mode: SyncMode = 'merge'): Pr
       return summary;
     }
 
-    const remoteAfterReplace = await fetchRemoteSnapshot();
+    const remoteAfterReplace = await fetchRemoteSnapshot(userId);
     await applyRemoteSnapshot(remoteAfterReplace);
 
     const syncedAt = new Date().toISOString();
@@ -1107,7 +1108,7 @@ export async function resolveInitialSyncMode(userId: string): Promise<InitialSyn
     return { kind: 'ready' as const };
   }
 
-  const [localCount, remoteHasData] = await Promise.all([countLocalSyncItems(), hasRemoteSyncData()]);
+  const [localCount, remoteHasData] = await Promise.all([countLocalSyncItems(), hasRemoteSyncData(userId)]);
 
   if (localCount === 0 && !remoteHasData) {
     await updateSyncState(`migration:${userId}`, {
@@ -1117,17 +1118,14 @@ export async function resolveInitialSyncMode(userId: string): Promise<InitialSyn
     return { kind: 'ready' as const };
   }
 
-  if (localCount > 0 && !remoteHasData) {
-    return { kind: 'auto', mode: 'push_local' as const };
-  }
-
   if (localCount === 0 && remoteHasData) {
     return { kind: 'auto', mode: 'replace_local' as const };
   }
 
   return {
     kind: 'prompt' as const,
-    localCount
+    localCount,
+    remoteHasData
   };
 }
 

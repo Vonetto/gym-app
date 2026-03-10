@@ -15,6 +15,7 @@ type SyncBannerStatus = 'idle' | 'syncing' | 'success' | 'error' | 'offline-pend
 
 interface MigrationPromptState {
   localCount: number;
+  remoteHasData: boolean;
 }
 
 interface SyncContextValue {
@@ -170,7 +171,8 @@ export function SyncProvider({ children }: { children: ReactNode }) {
       }
 
       setMigrationPrompt({
-        localCount: resolved.localCount
+        localCount: resolved.localCount,
+        remoteHasData: resolved.remoteHasData
       });
       setAccountDialogOpen(true);
     };
